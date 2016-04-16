@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <tsk/libtsk.h>
 #include <unistd.h>
-#include "guid.h"
+#include "Guid.h"
 
 using namespace std;
 
@@ -50,10 +50,13 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    char diskArr[GUID::BYTES_OF_GUID];
+    char *diskArr = new char[GUID::BYTES_OF_GUID]();
     tsk_img_read(img, 0x10020, diskArr, GUID::BYTES_OF_GUID);
     GUID fsUUID(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
 
-    cout << "[FS UUID] " << fsUUID.encode() << endl;
+    cout << "[FS UUID]: " << fsUUID.encode() << endl;
+
+    delete [] diskArr;
+
 }
 

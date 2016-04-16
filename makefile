@@ -2,14 +2,14 @@ P = btrfrsc
 CFLAGS = -g -Wall
 LDLIBS = -ltsk
 
-btrfrsc : btrfrsc.o guid.o
-	g++ -o $(P) btrfrsc.o guid.o $(CFLAGS) $(LDLIBS)
+btrfrsc : btrfrsc.o Guid.o
+	g++ -o $(P) btrfrsc.o Guid.o $(CFLAGS) $(LDLIBS)
 
-btrfrsc.o : btrfrsc.cpp guid.h
+btrfrsc.o : btrfrsc.cpp Guid.h
 	g++ -c btrfrsc.cpp $(CFLAGS) $(LDLIBS)
 
-guid.o : guid.cpp guid.h
-	g++ -c guid.cpp $(CFLAGS) $(LDLIBS)
+Guid.o : Guid.cpp Guid.h
+	g++ -c Guid.cpp $(CFLAGS) $(LDLIBS)
 
 clean :
 	rm btrfrsc *.o 
