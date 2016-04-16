@@ -1,4 +1,4 @@
-/** \file guid.c
+/** \file Guid.c
   * GUID processing.
   */
 

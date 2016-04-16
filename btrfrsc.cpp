@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <tsk/libtsk.h>
 #include <unistd.h>
-#include "Guid.h"
+#include "SuperBlock.h"
 
 using namespace std;
 
@@ -50,11 +50,11 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    char *diskArr = new char[GUID::BYTES_OF_GUID]();
-    tsk_img_read(img, 0x10020, diskArr, GUID::BYTES_OF_GUID);
-    GUID fsUUID(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
+    char *diskArr = new char[SuperBlock::SIZE_OF_SPR_BLK]();
+    tsk_img_read(img, 0x10000, diskArr, SuperBlock::SIZE_OF_SPR_BLK);
+    SuperBlock supb(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
 
-    cout << "[FS UUID]: " << fsUUID.encode() << endl;
+    cout << supb << endl;
 
     delete [] diskArr;
 
