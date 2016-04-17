@@ -4,6 +4,13 @@
 
 #include "SuperBlock.h"
 
+/**
+  * Constructor of super block.
+  * 
+  * \param endian The endianess of the array.
+  * \param arr Byte array storing super block data.
+  * 
+  */
 SuperBlock::SuperBlock(TSK_ENDIAN_ENUM endian, uint8_t arr[])
     :fsUUID(endian, arr + 0x20)
 {
@@ -34,6 +41,10 @@ std::string SuperBlock::printMagic()
     return std::string(magic, 8);
 }
 
+/**
+  * Overloaded stream operator.
+  * 
+  */
 std::ostream &operator<<(std::ostream &os, SuperBlock &supb)
 {
     os << supb.fsUUID.encode()
