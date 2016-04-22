@@ -35,8 +35,6 @@ private:
     uint8_t data_4[8];
 
 private:
-    uint16_t read16Bit(TSK_ENDIAN_ENUM endian, uint8_t *arr);
-    uint32_t read32Bit(TSK_ENDIAN_ENUM endian, uint8_t *arr);
 
     Variant getVariant();
     int getVersion();

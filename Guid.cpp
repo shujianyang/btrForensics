@@ -5,6 +5,7 @@
 #include <sstream>
 #include <bitset>
 #include "Guid.h"
+#include "Utility.h"
 
 
 /**
@@ -42,66 +43,6 @@ GUID::GUID(TSK_ENDIAN_ENUM endian, gpt_entry &entry)
     for(int i=0; i<8; i++){
         data_4[i] = *(entry.type_guid + 8 + i);
     }
-}
-
-
-/**
-  * Read a 16-bit long number from byte array.
-  *
-  * \param endian The endianess of the array.
-  * \param arr The array containg the bytes.
-  *
-  */
-uint16_t GUID::read16Bit(TSK_ENDIAN_ENUM endian, uint8_t *arr)
-{
-    uint16_t num(0);
-
-    if(endian == TSK_LIT_ENDIAN) {
-        num += (uint16_t)*(arr + 1);
-        num = num << 8;
-        num += (uint16_t)*arr;
-    }
-    else if(endian == TSK_BIG_ENDIAN) {
-        num += (uint16_t)*arr;
-        num += num << 8;
-        num += (uint16_t)*(arr + 1);
-    }
-
-    return num;
-}
-
-
-/**
-  * Read a 32-bit long number from byte array.
-  *
-  * \param endian The endianess of the array.
-  * \param arr The array containg the bytes.
-  *
-  */
-uint32_t GUID::read32Bit(TSK_ENDIAN_ENUM endian, uint8_t *arr)
-{
-    uint32_t num(0);
-
-    if(endian == TSK_LIT_ENDIAN) {
-        num += (uint16_t)*(arr + 3);
-        num = num << 8;
-        num += (uint16_t)*(arr + 2);
-        num = num << 8;
-        num += (uint16_t)*(arr + 1);
-        num = num << 8;
-        num += (uint16_t)*arr;
-    }
-    else if(endian == TSK_BIG_ENDIAN) {
-        num += (uint16_t)*arr;
-        num += num << 8;
-        num += (uint16_t)*(arr + 1);
-        num += num << 8;
-        num += (uint16_t)*(arr + 2);
-        num += num << 8;
-        num += (uint16_t)*(arr + 3);
-    }
-
-    return num;
 }
 
 

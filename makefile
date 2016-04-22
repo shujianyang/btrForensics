@@ -11,7 +11,7 @@ btrfrsc.o : btrfrsc.cpp SuperBlock.h Guid.h
 SuperBlock.o : SuperBlock.cpp SuperBlock.h Guid.h
 	g++ -c SuperBlock.cpp $(CFLAGS) $(LDLIBS)
 
-Guid.o : Guid.cpp Guid.h
+Guid.o : Guid.cpp Guid.h Utility.h
 	g++ -c Guid.cpp $(CFLAGS) $(LDLIBS)
 
 clean :
