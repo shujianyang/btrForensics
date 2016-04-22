@@ -3,6 +3,7 @@
   */
 
 #include "SuperBlock.h"
+#include "Utility.h"
 
 /**
   * Constructor of super block.
@@ -22,18 +23,15 @@ SuperBlock::SuperBlock(TSK_ENDIAN_ENUM endian, uint8_t arr[])
     for(int i=0; i<0x8; i++, arIndex++){
         magic[i] = arr[arIndex];
     }
+
     arIndex += 0x8;
-    for(int i=0x7; i>=0; i--){
-        rootTrRoot = (rootTrRoot << 8) + (uint64_t)*(arr + arIndex + i);
-    }
+    rootTrRoot = read64Bit(endian, arr + arIndex);
+
     arIndex += 0x8;
-    for(int i=0x7; i>=0; i--){
-        chunkTrRoot = (chunkTrRoot << 8) + (uint64_t)*(arr + arIndex + i);
-    }
+    chunkTrRoot = read64Bit(endian, arr + arIndex);
+
     arIndex += 0x8;
-    for(int i=0x7; i>=0; i--){
-        logTrRoot = (logTrRoot << 8) + (uint64_t)*(arr + arIndex + i);
-    }
+    logTrRoot = read64Bit(endian, arr + arIndex);
 }
 
 std::string SuperBlock::printMagic()
