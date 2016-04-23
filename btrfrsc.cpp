@@ -60,6 +60,7 @@ int main(int argc, char *argv[])
     SuperBlock supb(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
 
     cout << supb << endl;
+    cout << supb.printSpace() << endl;
 
     delete [] diskArr;
 

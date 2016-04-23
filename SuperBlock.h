@@ -20,14 +20,18 @@ private:
     uint64_t rootTrRoot;
     uint64_t chunkTrRoot;
     uint64_t logTrRoot;
+    uint64_t logRootTransid;
+    uint64_t totalBytes;
+    uint64_t bytesUsed;
 
 public:
     SuperBlock(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
 
     std::string printMagic();
+    std::string printSpace();
 
     static const int ADDR_OF_SPR_BLK = 0x10000;
-    static const int SIZE_OF_SPR_BLK = 0x68;
+    static const int SIZE_OF_SPR_BLK = 0x80;
 
     friend std::ostream &operator<<(std::ostream &os, SuperBlock &supb);
 };

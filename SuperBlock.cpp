@@ -2,6 +2,7 @@
   * SuperBlock implementation.
   */
 
+#include <sstream>
 #include "SuperBlock.h"
 #include "Utility.h"
 
@@ -32,12 +33,22 @@ SuperBlock::SuperBlock(TSK_ENDIAN_ENUM endian, uint8_t arr[])
 
     arIndex += 0x8;
     logTrRoot = read64Bit(endian, arr + arIndex);
+    
+    arIndex += 0x8;
+    logRootTransid = read64Bit(endian, arr + arIndex);
+
+    arIndex += 0x8;
+    totalBytes = read64Bit(endian, arr + arIndex);
+
+    arIndex += 0x8;
+    bytesUsed = read64Bit(endian, arr + arIndex);
 }
 
 std::string SuperBlock::printMagic()
 {
     return std::string(magic, 8);
 }
+
 
 /**
   * Overloaded stream operator.
@@ -58,5 +69,49 @@ std::ostream &operator<<(std::ostream &os, SuperBlock &supb)
     os.width(16);
     os << supb.logTrRoot;
     return os;
+}
+
+std::string SuperBlock::printSpace()
+{
+    uint64_t total = totalBytes;
+    std::string totalSfx;
+
+    if(total >> 10 == 0){
+        totalSfx = "B";
+    }
+    else if((total >>= 10) >> 10 == 0){
+        totalSfx = "KB";
+    }
+    else if((total >>= 10) >> 10 == 0){
+        totalSfx = "MB";
+    }
+    else{
+        total >>= 10;
+        totalSfx = "GB";
+    }
+
+    uint64_t used = bytesUsed;
+    std::string usedSfx;
+
+    if(used >> 10 == 0){
+        usedSfx = "B";
+    }
+    else if((used >>= 10) >> 10 == 0){
+        usedSfx = "KB";
+    }
+    else if((used >>= 10) >> 10 == 0){
+        usedSfx = "MB";
+    }
+    else{
+        used >>= 10;
+        usedSfx = "GB";
+    }
+
+    std::ostringstream oss;
+    oss << "Total size: " << total << totalSfx;
+    oss << '\n';
+    oss << "Used size: " << used << usedSfx;
+
+    return oss.str();
 }
 
