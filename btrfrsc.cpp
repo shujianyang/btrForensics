@@ -51,7 +51,12 @@ int main(int argc, char *argv[])
     }
 
     char *diskArr = new char[SuperBlock::SIZE_OF_SPR_BLK]();
-    tsk_img_read(img, 0x10000, diskArr, SuperBlock::SIZE_OF_SPR_BLK);
+    if(diskArr == 0){
+        cerr << "Fail to allocate superblock space." << endl;
+        exit(1);
+    }
+
+    tsk_img_read(img, SuperBlock::ADDR_OF_SPR_BLK, diskArr, SuperBlock::SIZE_OF_SPR_BLK);
     SuperBlock supb(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
 
     cout << supb << endl;

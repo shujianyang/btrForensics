@@ -44,13 +44,13 @@ uint32_t read32Bit(TSK_ENDIAN_ENUM endian, uint8_t *arr)
     if(endian == TSK_LIT_ENDIAN) {
         for(int i=3; i>=0; i--){
             num <<= 8;
-            num += (uint16_t)*(arr + i);
+            num += (uint32_t)*(arr + i);
         }
     }
     else if(endian == TSK_BIG_ENDIAN) {
         for(int i=0; i<=3; i--){
             num <<= 8;
-            num += (uint16_t)*(arr + i);
+            num += (uint32_t)*(arr + i);
         }
     }
 
@@ -64,20 +64,20 @@ uint32_t read32Bit(TSK_ENDIAN_ENUM endian, uint8_t *arr)
   * \param arr The array containg the bytes.
   *
   */
-uint32_t read64Bit(TSK_ENDIAN_ENUM endian, uint8_t *arr)
+uint64_t read64Bit(TSK_ENDIAN_ENUM endian, uint8_t *arr)
 {
-    uint32_t num(0);
+    uint64_t num(0);
 
     if(endian == TSK_LIT_ENDIAN) {
         for(int i=7; i>=0; i--){
             num <<= 8;
-            num += (uint16_t)*(arr + i);
+            num += (uint64_t)*(arr + i);
         }
     }
     else if(endian == TSK_BIG_ENDIAN) {
         for(int i=0; i<=7; i--){
             num <<= 8;
-            num += (uint16_t)*(arr + i);
+            num += (uint64_t)*(arr + i);
         }
     }
 

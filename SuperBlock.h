@@ -26,6 +26,7 @@ public:
 
     std::string printMagic();
 
+    static const int ADDR_OF_SPR_BLK = 0x10000;
     static const int SIZE_OF_SPR_BLK = 0x68;
 
     friend std::ostream &operator<<(std::ostream &os, SuperBlock &supb);
