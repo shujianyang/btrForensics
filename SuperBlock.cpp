@@ -17,31 +17,83 @@ SuperBlock::SuperBlock(TSK_ENDIAN_ENUM endian, uint8_t arr[])
     :fsUUID(endian, arr + 0x20)
 {
     int arIndex(0);
-    for(int i=0; i<0x20; i++, arIndex++){
-        checksum[i] = arr[arIndex];
+    for(int i=0; i<0x20; i++){
+        checksum[i] = arr[arIndex++];
     }
-    arIndex += 0x20;
+    arIndex += 0x20; //fsUUID, initialized ahead.
+
     for(int i=0; i<0x8; i++, arIndex++){
         magic[i] = arr[arIndex];
     }
 
+    generation = read64Bit(endian, arr + arIndex);
     arIndex += 0x8;
-    rootTrRoot = read64Bit(endian, arr + arIndex);
-
-    arIndex += 0x8;
-    chunkTrRoot = read64Bit(endian, arr + arIndex);
-
-    arIndex += 0x8;
-    logTrRoot = read64Bit(endian, arr + arIndex);
     
+    rootTrRoot = read64Bit(endian, arr + arIndex);
     arIndex += 0x8;
+
+    chunkTrRoot = read64Bit(endian, arr + arIndex);
+    arIndex += 0x8;
+
+    logTrRoot = read64Bit(endian, arr + arIndex);
+    arIndex += 0x8;
+
     logRootTransid = read64Bit(endian, arr + arIndex);
-
     arIndex += 0x8;
+
     totalBytes = read64Bit(endian, arr + arIndex);
-
     arIndex += 0x8;
+
     bytesUsed = read64Bit(endian, arr + arIndex);
+    arIndex += 0x8;
+
+    rootDirObjectid = read64Bit(endian, arr + arIndex);
+    arIndex += 0x8;
+
+    numDevices = read64Bit(endian, arr + arIndex);
+    arIndex += 0x8;
+
+    sectorSize = read32Bit(endian, arr + arIndex);
+    arIndex += 0x4;
+
+    nodeSize = read32Bit(endian, arr + arIndex);
+    arIndex += 0x4;
+
+    leafSize = read32Bit(endian, arr + arIndex);
+    arIndex += 0x4;
+
+    stripeSize = read32Bit(endian, arr + arIndex);
+    arIndex += 0x4;
+
+    n = read32Bit(endian, arr + arIndex);
+    arIndex += 0x4;
+
+    chunkRootGeneration = read64Bit(endian, arr + arIndex);
+    arIndex += 0x8;
+
+    compatFlags = read64Bit(endian, arr + arIndex);
+    arIndex += 0x8;
+
+    compatRoFlags = read64Bit(endian, arr + arIndex);
+    arIndex += 0x8;
+
+    imcompatFlags = read64Bit(endian, arr + arIndex);
+    arIndex += 0x8;
+
+    csumType = read16Bit(endian, arr + arIndex);
+    arIndex += 0x2;
+
+    rootLevel = arr[arIndex++];
+    chunkRootLevel = arr[arIndex++];
+    logRootLevel = arr[arIndex++];
+
+    for(int i=0; i<devItemSize; i++){
+        devItemData[i] = arr[arIndex++];
+    }
+
+    for(int i=0; i<labelSize; i++){
+        label[i] = arr[arIndex++];
+    }
 }
 
 std::string SuperBlock::printMagic()
@@ -67,7 +119,12 @@ std::ostream &operator<<(std::ostream &os, SuperBlock &supb)
     os << supb.chunkTrRoot;    
     os << "\nLog tree root address: ";
     os.width(16);
-    os << supb.logTrRoot;
+    os << supb.logTrRoot << '\n';
+    os << std::dec;
+    os << "Sector size:" << supb.sectorSize;
+    os << " Node size:" << supb.nodeSize;
+    os << " Leaf size:" << supb.leafSize;
+    os << " Stripe size:" << supb.stripeSize;
     return os;
 }
 
@@ -112,6 +169,16 @@ std::string SuperBlock::printSpace()
     oss << '\n';
     oss << "Used size: " << used << usedSfx;
 
+    return oss.str();
+}
+
+std::string SuperBlock::printLabel()
+{
+    std::ostringstream oss;
+    for(int i=0; i<labelSize; i++){
+        if(label[i] == 0) break;
+        oss << label[i];
+    }
     return oss.str();
 }
 

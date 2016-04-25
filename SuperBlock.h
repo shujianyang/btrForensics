@@ -11,27 +11,59 @@
 
 class SuperBlock{
 private:
-    uint8_t checksum[0x20];
-    GUID fsUUID;
-    uint64_t address;
+    static constexpr int devItemSize = 0x62;
+    static constexpr int labelSize = 0x100;
+
+    uint8_t checksum[0x20]; //0x0
+    
+    GUID fsUUID; //0x20
+
+    uint64_t address; //0x30
     uint8_t flags[0x8];
-    char magic[0x8];
+
+    char magic[0x8]; //0x40
     uint64_t generation;
-    uint64_t rootTrRoot;
+
+    uint64_t rootTrRoot; //0x50
     uint64_t chunkTrRoot;
-    uint64_t logTrRoot;
+
+    uint64_t logTrRoot; //0x60
     uint64_t logRootTransid;
-    uint64_t totalBytes;
+
+    uint64_t totalBytes; //0x70
     uint64_t bytesUsed;
+    
+    uint64_t rootDirObjectid; //0x80
+    uint64_t numDevices;
+
+    uint32_t sectorSize; //0x90
+    uint32_t nodeSize;
+    uint32_t leafSize;
+    uint32_t stripeSize;
+
+    uint32_t n; //0xa0
+    uint64_t chunkRootGeneration;
+    uint64_t compatFlags;
+    uint64_t compatRoFlags;
+    uint64_t imcompatFlags;
+
+    uint16_t csumType;
+    uint8_t rootLevel;
+    uint8_t chunkRootLevel;
+    uint8_t logRootLevel;
+
+    uint8_t devItemData[devItemSize]; //0xc9
+    uint8_t label[labelSize];
 
 public:
     SuperBlock(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
 
     std::string printMagic();
     std::string printSpace();
+    std::string printLabel();
 
     static const int ADDR_OF_SPR_BLK = 0x10000;
-    static const int SIZE_OF_SPR_BLK = 0x80;
+    static const int SIZE_OF_SPR_BLK = 0x22b;
 
     friend std::ostream &operator<<(std::ostream &os, SuperBlock &supb);
 };

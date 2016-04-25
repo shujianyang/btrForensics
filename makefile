@@ -1,5 +1,5 @@
 P = btrfrsc
-CFLAGS = -g -Wall
+CFLAGS = -g -Wall -std=c++11
 LDLIBS = -ltsk
 
 btrfrsc : btrfrsc.o SuperBlock.o Guid.o Utility.o
