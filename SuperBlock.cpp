@@ -87,11 +87,11 @@ SuperBlock::SuperBlock(TSK_ENDIAN_ENUM endian, uint8_t arr[])
     chunkRootLevel = arr[arIndex++];
     logRootLevel = arr[arIndex++];
 
-    for(int i=0; i<devItemSize; i++){
+    for(int i=0; i<DEV_ITEM_SIZE; i++){
         devItemData[i] = arr[arIndex++];
     }
 
-    for(int i=0; i<labelSize; i++){
+    for(int i=0; i<LABEL_SIZE; i++){
         label[i] = arr[arIndex++];
     }
 }
@@ -175,7 +175,7 @@ std::string SuperBlock::printSpace()
 std::string SuperBlock::printLabel()
 {
     std::ostringstream oss;
-    for(int i=0; i<labelSize; i++){
+    for(int i=0; i<LABEL_SIZE; i++){
         if(label[i] == 0) break;
         oss << label[i];
     }

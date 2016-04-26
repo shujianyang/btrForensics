@@ -11,8 +11,8 @@
 
 class SuperBlock{
 private:
-    static constexpr int devItemSize = 0x62;
-    static constexpr int labelSize = 0x100;
+    static constexpr int DEV_ITEM_SIZE = 0x62;
+    static constexpr int LABEL_SIZE = 0x100;
 
     uint8_t checksum[0x20]; //0x0
     
@@ -52,8 +52,8 @@ private:
     uint8_t chunkRootLevel;
     uint8_t logRootLevel;
 
-    uint8_t devItemData[devItemSize]; //0xc9
-    uint8_t label[labelSize];
+    uint8_t devItemData[DEV_ITEM_SIZE]; //0xc9
+    uint8_t label[LABEL_SIZE];
 
 public:
     SuperBlock(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
