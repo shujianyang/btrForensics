@@ -8,6 +8,7 @@
 #include <iostream>
 #include <string>
 #include "Guid.h"
+#include "DevItem.h"
 
 class SuperBlock{
 private:
@@ -52,7 +53,7 @@ private:
     uint8_t chunkRootLevel;
     uint8_t logRootLevel;
 
-    uint8_t devItemData[DEV_ITEM_SIZE]; //0xc9
+    DevItem devItemData; //0xc9
     uint8_t label[LABEL_SIZE];
 
 public:

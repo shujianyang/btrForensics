@@ -14,7 +14,7 @@
   * 
   */
 SuperBlock::SuperBlock(TSK_ENDIAN_ENUM endian, uint8_t arr[])
-    :fsUUID(endian, arr + 0x20)
+    :fsUUID(endian, arr + 0x20), devItemData(endian, arr + 0xc9)
 {
     int arIndex(0);
     for(int i=0; i<0x20; i++){
@@ -87,9 +87,7 @@ SuperBlock::SuperBlock(TSK_ENDIAN_ENUM endian, uint8_t arr[])
     chunkRootLevel = arr[arIndex++];
     logRootLevel = arr[arIndex++];
 
-    for(int i=0; i<DEV_ITEM_SIZE; i++){
-        devItemData[i] = arr[arIndex++];
-    }
+    arIndex += DEV_ITEM_SIZE;
 
     for(int i=0; i<LABEL_SIZE; i++){
         label[i] = arr[arIndex++];
