@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <string>
-#include "Guid.h"
+#include "Uuid.h"
 #include "DevItem.h"
 
 class SuperBlock{
@@ -17,7 +17,7 @@ private:
 
     uint8_t checksum[0x20]; //0x0
     
-    GUID fsUUID; //0x20
+    UUID fsUUID; //0x20
 
     uint64_t address; //0x30
     uint8_t flags[0x8];

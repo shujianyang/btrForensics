@@ -1,21 +1,21 @@
-/** \file Guid.c
-  * GUID processing.
+/** \file
+  * UUID processing.
   */
 
 #include <sstream>
 #include <bitset>
-#include "Guid.h"
+#include "Uuid.h"
 #include "Utility.h"
 
 
 /**
-  * Constructor of GUID
+  * Constructor of UUID
   *
   * \param endian The endianess of the array.
-  * \param vs Byte array storing GUID.
+  * \param vs Byte array storing UUID.
   *
   */
-GUID::GUID(TSK_ENDIAN_ENUM endian, uint8_t arr[])
+UUID::UUID(TSK_ENDIAN_ENUM endian, uint8_t arr[])
 {
     data_1 = read32Bit(endian, arr);
     data_2 = read16Bit(endian, arr + 4);
@@ -28,13 +28,13 @@ GUID::GUID(TSK_ENDIAN_ENUM endian, uint8_t arr[])
 
 
 /**
-  * Constructor of GUID
+  * Constructor of UUID
   *
   * \param endian The endianess of the array.
   * \param vs Volume system from TSK
   *
   */
-GUID::GUID(TSK_ENDIAN_ENUM endian, gpt_entry &entry)
+UUID::UUID(TSK_ENDIAN_ENUM endian, gpt_entry &entry)
 {
     data_1 = read32Bit(endian, entry.type_guid);
     data_2 = read16Bit(endian, entry.type_guid + 4);
@@ -47,22 +47,22 @@ GUID::GUID(TSK_ENDIAN_ENUM endian, gpt_entry &entry)
 
 
 /**
-  * Check if a GUID is empty.
+  * Check if a UUID is empty.
   *
-  * \return True if the GUID is all 0s.
+  * \return True if the UUID is all 0s.
   *
   */
-bool GUID::isUnused()
+bool UUID::isUnused()
 {
     return match(0, 0, 0, 0);
 }
 
 /**
-  * Encode GUID as a string
+  * Encode UUID as a string
   *
-  * \return Encoded GUID string.
+  * \return Encoded UUID string.
   */
-std::string GUID::encode()
+std::string UUID::encode()
 {
     if(match(0, 0, 0, 0))
         return "";
@@ -94,16 +94,16 @@ std::string GUID::encode()
 
 
 /**
-  *  Check if GUID matches a given value.
+  *  Check if UUID matches a given value.
   *
-  * \param d1 Part 1 of GUID
-  * \param d2 Part 2 of GUID
-  * \param d3 Part 3 of GUID
-  * \param d4 Part 4 of GUID
+  * \param d1 Part 1 of UUID
+  * \param d2 Part 2 of UUID
+  * \param d3 Part 3 of UUID
+  * \param d4 Part 4 of UUID
   *
-  * \return True if GUID matches the given pattern.
+  * \return True if UUID matches the given pattern.
   */
-bool GUID::match(uint32_t d1, uint16_t d2, uint16_t d3, uint64_t d4)
+bool UUID::match(uint32_t d1, uint16_t d2, uint16_t d3, uint64_t d4)
 {
     if(data_1 != d1 || data_2 != d2 || data_3 != d3)
         return false;
@@ -123,11 +123,11 @@ bool GUID::match(uint32_t d1, uint16_t d2, uint16_t d3, uint64_t d4)
 
 
 /**
-  * Get partition type based on GUID value.
+  * Get partition type based on UUID value.
   *
-  * \return String of partition type the GUID represents.
+  * \return String of partition type the UUID represents.
   */
-std::string GUID::guidType()
+std::string UUID::guidType()
 {
     std::string type;
     if(match(0, 0, 0, 0))
@@ -164,11 +164,11 @@ std::string GUID::guidType()
 
 
 /**
-  * Get GUID variant.
+  * Get UUID variant.
   *
-  * \return Variant of the GUID.
+  * \return Variant of the UUID.
   */
-Variant GUID::getVariant()
+Variant UUID::getVariant()
 {
     std::bitset<8> d4(data_4[0]);
 
@@ -184,11 +184,11 @@ Variant GUID::getVariant()
 
 
 /**
-  * Get GUID version.
+  * Get UUID version.
   *
-  * \return Version of the GUID.
+  * \return Version of the UUID.
   */
-int GUID::getVersion()
+int UUID::getVersion()
 {
     uint16_t ver = data_3 >> 12;
 
@@ -197,11 +197,11 @@ int GUID::getVersion()
 
 
 /**
-  * Get GUID variant string.
+  * Get UUID variant string.
   *
   * \return String of variant infomation.
   */
-std::string GUID::variantInfo()
+std::string UUID::variantInfo()
 {
     std::string variant("");
     switch(getVariant()){
@@ -225,11 +225,11 @@ std::string GUID::variantInfo()
 
 
 /**
-  * Get GUID version string.
+  * Get UUID version string.
   *
   * \return String of version infomation.
   */
-std::string GUID::versionInfo()
+std::string UUID::versionInfo()
 {
     std::string version("");
     if(getVariant() != STANDARD)

@@ -5,7 +5,7 @@
 #ifndef DEV_ITEM
 #define DEV_ITEM
 
-#include "Guid.h"
+#include "Uuid.h"
 
 class DevItem{
 private:
@@ -25,8 +25,8 @@ private:
     uint8_t seekSpeed; //0x40
     uint8_t bandWidth;
 
-    GUID devUUID;
-    GUID fsUUID;
+    UUID devUUID;
+    UUID fsUUID;
 
 public:
     DevItem(TSK_ENDIAN_ENUM endian, uint8_t arr[]);

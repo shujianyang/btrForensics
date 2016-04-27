@@ -1,9 +1,9 @@
 /** \file
-  * Header file of GUID.
+  * Header file of UUID.
   */
 
-#ifndef GUID_H
-#define GUID_H
+#ifndef UUID_H
+#define UUID_H
 
 #include <string>
 #include <tsk/libtsk.h>
@@ -27,7 +27,7 @@ enum Version{
 };
 
 
-class GUID{
+class UUID{
 private:
     uint32_t data_1;
     uint16_t data_2;
@@ -40,8 +40,8 @@ private:
     int getVersion();
 
 public:
-    GUID(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
-    GUID(TSK_ENDIAN_ENUM endian, gpt_entry &entry);
+    UUID(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
+    UUID(TSK_ENDIAN_ENUM endian, gpt_entry &entry);
 
     bool isUnused();
     bool match(uint32_t, uint16_t, uint16_t, uint64_t);
@@ -51,8 +51,8 @@ public:
     std::string variantInfo();
     std::string versionInfo();
 
-    static const int BYTES_OF_GUID = 16;
-    static const int LENGTH_OF_GUID_STRING = 36;
+    static const int BYTES_OF_UUID = 16;
+    static const int LENGTH_OF_UUID_STRING = 36;
 };
 
 
