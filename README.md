@@ -13,6 +13,8 @@ Raw image of a btrfs partition.
 ###Note:
 Reference of Btrfs structure can be found in [btrfs Wiki](https://btrfs.wiki.kernel.org/index.php/Main_Page).
 
+Btrfs on-disk format: [Link](https://btrfs.wiki.kernel.org/index.php/On-disk_Format)
+
 ###License:
 This software uses MIT License.
 

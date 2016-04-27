@@ -126,6 +126,10 @@ std::ostream &operator<<(std::ostream &os, SuperBlock &supb)
     return os;
 }
 
+/**
+  * Print info about partition space.
+  *
+  */
 std::string SuperBlock::printSpace()
 {
     uint64_t total = totalBytes;
