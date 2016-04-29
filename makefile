@@ -2,7 +2,7 @@ P = btrfrsc
 CFLAGS = -g -Wall -std=c++11
 LDLIBS = -ltsk
 
-OBJS = btrfrsc.o SuperBlock.o Uuid.o DevItem.o Utility.o
+OBJS = btrfrsc.o SuperBlock.o Uuid.o DevItem.o BtrfsKey.o Utility.o
 
 btrfrsc : $(OBJS)
 	g++ -o $(P) $(OBJS) $(CFLAGS) $(LDLIBS)
@@ -18,6 +18,9 @@ Uuid.o : Uuid.h Utility.h
 
 DevItem.o : Uuid.h Utility.h
 	g++ -c DevItem.cpp $(CFLAGS) $(LDLIBS)
+
+BtrfsKey.o: Basics/BtrfsKey.h Utility.h
+	g++ -c Basics/BtrfsKey.cpp $(CFLAGS) $(LDLIBS)
 
 Utility.o: Utility.h
 	g++ -c Utility.cpp $(CFLAGS) $(LDLIBS)
