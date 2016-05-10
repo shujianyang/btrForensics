@@ -4,7 +4,7 @@
 
 #include <sstream>
 #include "SuperBlock.h"
-#include "Utility.h"
+#include "Utility/ReadInt.h"
 
 /**
   * Constructor of super block.

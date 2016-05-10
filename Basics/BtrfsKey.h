@@ -5,7 +5,7 @@
 #ifndef BTR_KEY_H
 #define BTR_KEY_H
 
-#include "../Utility.h"
+#include <tsk/libtsk.h>
 
 class BtrfsKey{
 private:

@@ -5,7 +5,7 @@
 #ifndef DEV_ITEM
 #define DEV_ITEM
 
-#include "Uuid.h"
+#include "Basics/Uuid.h"
 
 class DevItem{
 private:

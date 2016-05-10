@@ -3,7 +3,7 @@
   */
 
 #include "DevItem.h"
-#include "Utility.h"
+#include "Utility/ReadInt.h"
 
 /**
   * Constructor of device item.

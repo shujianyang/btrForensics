@@ -1,4 +1,4 @@
-*.dd
+# Executable
 btrfrsc
 
 # Object files
@@ -39,3 +39,6 @@ docs/*
 
 # Input files
 files/*
+
+# CMake build files
+build/*

@@ -1,5 +1,5 @@
 #include "BtrfsKey.h"
-#include "../Utility.h"
+#include "Utility/ReadInt.h"
 
 BtrfsKey::BtrfsKey(TSK_ENDIAN_ENUM endian, uint8_t arr[])
 {

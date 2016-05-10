@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <tsk/libtsk.h>
 #include <unistd.h>
-#include "SuperBlock.h"
+#include "Structures/SuperBlock.h"
 
 using namespace std;
 
