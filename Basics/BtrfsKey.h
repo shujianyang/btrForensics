@@ -7,14 +7,17 @@
 
 #include <tsk/libtsk.h>
 
-class BtrfsKey{
-private:
-    uint64_t objId;
-    uint8_t itemType;
-    uint64_t offset;
+namespace btrForensics{
 
-public:
-    BtrfsKey(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
-};
+    class BtrfsKey{
+    private:
+        uint64_t objId;
+        uint8_t itemType;
+        uint64_t offset;
+
+    public:
+        BtrfsKey(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
+    };
+}
 
 #endif

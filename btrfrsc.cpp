@@ -13,6 +13,8 @@
 
 using namespace std;
 
+using btrForensics::SuperBlock;
+
 int main(int argc, char *argv[])
 {
     TSK_OFF_T imgOffset(0);

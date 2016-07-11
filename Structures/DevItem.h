@@ -7,29 +7,32 @@
 
 #include "Utility/Uuid.h"
 
-class DevItem{
-private:
-    uint64_t deviceId; //0x0
-    uint64_t bytes;
-    uint64_t bytesUsed;
+namespace btrForensics{
 
-    uint32_t optIOAlign;
-    uint32_t optIOWidth;
-    uint32_t minimalIOSize;
+    class DevItem{
+    private:
+        uint64_t deviceId; //0x0
+        uint64_t bytes;
+        uint64_t bytesUsed;
 
-    uint64_t type;
-    uint64_t generation;
-    uint64_t offset;
-    uint32_t devGroup;
+        uint32_t optIOAlign;
+        uint32_t optIOWidth;
+        uint32_t minimalIOSize;
 
-    uint8_t seekSpeed; //0x40
-    uint8_t bandWidth;
+        uint64_t type;
+        uint64_t generation;
+        uint64_t offset;
+        uint32_t devGroup;
 
-    UUID devUUID;
-    UUID fsUUID;
+        uint8_t seekSpeed; //0x40
+        uint8_t bandWidth;
 
-public:
-    DevItem(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
-};
+        UUID devUUID;
+        UUID fsUUID;
+
+    public:
+        DevItem(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
+    };
+}
 
 #endif

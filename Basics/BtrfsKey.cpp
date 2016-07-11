@@ -1,14 +1,17 @@
 #include "BtrfsKey.h"
 #include "Utility/ReadInt.h"
 
-BtrfsKey::BtrfsKey(TSK_ENDIAN_ENUM endian, uint8_t arr[])
-{
-    int arIndex = 0;
+namespace btrForensics{
 
-    objId = read64Bit(endian, arr + arIndex);
-    arIndex += 8;
+    BtrfsKey::BtrfsKey(TSK_ENDIAN_ENUM endian, uint8_t arr[])
+    {
+        int arIndex = 0;
 
-    itemType = arr[arIndex++];
+        objId = read64Bit(endian, arr + arIndex);
+        arIndex += 8;
 
-    offset = read64Bit(endian, arr + arIndex);
+        itemType = arr[arIndex++];
+
+        offset = read64Bit(endian, arr + arIndex);
+    }
 }
