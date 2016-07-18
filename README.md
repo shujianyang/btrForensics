@@ -7,8 +7,19 @@ Linux
 ###Prerequisite:
 Install the Sleuth Kit library --> [Link](https://github.com/sleuthkit/sleuthkit.git)
 
+###Build:
+```
+mkdir build
+
+cd build
+
+cmake ..
+
+make
+```
+
 ###Input File:
-Raw image of a btrfs partition.
+Raw image of a btrfs partition, or a partition using btrfs.
 
 ###Note:
 Reference of Btrfs structure can be found in [btrfs Wiki](https://btrfs.wiki.kernel.org/index.php/Main_Page).

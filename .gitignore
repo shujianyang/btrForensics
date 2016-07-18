@@ -42,3 +42,6 @@ files/*
 
 # CMake build files
 build/*
+
+# VSCode files
+.vscode/*
