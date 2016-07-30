@@ -121,10 +121,10 @@ namespace btrForensics{
         os.width(16);
         os << supb.logTrRoot << '\n';
         os << std::dec;
-        os << "Sector size:" << supb.sectorSize;
-        os << " Node size:" << supb.nodeSize;
-        os << " Leaf size:" << supb.leafSize;
-        os << " Stripe size:" << supb.stripeSize;
+        os << '\n' << "Unit size:" << '\n';
+        os << "Sector\tNode\tLeaf\tStripe" << '\n';
+        os << supb.sectorSize << "\t" << supb.nodeSize << "\t" << 
+            supb.leafSize << "\t" << supb.stripeSize;
         return os;
     }
 
