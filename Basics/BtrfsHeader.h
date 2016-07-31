@@ -1,3 +1,7 @@
+/** \file
+  * Header file of class BtrfsHeader
+  */
+  
 #ifndef BTRFS_HEADER_H
 #define BTRFS_HEADER_H
 

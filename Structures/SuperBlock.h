@@ -2,8 +2,8 @@
   * Header file of SuperBlock.
   */
 
-#ifndef SPR_BLK_H
-#define SPR_BLK_H
+#ifndef SUP_BLK_H
+#define SUP_BLK_H
 
 #include <iostream>
 #include <string>
