@@ -4,4 +4,4 @@ aux_source_directory(. STRUCT_SRCS)
 
 add_library(Structures ${STRUCT_SRCS})
 
-#target_link_libraries(Structures Utility Basics)
+#target_link_libraries(Structures Basics Utility)

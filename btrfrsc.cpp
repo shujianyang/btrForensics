@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <tsk/libtsk.h>
 #include <unistd.h>
-#include "Structures/SuperBlock.h"
+#include "btrfrsc.h"
 
 using namespace std;
 
@@ -64,13 +64,42 @@ int main(int argc, char *argv[])
     cout << supblk << endl;
     cout << endl;
 
+    cout << supblk.printMagic() << endl;
+
     cout << supblk.printSpace() << endl;
     cout << endl;
 
     cout << "Label: " << supblk.printLabel() << endl;
-    //BtrfsHeader header(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
 
+    cout << "\n\n" << endl;
     delete [] diskArr;
+
+    cout << "Root tree info:" << endl;
+
+    diskArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
+    tsk_img_read(img, supblk.getRootTrRootAddr(), diskArr, BtrfsHeader::SIZE_OF_HEADER);
+    BtrfsHeader header(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
+
+    cout << header << endl;
+    cout << endl;
+    delete [] diskArr;
+
+    uint64_t itemListStart = supblk.getRootTrRootAddr() + BtrfsHeader::SIZE_OF_HEADER;
+    uint64_t itemOffset(0);
+    int numOfItems = header.getNumOfItems();
+
+    cout << "Root tree item list:" << endl;
+    for(int i=0; i<numOfItems; i++){
+        diskArr = new char[BtrfsItem::SIZE_OF_ITEM]();
+        tsk_img_read(img, itemListStart + itemOffset, diskArr, BtrfsItem::SIZE_OF_ITEM);
+
+        BtrfsItem item(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
+        cout << item << endl;
+
+        delete [] diskArr;
+        itemOffset += BtrfsItem::SIZE_OF_ITEM;
+    }
+
 
 }
 

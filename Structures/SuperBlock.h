@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <string>
-#include "Utility/Uuid.h"
+#include "Utility/Utility.h"
 #include "DevItem.h"
 
 namespace btrForensics{
@@ -19,7 +19,7 @@ namespace btrForensics{
 
         uint8_t checksum[0x20]; //0x0
         
-        UUID fsUUID; //0x20
+        const UUID fsUUID; //0x20
 
         uint64_t address; //0x30
         uint8_t flags[0x8];
@@ -55,15 +55,17 @@ namespace btrForensics{
         uint8_t chunkRootLevel;
         uint8_t logRootLevel;
 
-        DevItem devItemData; //0xc9
+        const DevItem devItemData; //0xc9
         uint8_t label[LABEL_SIZE];
 
     public:
         SuperBlock(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
 
-        std::string printMagic();
-        std::string printSpace();
-        std::string printLabel();
+        const uint64_t getRootTrRootAddr() const;
+
+        const std::string printMagic() const;
+        const std::string printSpace() const;
+        const std::string printLabel() const;
 
         static const int ADDR_OF_SPR_BLK = 0x10000;
         static const int SIZE_OF_SPR_BLK = 0x22b;

@@ -22,7 +22,7 @@ namespace btrForensics{
             checksum[i] = arr[arIndex++];
         }
 
-        arIndex += 0x20; //fsUUID, initialized ahead.
+        arIndex += 0x10; //fsUUID, initialized ahead.
 
         address = read64Bit(endian, arr + arIndex);
         arIndex += 0x08;
@@ -31,7 +31,7 @@ namespace btrForensics{
             flags[i] = arr[arIndex++];
         }
 
-        arIndex += 0x20; //chunkTrUUID, initialized ahead.
+        arIndex += 0x10; //chunkTrUUID, initialized ahead.
 
         generation = read64Bit(endian, arr + arIndex);
         arIndex += 0x08;
@@ -47,10 +47,20 @@ namespace btrForensics{
 
 
     /**
+     * Get number of items stored in this node.
+     *
+     */
+    const uint32_t BtrfsHeader::getNumOfItems() const
+    {
+        return numOfItems;
+    }
+
+
+    /**
      * Overloaded stream operator.
      *
      */
-    std::ostream &operator<<(std::ostream &os, BtrfsHeader &header)
+    std::ostream &operator<<(std::ostream &os, const BtrfsHeader &header)
     {
         os << "FS UUID: " << header.fsUUID.encode() << '\n';
 
@@ -62,7 +72,7 @@ namespace btrForensics{
         os << "Generation: " << header.generation << '\n';
         os << "Tree id: " << header.treeId << '\n';
         os << "Number of items: " << header.numOfItems << '\n';
-        os << "Level: " << header.level;
+        os << "Level: " << (int)header.level;
 
         return os;
     }

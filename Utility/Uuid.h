@@ -10,6 +10,8 @@
 #include <tsk/vs/tsk_gpt.h>
 
 
+/** Types of UUID
+ */
 enum Variant{
     NETWORK_COMPUTING_SYSTEM,
     STANDARD,
@@ -17,16 +19,19 @@ enum Variant{
     RESERVED
 };
 
+/** Different versions of UUID.
+ */
 enum Version{
-    MAC_DATE = 1,
-    DCE,
-    MD5_NAMESPACE,
-    RANDOM,
-    SHA_NAMESPACE,
+    MAC_DATE = 1, /**< Time-based version */
+    DCE,  /**< DEC Security version */
+    MD5_NAMESPACE,  /**< Name-based version using MD5 */
+    RANDOM,  /**< Randomly or pseudo-randomly generated version */
+    SHA_NAMESPACE,  /**< Name-based version using SHA-1 */
     UNKNOWN
 };
 
 
+/** Universally Unique IDentifier (UUID). */
 class UUID{
 private:
     uint32_t data_1;
@@ -36,23 +41,23 @@ private:
 
 private:
 
-    Variant getVariant();
-    int getVersion();
+    const Variant getVariant() const;
+    const int getVersion() const;
 
 public:
     UUID(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
     UUID(TSK_ENDIAN_ENUM endian, gpt_entry &entry);
 
-    bool isUnused();
-    bool match(uint32_t, uint16_t, uint16_t, uint64_t);
+    const bool isUnused() const;
+    const bool match(uint32_t, uint16_t, uint16_t, uint64_t) const;
     
-    std::string encode();
-    std::string guidType();
-    std::string variantInfo();
-    std::string versionInfo();
+    const std::string encode() const;
+    const std::string guidType() const;
+    const std::string variantInfo() const;
+    const std::string versionInfo() const;
 
-    static const int BYTES_OF_UUID = 16;
-    static const int LENGTH_OF_UUID_STRING = 36;
+    static const int BYTES_OF_UUID = 16; /**< UUID byte length when stored in machine, */
+    static const int LENGTH_OF_UUID_STRING = 36; /**< String length used to represent a UUID. */
 };
 
 

@@ -23,7 +23,14 @@ namespace btrForensics{
             checksum[i] = arr[arIndex++];
         }
 
-        arIndex += 0x20; //fsUUID, initialized ahead.
+        arIndex += 0x10; //fsUUID, initialized ahead.
+
+        address = read64Bit(endian, arr + arIndex);
+        arIndex += 0x08;
+
+        for(int i=0; i<0x08; i++){
+            flags[i] = arr[arIndex++];
+        }
 
         for(int i=0; i<0x08; i++, arIndex++){
             magic[i] = arr[arIndex];
@@ -97,43 +104,33 @@ namespace btrForensics{
         }
     }
 
-    std::string SuperBlock::printMagic()
+
+    /**
+     * Get root tree root address from superblock.
+     *
+     * \return 8 byte root tree root address.
+     */
+    const uint64_t SuperBlock::getRootTrRootAddr() const
+    {
+        return rootTrRootAddr;
+    }
+
+
+    /**
+     * Get magic words of btrfs system.
+     *
+     */
+    const std::string SuperBlock::printMagic() const
     {
         return std::string(magic, 8);
     }
 
 
     /**
-     * Overloaded stream operator.
-     * 
-     */
-    std::ostream &operator<<(std::ostream &os, SuperBlock &supb)
-    {
-        os << supb.fsUUID.encode()
-            << std::uppercase << std::hex;
-        os << "\nRoot tree root address: ";
-        os.fill('0');
-        os.width(16);
-        os << supb.rootTrRootAddr;
-        os << "\nChunk tree root address: ";
-        os.width(16);
-        os << supb.chunkTrRootAddr;    
-        os << "\nLog tree root address: ";
-        os.width(16);
-        os << supb.logTrRootAddr << '\n';
-        os << std::dec;
-        os << '\n' << "Unit size:" << '\n';
-        os << "Sector\tNode\tLeaf\tStripe" << '\n';
-        os << supb.sectorSize << "\t" << supb.nodeSize << "\t" << 
-            supb.leafSize << "\t" << supb.stripeSize;
-        return os;
-    }
-
-    /**
-     * Print info about partition space.
+     * Get info about partition space usage.
      *
      */
-    std::string SuperBlock::printSpace()
+    const std::string SuperBlock::printSpace() const
     {
         uint64_t total = totalBytes;
         std::string totalSfx;
@@ -177,7 +174,12 @@ namespace btrForensics{
         return oss.str();
     }
 
-    std::string SuperBlock::printLabel()
+
+    /**
+     * Get super block label.
+     *
+     */
+    const std::string SuperBlock::printLabel() const
     {
         std::ostringstream oss;
         for(int i=0; i<LABEL_SIZE; i++){
@@ -186,5 +188,33 @@ namespace btrForensics{
         }
         return oss.str();
     }
+
+
+    /**
+     * Overloaded stream operator.
+     * 
+     */
+    std::ostream &operator<<(std::ostream &os, SuperBlock &supb)
+    {
+        os << supb.fsUUID.encode()
+            << std::uppercase << std::hex;
+        os << "\nRoot tree root address: ";
+        os.fill('0');
+        os.width(16);
+        os << supb.rootTrRootAddr;
+        os << "\nChunk tree root address: ";
+        os.width(16);
+        os << supb.chunkTrRootAddr;    
+        os << "\nLog tree root address: ";
+        os.width(16);
+        os << supb.logTrRootAddr << '\n';
+        os << std::dec;
+        os << '\n' << "Unit size:" << '\n';
+        os << "Sector\tNode\tLeaf\tStripe" << '\n';
+        os << supb.sectorSize << "\t" << supb.nodeSize << "\t" << 
+            supb.leafSize << "\t" << supb.stripeSize;
+        return os;
+    }
+
 }
 

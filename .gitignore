@@ -45,3 +45,6 @@ build/*
 
 # VSCode files
 .vscode/*
+
+# Bash scripts
+*.sh

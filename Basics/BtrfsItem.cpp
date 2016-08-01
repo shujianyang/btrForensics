@@ -17,7 +17,7 @@ namespace btrForensics{
     BtrfsItem::BtrfsItem(TSK_ENDIAN_ENUM endian, uint8_t arr[])
         :key(endian, arr)
     {
-        int arIndex(0);
+        int arIndex(0x11);
         dataOffset = read32Bit(endian, arr + arIndex);
         arIndex += 0x04;
 
@@ -30,7 +30,7 @@ namespace btrForensics{
      * Overloaded stream operator.
      *
      */
-    std::ostream &operator<<(std::ostream &os, BtrfsItem &item)
+    std::ostream &operator<<(std::ostream &os, const BtrfsItem &item)
     {
         os << item.key;
         os << "Data offset: " << item.dataOffset << '\n';

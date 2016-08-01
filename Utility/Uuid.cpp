@@ -52,7 +52,7 @@ UUID::UUID(TSK_ENDIAN_ENUM endian, gpt_entry &entry)
   * \return True if the UUID is all 0s.
   *
   */
-bool UUID::isUnused()
+const bool UUID::isUnused() const
 {
     return match(0, 0, 0, 0);
 }
@@ -62,7 +62,7 @@ bool UUID::isUnused()
   *
   * \return Encoded UUID string.
   */
-std::string UUID::encode()
+const std::string UUID::encode() const
 {
     if(match(0, 0, 0, 0))
         return "";
@@ -78,7 +78,7 @@ std::string UUID::encode()
     guidOSS.width(4);
     guidOSS << data_3 << '-';
 
-    uint8_t *part = data_4;
+    const uint8_t *part = data_4;
     guidOSS.width(2);
     guidOSS << (int)*part++;
     guidOSS.width(2);
@@ -103,7 +103,7 @@ std::string UUID::encode()
   *
   * \return True if UUID matches the given pattern.
   */
-bool UUID::match(uint32_t d1, uint16_t d2, uint16_t d3, uint64_t d4)
+const bool UUID::match(uint32_t d1, uint16_t d2, uint16_t d3, uint64_t d4) const
 {
     if(data_1 != d1 || data_2 != d2 || data_3 != d3)
         return false;
@@ -127,7 +127,7 @@ bool UUID::match(uint32_t d1, uint16_t d2, uint16_t d3, uint64_t d4)
   *
   * \return String of partition type the UUID represents.
   */
-std::string UUID::guidType()
+const std::string UUID::guidType() const
 {
     std::string type;
     if(match(0, 0, 0, 0))
@@ -168,7 +168,7 @@ std::string UUID::guidType()
   *
   * \return Variant of the UUID.
   */
-Variant UUID::getVariant()
+const Variant UUID::getVariant() const
 {
     std::bitset<8> d4(data_4[0]);
 
@@ -188,7 +188,7 @@ Variant UUID::getVariant()
   *
   * \return Version of the UUID.
   */
-int UUID::getVersion()
+const int UUID::getVersion() const
 {
     uint16_t ver = data_3 >> 12;
 
@@ -201,7 +201,7 @@ int UUID::getVersion()
   *
   * \return String of variant infomation.
   */
-std::string UUID::variantInfo()
+const std::string UUID::variantInfo() const
 {
     std::string variant("");
     switch(getVariant()){
@@ -229,7 +229,7 @@ std::string UUID::variantInfo()
   *
   * \return String of version infomation.
   */
-std::string UUID::versionInfo()
+const std::string UUID::versionInfo() const
 {
     std::string version("");
     if(getVariant() != STANDARD)

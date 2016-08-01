@@ -12,7 +12,7 @@
   * \param arr The array containg the bytes.
   *
   */
-uint16_t read16Bit(TSK_ENDIAN_ENUM endian, uint8_t *arr)
+const uint16_t read16Bit(TSK_ENDIAN_ENUM endian, const uint8_t *arr)
 {
     uint16_t num(0);
 
@@ -37,7 +37,7 @@ uint16_t read16Bit(TSK_ENDIAN_ENUM endian, uint8_t *arr)
   * \param arr The array containg the bytes.
   *
   */
-uint32_t read32Bit(TSK_ENDIAN_ENUM endian, uint8_t *arr)
+const uint32_t read32Bit(TSK_ENDIAN_ENUM endian, const uint8_t *arr)
 {
     uint32_t num(0);
 
@@ -64,7 +64,7 @@ uint32_t read32Bit(TSK_ENDIAN_ENUM endian, uint8_t *arr)
   * \param arr The array containg the bytes.
   *
   */
-uint64_t read64Bit(TSK_ENDIAN_ENUM endian, uint8_t *arr)
+const uint64_t read64Bit(TSK_ENDIAN_ENUM endian, const uint8_t *arr)
 {
     uint64_t num(0);
 

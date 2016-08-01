@@ -32,11 +32,11 @@ namespace btrForensics{
      * Overloaded stream operator.
      *
      */
-    std::ostream &operator<<(std::ostream &os, BtrfsKey &key)
+    std::ostream &operator<<(std::ostream &os, const BtrfsKey &key)
     {
         os << std::uppercase << std::hex;
         os << "Key - Object id: " << key.objId << '\n';
-        os << "Key - Item type: " << key.getItemTypeStr() << 'n';
+        os << "Key - Item type: " << key.getItemTypeStr() << '\n';
         os << "Key - Offset: " << key.offset << '\n';
     }
 
@@ -47,7 +47,7 @@ namespace btrForensics{
      * \return Item type code.
      *
      */
-    uint8_t BtrfsKey::getItemType()
+    const uint8_t BtrfsKey::getItemType() const
     {
         return itemType;
     }
@@ -59,7 +59,7 @@ namespace btrForensics{
      * \return Item type in string.
      *
      */
-    std::string BtrfsKey::getItemTypeStr()
+    const std::string BtrfsKey::getItemTypeStr() const
     {
         std::string type;
         switch(itemType){
