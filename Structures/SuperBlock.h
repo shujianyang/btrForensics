@@ -27,10 +27,10 @@ namespace btrForensics{
         char magic[0x8]; //0x40
         uint64_t generation;
 
-        uint64_t rootTrRoot; //0x50
-        uint64_t chunkTrRoot;
+        uint64_t rootTrRootAddr; //0x50
+        uint64_t chunkTrRootAddr;
 
-        uint64_t logTrRoot; //0x60
+        uint64_t logTrRootAddr; //0x60
         uint64_t logRootTransid;
 
         uint64_t totalBytes; //0x70

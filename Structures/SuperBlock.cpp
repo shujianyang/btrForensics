@@ -9,12 +9,12 @@
 namespace btrForensics{
     
     /**
-    * Constructor of super block.
-    * 
-    * \param endian The endianess of the array.
-    * \param arr Byte array storing super block data.
-    * 
-    */
+     * Constructor of super block.
+     * 
+     * \param endian The endianess of the array.
+     * \param arr Byte array storing super block data.
+     * 
+     */
     SuperBlock::SuperBlock(TSK_ENDIAN_ENUM endian, uint8_t arr[])
         :fsUUID(endian, arr + 0x20), devItemData(endian, arr + 0xc9)
     {
@@ -22,65 +22,66 @@ namespace btrForensics{
         for(int i=0; i<0x20; i++){
             checksum[i] = arr[arIndex++];
         }
+
         arIndex += 0x20; //fsUUID, initialized ahead.
 
-        for(int i=0; i<0x8; i++, arIndex++){
+        for(int i=0; i<0x08; i++, arIndex++){
             magic[i] = arr[arIndex];
         }
 
         generation = read64Bit(endian, arr + arIndex);
-        arIndex += 0x8;
+        arIndex += 0x08;
         
-        rootTrRoot = read64Bit(endian, arr + arIndex);
-        arIndex += 0x8;
+        rootTrRootAddr = read64Bit(endian, arr + arIndex);
+        arIndex += 0x08;
 
-        chunkTrRoot = read64Bit(endian, arr + arIndex);
-        arIndex += 0x8;
+        chunkTrRootAddr = read64Bit(endian, arr + arIndex);
+        arIndex += 0x08;
 
-        logTrRoot = read64Bit(endian, arr + arIndex);
-        arIndex += 0x8;
+        logTrRootAddr = read64Bit(endian, arr + arIndex);
+        arIndex += 0x08;
 
         logRootTransid = read64Bit(endian, arr + arIndex);
-        arIndex += 0x8;
+        arIndex += 0x08;
 
         totalBytes = read64Bit(endian, arr + arIndex);
-        arIndex += 0x8;
+        arIndex += 0x08;
 
         bytesUsed = read64Bit(endian, arr + arIndex);
-        arIndex += 0x8;
+        arIndex += 0x08;
 
         rootDirObjectid = read64Bit(endian, arr + arIndex);
-        arIndex += 0x8;
+        arIndex += 0x08;
 
         numDevices = read64Bit(endian, arr + arIndex);
-        arIndex += 0x8;
+        arIndex += 0x08;
 
         sectorSize = read32Bit(endian, arr + arIndex);
-        arIndex += 0x4;
+        arIndex += 0x04;
 
         nodeSize = read32Bit(endian, arr + arIndex);
-        arIndex += 0x4;
+        arIndex += 0x04;
 
         leafSize = read32Bit(endian, arr + arIndex);
-        arIndex += 0x4;
+        arIndex += 0x04;
 
         stripeSize = read32Bit(endian, arr + arIndex);
-        arIndex += 0x4;
+        arIndex += 0x04;
 
         n = read32Bit(endian, arr + arIndex);
-        arIndex += 0x4;
+        arIndex += 0x04;
 
         chunkRootGeneration = read64Bit(endian, arr + arIndex);
-        arIndex += 0x8;
+        arIndex += 0x08;
 
         compatFlags = read64Bit(endian, arr + arIndex);
-        arIndex += 0x8;
+        arIndex += 0x08;
 
         compatRoFlags = read64Bit(endian, arr + arIndex);
-        arIndex += 0x8;
+        arIndex += 0x08;
 
         imcompatFlags = read64Bit(endian, arr + arIndex);
-        arIndex += 0x8;
+        arIndex += 0x08;
 
         csumType = read16Bit(endian, arr + arIndex);
         arIndex += 0x2;
@@ -103,9 +104,9 @@ namespace btrForensics{
 
 
     /**
-    * Overloaded stream operator.
-    * 
-    */
+     * Overloaded stream operator.
+     * 
+     */
     std::ostream &operator<<(std::ostream &os, SuperBlock &supb)
     {
         os << supb.fsUUID.encode()
@@ -113,13 +114,13 @@ namespace btrForensics{
         os << "\nRoot tree root address: ";
         os.fill('0');
         os.width(16);
-        os << supb.rootTrRoot;
+        os << supb.rootTrRootAddr;
         os << "\nChunk tree root address: ";
         os.width(16);
-        os << supb.chunkTrRoot;    
+        os << supb.chunkTrRootAddr;    
         os << "\nLog tree root address: ";
         os.width(16);
-        os << supb.logTrRoot << '\n';
+        os << supb.logTrRootAddr << '\n';
         os << std::dec;
         os << '\n' << "Unit size:" << '\n';
         os << "Sector\tNode\tLeaf\tStripe" << '\n';
@@ -129,9 +130,9 @@ namespace btrForensics{
     }
 
     /**
-    * Print info about partition space.
-    *
-    */
+     * Print info about partition space.
+     *
+     */
     std::string SuperBlock::printSpace()
     {
         uint64_t total = totalBytes;

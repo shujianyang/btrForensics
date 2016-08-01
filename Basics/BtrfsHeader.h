@@ -5,6 +5,8 @@
 #ifndef BTRFS_HEADER_H
 #define BTRFS_HEADER_H
 
+#include <iostream>
+#include <tsk/libtsk.h>
 #include "Utility/Uuid.h"
 
 namespace btrForensics{
@@ -16,7 +18,7 @@ namespace btrForensics{
         UUID fsUUID; //0x20
 
         uint64_t address; //0x30
-        uint8_t flags[0x8];
+        uint8_t flags[0x08];
 
         UUID chunkTrUUID; //0x40
 
@@ -25,6 +27,13 @@ namespace btrForensics{
 
         uint32_t numOfItems; //0x60
         uint8_t level;
+        
+        //Total bytes: 0x65
+
+    public:
+        BtrfsHeader(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
+        
+        friend std::ostream &operator<<(std::ostream &os, BtrfsHeader &header);
     };
 
 }

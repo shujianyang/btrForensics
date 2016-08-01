@@ -13,7 +13,7 @@
 
 using namespace std;
 
-using btrForensics::SuperBlock;
+using namespace btrForensics;
 
 int main(int argc, char *argv[])
 {
@@ -59,15 +59,16 @@ int main(int argc, char *argv[])
     }
 
     tsk_img_read(img, SuperBlock::ADDR_OF_SPR_BLK, diskArr, SuperBlock::SIZE_OF_SPR_BLK);
-    SuperBlock supb(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
+    SuperBlock supblk(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
 
-    cout << supb << endl;
+    cout << supblk << endl;
     cout << endl;
 
-    cout << supb.printSpace() << endl;
+    cout << supblk.printSpace() << endl;
     cout << endl;
 
-    cout << "Label: " << supb.printLabel() << endl;
+    cout << "Label: " << supblk.printLabel() << endl;
+    //BtrfsHeader header(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
 
     delete [] diskArr;
 
