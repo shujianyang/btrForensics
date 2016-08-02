@@ -11,7 +11,7 @@ namespace btrForensics{
      * Constructor of Btrfs header.
      *
      * \param endian The endianess of the array.
-     * \param arr Byte array storing super block data.
+     * \param arr Byte array storing header data.
      * 
      */
     BtrfsHeader::BtrfsHeader(TSK_ENDIAN_ENUM endian, uint8_t arr[])

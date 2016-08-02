@@ -6,6 +6,7 @@
 #define BTR_ITEM_H
 
 #include <iostream>
+#include <string>
 #include <tsk/libtsk.h>
 #include "BtrfsKey.h"
 
@@ -14,8 +15,9 @@ namespace btrForensics{
      * May contain data.
      */
     class BtrfsItem{
-    private:
+    public:
         const BtrfsKey key;
+    private:
         uint32_t dataOffset; //Relative to end of header
         uint32_t dataSize;
 
@@ -23,6 +25,9 @@ namespace btrForensics{
 
     public:
         BtrfsItem(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
+
+        uint32_t getDataOffset() { return dataOffset; }  /**< Return offset of data linked to this item. */
+        uint32_t getDataSize() { return dataSize; }  /**< Return size of data linked to this item. */
 
         friend std::ostream &operator<<(
             std::ostream &os, const BtrfsItem &item);

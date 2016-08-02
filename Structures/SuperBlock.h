@@ -8,7 +8,7 @@
 #include <iostream>
 #include <string>
 #include "Utility/Utility.h"
-#include "DevItem.h"
+#include "Basics/Basics.h"
 
 namespace btrForensics{
     
@@ -67,8 +67,8 @@ namespace btrForensics{
         const std::string printSpace() const;
         const std::string printLabel() const;
 
-        static const int ADDR_OF_SPR_BLK = 0x10000;
-        static const int SIZE_OF_SPR_BLK = 0x22b;
+        static const int ADDR_OF_SPR_BLK = 0x10000;  /**< Address of superblock on disk. */
+        static const int SIZE_OF_SPR_BLK = 0x22b;  /**< Size of superblock on disk. */
 
         friend std::ostream &operator<<(std::ostream &os, SuperBlock &supb);
     };
