@@ -27,6 +27,8 @@ namespace btrForensics{
 
         const uint8_t getItemType() const;
         const std::string getItemTypeStr() const;
+
+        static const int SIZE_OF_KEY = 0x11;
     };
 }
 

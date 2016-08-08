@@ -8,27 +8,39 @@
 #include <iostream>
 #include <string>
 #include <tsk/libtsk.h>
-#include "BtrfsKey.h"
+#include "Basics.h"
 
 namespace btrForensics{
     /** Root item data.
      *
      */
-    class DirItem{
+    class RootItem{
     public:
-        const BtrfsKey key;
+        const InodeItem inode;
     private:
-        uint64_t transId;
-        uint16_t dataSize;
-        uint16_t nameSize;
-        uint8_t childType;
-        char *dirName;
-        char *dirData;
+        uint64_t exptGen; //0xa0
+        uint64_t objIdInThisTree;
+
+        uint64_t blkNum;  //0xb0
+        uint64_t byteLimit;
+
+        uint64_t byteUsed; //0xc0
+        uint64_t lastGenOfSnapshot;
+
+        uint8_t flags[8]; //0xd0
+        uint32_t numOfRefs;
+    public:
+        const BtrfsKey dropProgress;
+    private:
+        uint8_t dropLevel;
+        uint8_t rootLevel;
 
     public:
-        DirItem(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
+        RootItem(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
 
-        std::string getDirName();
+        const uint64_t getBlockNumber() const;
+
+        friend std::ostream &operator<<(std::ostream &os, const RootItem &root);
     };
 }
 

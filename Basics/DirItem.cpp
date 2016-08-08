@@ -17,7 +17,7 @@ namespace btrForensics{
     DirItem::DirItem(TSK_ENDIAN_ENUM endian, uint8_t arr[])
         :key(endian, arr)
     {
-        int arIndex(0x11);
+        int arIndex(BtrfsKey::SIZE_OF_KEY); //Key initialized already.
         transId = read64Bit(endian, arr + arIndex);
         arIndex += 0x08;
 

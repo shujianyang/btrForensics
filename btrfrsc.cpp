@@ -89,9 +89,8 @@ int main(int argc, char *argv[])
     uint64_t itemOffset(0);
     int numOfItems = header.getNumOfItems();
 
-    DirItem *direct = nullptr;
-
     cout << "Root tree item list:" << endl;
+    cout << string(30, '=') << '\n' << endl;
     for(int i=0; i<numOfItems; i++){
         diskArr = new char[BtrfsItem::SIZE_OF_ITEM]();
         tsk_img_read(img, itemListStart + itemOffset, diskArr, BtrfsItem::SIZE_OF_ITEM);
@@ -104,20 +103,40 @@ int main(int argc, char *argv[])
         cout << endl;
 
         if(item.key.getItemType() == 0x54){
+            DirItem *direct = nullptr;
             char *dirArr = new char[item.getDataSize()]();
             uint64_t dirOffset = itemListStart + item.getDataOffset();
             tsk_img_read(img, dirOffset, dirArr, item.getDataSize());
             direct = new DirItem(TSK_LIT_ENDIAN, (uint8_t*)dirArr);
+
+            if(direct != nullptr){
+                cout << direct->getDirName() << endl;
+                cout << direct->key << endl;
+            }
+
+            delete direct;
+        }
+        else if(item.key.getItemType() == 0x84){
+            RootItem *rootItm = nullptr;
+            char *rootArr = new char[item.getDataSize()]();
+            uint64_t dirOffset = itemListStart + item.getDataOffset();
+            tsk_img_read(img, dirOffset, rootArr, item.getDataSize());
+            rootItm = new RootItem(TSK_LIT_ENDIAN, (uint8_t*)rootArr);
+
+            if(rootItm != nullptr){
+                cout << *rootItm << endl;
+            }
+
+            delete rootItm;
         }
 
         delete [] diskArr;
         itemOffset += BtrfsItem::SIZE_OF_ITEM;
+
+        cout << string(30, '=') << '\n' << endl;
     }
+
     cout << endl;
 
-    if(direct != nullptr){
-        cout << direct->getDirName() << endl;
-        cout << direct->key << endl;
-    }
 }
 

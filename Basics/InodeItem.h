@@ -14,8 +14,6 @@ namespace btrForensics{
      *
      */
     class InodeItem{
-    public:
-        const BtrfsKey key;
     private:
         uint64_t generation;
         uint64_t transId;
@@ -24,10 +22,10 @@ namespace btrForensics{
         uint64_t stBlocks;
         
         uint64_t blockGroup; //0x20
-        uint16_t stNlink;
-        uint16_t stUid;
-        uint16_t stGid;
-        uint16_t stMode;
+        uint32_t stNlink;
+        uint32_t stUid;
+        uint32_t stGid;
+        uint32_t stMode;
         uint64_t stRdev;
 
         uint8_t flags[8]; //0x40
@@ -36,6 +34,7 @@ namespace btrForensics{
     public:
         InodeItem(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
 
+        static const int SIZE_OF_INODE_ITEM = 0xa0;
     };
 }
 

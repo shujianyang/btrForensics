@@ -6,6 +6,9 @@
 #include "BtrfsKey.h"
 #include "BtrfsKeyPtr.h"
 
+#include "InodeItem.h"
+#include "RootItem.h"
+
 #include "DevItem.h"
 #include "DirItem.h"
 
