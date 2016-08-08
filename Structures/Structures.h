@@ -3,5 +3,9 @@
 
 #include "SuperBlock.h"
 
+#include "BtrfsNode.h"
+#include "InternalNode.h"
+#include "LeafNode.h"
+
 #endif
 

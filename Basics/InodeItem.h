@@ -10,9 +10,7 @@
 #include <tsk/libtsk.h>
 
 namespace btrForensics{
-    /** Inode item data.
-     *
-     */
+    /** Inode item data. */
     class InodeItem{
     private:
         uint64_t generation;

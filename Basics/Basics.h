@@ -1,10 +1,10 @@
 #ifndef BASICS_H
 #define BASICS_H
 
+#include "BtrfsKey.h"
 #include "BtrfsHeader.h"
 #include "BtrfsItem.h"
-#include "BtrfsKey.h"
-#include "BtrfsKeyPtr.h"
+#include "KeyPtr.h"
 
 #include "InodeItem.h"
 #include "RootItem.h"

@@ -11,7 +11,7 @@
 #include "Basics/Basics.h"
 
 namespace btrForensics{
-    
+    /** Store super block info. */
     class SuperBlock{
     private:
         static constexpr int DEV_ITEM_SIZE = 0x62;

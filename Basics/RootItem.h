@@ -11,9 +11,7 @@
 #include "Basics.h"
 
 namespace btrForensics{
-    /** Root item data.
-     *
-     */
+    /** Root item data. */
     class RootItem{
     public:
         const InodeItem inode;

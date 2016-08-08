@@ -11,9 +11,7 @@
 #include "BtrfsKey.h"
 
 namespace btrForensics{
-    /** Directory item data.
-     *
-     */
+    /** Directory item data. */
     class DirItem{
     public:
         const BtrfsKey key;

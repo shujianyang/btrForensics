@@ -11,9 +11,7 @@
 #include "BtrfsKey.h"
 
 namespace btrForensics{
-    /** Node items, stored right after node header.
-     * May contain data.
-     */
+    /** Node items, stored right after node header. */
     class BtrfsItem{
     public:
         const BtrfsKey key;
@@ -26,8 +24,8 @@ namespace btrForensics{
     public:
         BtrfsItem(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
 
-        uint32_t getDataOffset() { return dataOffset; }  /**< Return offset of data linked to this item. */
-        uint32_t getDataSize() { return dataSize; }  /**< Return size of data linked to this item. */
+        const uint32_t getDataOffset() const { return dataOffset; }  /**< Return offset of data linked to this item. */
+        const uint32_t getDataSize() const { return dataSize; }  /**< Return size of data linked to this item. */
 
         friend std::ostream &operator<<(
             std::ostream &os, const BtrfsItem &item);
