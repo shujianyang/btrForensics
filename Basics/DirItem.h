@@ -8,11 +8,11 @@
 #include <iostream>
 #include <string>
 #include <tsk/libtsk.h>
-#include "BtrfsKey.h"
+#include "Basics.h"
 
 namespace btrForensics{
     /** Directory item data. */
-    class DirItem{
+    class DirItem : public ItemData {
     public:
         const BtrfsKey key;
     private:
@@ -26,7 +26,9 @@ namespace btrForensics{
     public:
         DirItem(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
 
-        std::string getDirName();
+        std::string getDirName() const;
+
+        std::string info() const override;
     };
 }
 

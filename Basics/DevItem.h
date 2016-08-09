@@ -6,10 +6,11 @@
 #define DEV_ITEM
 
 #include "Utility/Uuid.h"
+#include "ItemData.h"
 
 namespace btrForensics{
 
-    class DevItem{
+    class DevItem: public ItemData {
     private:
         uint64_t deviceId; //0x0
         uint64_t bytes;
@@ -32,6 +33,8 @@ namespace btrForensics{
 
     public:
         DevItem(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
+
+        std::string info() const override;
     };
 }
 

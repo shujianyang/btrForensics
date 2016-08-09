@@ -2,6 +2,7 @@
  * Implementation of class DirItem
  */
 
+#include <sstream>
 #include "DirItem.h"
 #include "Utility/ReadInt.h"
 
@@ -40,10 +41,21 @@ namespace btrForensics{
     /**
      * Return name of the directory.
      */
-    std::string DirItem::getDirName()
+    std::string DirItem::getDirName() const
     {
         return std::string(dirName, nameSize);
     }
 
+
+    /**
+     * Return infomation about the item data as string.
+     */
+    std::string DirItem::info() const
+    {
+        std::ostringstream oss;
+        oss << key;
+        oss << "Name: " << getDirName();
+        return oss.str();
+    }
 }
 

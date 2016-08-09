@@ -52,4 +52,13 @@ namespace btrForensics{
       seekSpeed = arr[arIndex++];
       bandWidth = arr[arIndex++];
   }
+
+
+  /**
+     * Return infomation about the item data as string.
+     */
+    std::string DevItem::info() const
+    {
+        return "";
+    }
 }

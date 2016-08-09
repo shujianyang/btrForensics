@@ -4,6 +4,7 @@
 #include "BtrfsKey.h"
 #include "BtrfsHeader.h"
 #include "BtrfsItem.h"
+#include "ItemData.h"
 #include "KeyPtr.h"
 
 #include "InodeItem.h"

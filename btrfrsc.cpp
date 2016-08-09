@@ -102,35 +102,25 @@ int main(int argc, char *argv[])
         cout << "Data address: " << itemListStart + item.getDataOffset() << endl;
         cout << endl;
 
+        ItemData *itmData = nullptr;
+        char *itmArr = new char[item.getDataSize()]();
+        uint64_t dirOffset = itemListStart + item.getDataOffset();
+        tsk_img_read(img, dirOffset, itmArr, item.getDataSize());
+
         if(item.key.getItemType() == 0x54){
-            DirItem *direct = nullptr;
-            char *dirArr = new char[item.getDataSize()]();
-            uint64_t dirOffset = itemListStart + item.getDataOffset();
-            tsk_img_read(img, dirOffset, dirArr, item.getDataSize());
-            direct = new DirItem(TSK_LIT_ENDIAN, (uint8_t*)dirArr);
-
-            if(direct != nullptr){
-                cout << direct->getDirName() << endl;
-                cout << direct->key << endl;
-            }
-
-            delete direct;
+            itmData = new DirItem(TSK_LIT_ENDIAN, (uint8_t*)itmArr);
         }
         else if(item.key.getItemType() == 0x84){
-            RootItem *rootItm = nullptr;
-            char *rootArr = new char[item.getDataSize()]();
-            uint64_t dirOffset = itemListStart + item.getDataOffset();
-            tsk_img_read(img, dirOffset, rootArr, item.getDataSize());
-            rootItm = new RootItem(TSK_LIT_ENDIAN, (uint8_t*)rootArr);
+            itmData = new RootItem(TSK_LIT_ENDIAN, (uint8_t*)itmArr);
+        }
 
-            if(rootItm != nullptr){
-                cout << *rootItm << endl;
-            }
-
-            delete rootItm;
+        if(itmData != nullptr){
+            cout << *itmData << endl;
         }
 
         delete [] diskArr;
+        delete itmData;
+
         itemOffset += BtrfsItem::SIZE_OF_ITEM;
 
         cout << string(30, '=') << '\n' << endl;

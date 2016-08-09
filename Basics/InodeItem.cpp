@@ -56,4 +56,12 @@ namespace btrForensics{
         arIndex += 0x08;
     }
 
+    /**
+     * Return infomation about the item data as string.
+     */
+    std::string InodeItem::info() const
+    {
+        return "";
+    }
+
 }

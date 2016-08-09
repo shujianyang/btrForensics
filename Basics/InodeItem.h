@@ -8,10 +8,11 @@
 #include <iostream>
 #include <string>
 #include <tsk/libtsk.h>
+#include "ItemData.h"
 
 namespace btrForensics{
     /** Inode item data. */
-    class InodeItem{
+    class InodeItem : public ItemData {
     private:
         uint64_t generation;
         uint64_t transId;
@@ -32,6 +33,8 @@ namespace btrForensics{
     public:
         InodeItem(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
 
+        std::string info() const override;
+        
         static const int SIZE_OF_INODE_ITEM = 0xa0;
     };
 }

@@ -2,6 +2,7 @@
   * Implementation of class RootItem
   */
 
+#include <sstream>
 #include "RootItem.h"
 #include "Utility/ReadInt.h"
 
@@ -78,6 +79,17 @@ namespace btrForensics{
         //os << "Level: " << (int)header.level;
 
         return os;
+    }
+
+
+    /**
+     * Return infomation about the item data as string.
+     */
+    std::string RootItem::info() const
+    {
+        std::ostringstream oss;
+        oss << *this;
+        return oss.str();
     }
 
 }

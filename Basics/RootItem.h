@@ -12,7 +12,7 @@
 
 namespace btrForensics{
     /** Root item data. */
-    class RootItem{
+    class RootItem : public ItemData {
     public:
         const InodeItem inode;
     private:
@@ -37,7 +37,8 @@ namespace btrForensics{
         RootItem(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
 
         const uint64_t getBlockNumber() const;
-
+        std::string info() const override;
+        
         friend std::ostream &operator<<(std::ostream &os, const RootItem &root);
     };
 }

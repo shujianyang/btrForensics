@@ -17,7 +17,7 @@ namespace BtrfsForensics{
     public:
         const BtrfsHeader *nodeHeader;
 
-        BtrfsNode::BtrfsNode(BtrfsHeader *header);
+        BtrfsNode(BtrfsHeader *header);
     };
 
 }
