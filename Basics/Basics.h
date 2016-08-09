@@ -13,5 +13,7 @@
 #include "DevItem.h"
 #include "DirItem.h"
 
+#include "UnknownItem.h"
+
 #endif
 

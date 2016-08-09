@@ -4,7 +4,7 @@
 
 #include "InternalNode.h"
 
-namespace BtrfsForensics{
+namespace btrForensics{
     /**
      * Constructor of btrfs internal node.
      *
@@ -21,7 +21,7 @@ namespace BtrfsForensics{
         int arIndex(0);
 
         for(uint32_t i=0; i<itemNum; ++i){
-            keyPointers.push_back(KeyPtr(endian, arr[arIndex]));
+            keyPointers.push_back(KeyPtr(endian, arr + arIndex));
             arIndex += KeyPtr::SIZE_OF_KEY_PTR;
         }
     }

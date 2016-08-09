@@ -11,13 +11,14 @@
 #include "Utility/Utility.h"
 #include "Basics/Basics.h"
 
-namespace BtrfsForensics{
+namespace btrForensics{
     /** Represent a node in B-tree structure. */
-    class BtrfsNode{
+    class BtrfsNode {
     public:
         const BtrfsHeader *nodeHeader;
 
         BtrfsNode(BtrfsHeader *header);
+        ~BtrfsNode() { delete nodeHeader; }
     };
 
 }

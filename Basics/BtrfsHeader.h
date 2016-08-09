@@ -11,7 +11,7 @@
 
 namespace btrForensics{
     /** Header of a node in btrfs. */
-    class BtrfsHeader{
+    class BtrfsHeader {
     private:
         uint8_t checksum[0x20]; //0x0
 
@@ -34,6 +34,9 @@ namespace btrForensics{
         BtrfsHeader(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
 
         const uint32_t getNumOfItems() const;
+
+        /** Return true if the header indicates it is a leaf node. */
+        const bool isLeafNode() const { return level == 0; }
         
         friend std::ostream &operator<<(
             std::ostream &os, const BtrfsHeader &header);

@@ -78,53 +78,14 @@ int main(int argc, char *argv[])
 
     diskArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
     tsk_img_read(img, supblk.getRootTrRootAddr(), diskArr, BtrfsHeader::SIZE_OF_HEADER);
-    BtrfsHeader header(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
-
-    cout << header << endl;
-    cout << endl;
+    BtrfsHeader *header = new BtrfsHeader(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
     delete [] diskArr;
 
     uint64_t itemListStart = supblk.getRootTrRootAddr() + BtrfsHeader::SIZE_OF_HEADER;
     cout << "Item list start address: " << itemListStart << endl;
-    uint64_t itemOffset(0);
-    int numOfItems = header.getNumOfItems();
 
-    cout << "Root tree item list:" << endl;
-    cout << string(30, '=') << '\n' << endl;
-    for(int i=0; i<numOfItems; i++){
-        diskArr = new char[BtrfsItem::SIZE_OF_ITEM]();
-        tsk_img_read(img, itemListStart + itemOffset, diskArr, BtrfsItem::SIZE_OF_ITEM);
-
-        cout << "Item address: " << itemListStart + itemOffset << endl;
-
-        BtrfsItem item(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
-        cout << item;
-        cout << "Data address: " << itemListStart + item.getDataOffset() << endl;
-        cout << endl;
-
-        ItemData *itmData = nullptr;
-        char *itmArr = new char[item.getDataSize()]();
-        uint64_t dirOffset = itemListStart + item.getDataOffset();
-        tsk_img_read(img, dirOffset, itmArr, item.getDataSize());
-
-        if(item.key.getItemType() == 0x54){
-            itmData = new DirItem(TSK_LIT_ENDIAN, (uint8_t*)itmArr);
-        }
-        else if(item.key.getItemType() == 0x84){
-            itmData = new RootItem(TSK_LIT_ENDIAN, (uint8_t*)itmArr);
-        }
-
-        if(itmData != nullptr){
-            cout << *itmData << endl;
-        }
-
-        delete [] diskArr;
-        delete itmData;
-
-        itemOffset += BtrfsItem::SIZE_OF_ITEM;
-
-        cout << string(30, '=') << '\n' << endl;
-    }
+    LeafNode *leaf = new LeafNode(img, header, TSK_LIT_ENDIAN, itemListStart);
+    cout << leaf->info() << endl;
 
     cout << endl;
 

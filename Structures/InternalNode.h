@@ -10,9 +10,9 @@
 
 using std::vector;
 
-namespace BtrfsForensics{
+namespace btrForensics{
     /** Internal node in B-tree structure. */
-    class InternalNode : public BtrfsNode{
+    class InternalNode : public BtrfsNode {
     private:
         vector<KeyPtr> keyPointers;
 

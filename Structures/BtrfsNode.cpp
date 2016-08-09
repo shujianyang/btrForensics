@@ -4,7 +4,7 @@
 
 #include "BtrfsNode.h"
 
-namespace BtrfsForensics{
+namespace btrForensics{
     /**
      * Constructor of btrfs node.
      *

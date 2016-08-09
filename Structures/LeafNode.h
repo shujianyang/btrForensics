@@ -6,20 +6,23 @@
 #define LEAF_NODE_H
 
 #include <vector>
-#include "BtrfsNode.h"
+#include <string>
+#include <tsk/libtsk.h>
+#include "Structures.h"
 
 using std::vector;
 
-namespace BtrfsForensics{
+namespace btrForensics{
     /** Leaf node in B-tree structure. */
-    class LeafNode : public BtrfsNode{
+    class LeafNode : public BtrfsNode {
     private:
-        vector<BtrfsItem> items;
+        vector<ItemGroup*> itemGroups;
 
     public:
-        LeafNode(BtrfsHeader *header, TSK_ENDIAN_ENUM endian, uint8_t arr[]);
-    };
+        LeafNode(TSK_IMG_INFO*, BtrfsHeader*, TSK_ENDIAN_ENUM, uint64_t);
 
+        const std::string info() const;
+    };
 }
 
 #endif
