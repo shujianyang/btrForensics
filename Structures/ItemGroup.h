@@ -17,13 +17,20 @@ namespace btrForensics{
      */
     class ItemGroup {
     public:
-        const BtrfsItem *item;
-        const ItemData *data;
+        const BtrfsItem *item; /**< Item stored in leaf node. */
+        const ItemData *data; /**< Corresponding item data. */
 
+        /** Constructor of item group. */
         ItemGroup(BtrfsItem *itemIn, ItemData *dataIn)
             :item(itemIn), data(dataIn) {}
         ~ItemGroup() { delete item; delete data; }
 
+        /** Get type code of the item. */
+        const uint8_t getItemType() const { return item->key.getItemType(); }
+
+        /**
+         * Overloaded stream operator.
+         */
         friend std::ostream &operator<<(std::ostream &os, const ItemGroup &itmGrp)
         {
             os << *itmGrp.item << '\n' << *itmGrp.data;

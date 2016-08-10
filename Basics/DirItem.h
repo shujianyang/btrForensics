@@ -14,7 +14,7 @@ namespace btrForensics{
     /** Directory item data. */
     class DirItem : public ItemData {
     public:
-        const BtrfsKey key;
+        const BtrfsKey key; /**< Key of the item. */
     private:
         uint64_t transId;
         uint16_t dataSize;

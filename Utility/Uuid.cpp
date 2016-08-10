@@ -12,7 +12,7 @@
   * Constructor of UUID
   *
   * \param endian The endianess of the array.
-  * \param vs Byte array storing UUID.
+  * \param arr Byte array storing UUID.
   *
   */
 UUID::UUID(TSK_ENDIAN_ENUM endian, uint8_t arr[])
@@ -31,7 +31,7 @@ UUID::UUID(TSK_ENDIAN_ENUM endian, uint8_t arr[])
   * Constructor of UUID
   *
   * \param endian The endianess of the array.
-  * \param vs Volume system from TSK
+  * \param entry TSK gpt entry.
   *
   */
 UUID::UUID(TSK_ENDIAN_ENUM endian, gpt_entry &entry)

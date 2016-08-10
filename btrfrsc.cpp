@@ -4,8 +4,10 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <iomanip>
 #include <string>
+#include <map>
 #include <unistd.h>
 #include <tsk/libtsk.h>
 #include <unistd.h>
@@ -78,14 +80,87 @@ int main(int argc, char *argv[])
 
     diskArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
     tsk_img_read(img, supblk.getRootTrRootAddr(), diskArr, BtrfsHeader::SIZE_OF_HEADER);
-    BtrfsHeader *header = new BtrfsHeader(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
+    BtrfsHeader *rootHeader = new BtrfsHeader(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
     delete [] diskArr;
 
     uint64_t itemListStart = supblk.getRootTrRootAddr() + BtrfsHeader::SIZE_OF_HEADER;
-    cout << "Item list start address: " << itemListStart << endl;
+    //cout << "Item list start address: " << itemListStart << endl;
 
-    LeafNode *leaf = new LeafNode(img, header, TSK_LIT_ENDIAN, itemListStart);
-    cout << leaf->info() << endl;
+    LeafNode *rootTree = new LeafNode(img, rootHeader, TSK_LIT_ENDIAN, itemListStart);
+
+    BtrfsHeader *header = rootHeader;
+    BtrfsNode *node = rootTree;
+    while(true){
+        bool quit(false);
+        cout << node->info() << endl;
+
+        uint64_t offset(0);
+        map<uint64_t, uint64_t> nodeAddrs;
+        if(header->isLeafNode()){
+            LeafNode *leaf = (LeafNode*)node;
+
+            for(auto group : leaf->itemGroups){
+                if(group->getItemType() == 0x84){
+                    RootItem *rootItm = (RootItem*)(group->data);
+                    nodeAddrs[group->item->key.objId]
+                        = rootItm->getBlockNumber();
+                }
+            }
+        }
+        else {
+            InternalNode *internal = (InternalNode*)node;
+
+            for(auto ptr : internal->keyPointers) {
+                nodeAddrs[ptr.key.objId] = ptr.getBlkNum();
+            }
+        }
+
+        if(nodeAddrs.size() == 0) {
+            cout << "This is a leaf node with no root items." << endl;
+            break;
+        }
+
+        string input;
+        uint64_t inOffset;
+        do{
+            cout << "----Child nodes with following object ids are found." << endl;
+            for(auto addr : nodeAddrs)
+                cout << addr.first << " ";
+            cout << endl;
+            cout << "To read a child node, please enter its object id in the list: ";
+            cout << "(Enter 'q' to quit.)" << endl;
+            cin >> input;
+            
+            quit = (input == "q");
+            if(quit) break;
+
+            stringstream(input) >> inOffset;
+            if(nodeAddrs.find(inOffset) != nodeAddrs.end()) break;
+            cout << "Wrong object id, please enter a correct one.\n" << endl;
+        } while(true);
+
+        if(quit) break;
+        cout << endl;
+
+        offset = nodeAddrs[inOffset];
+
+        char *headerArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
+        tsk_img_read(img, offset, headerArr, BtrfsHeader::SIZE_OF_HEADER);
+        header = new BtrfsHeader(TSK_LIT_ENDIAN, (uint8_t*)headerArr);
+        delete [] headerArr;
+
+        uint64_t itemOffset = offset + BtrfsHeader::SIZE_OF_HEADER;
+
+        delete node;
+
+        if(header->isLeafNode()){
+            node = new LeafNode(img, header, TSK_LIT_ENDIAN, itemOffset);
+        }
+        else {
+            node = new InternalNode(img, header, TSK_LIT_ENDIAN, itemOffset);
+        }
+        
+    }
 
     cout << endl;
 

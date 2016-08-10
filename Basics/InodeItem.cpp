@@ -61,7 +61,7 @@ namespace btrForensics{
      */
     std::string InodeItem::info() const
     {
-        return "";
+        return "Inode item";
     }
 
 }

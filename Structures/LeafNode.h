@@ -15,13 +15,13 @@ using std::vector;
 namespace btrForensics{
     /** Leaf node in B-tree structure. */
     class LeafNode : public BtrfsNode {
-    private:
-        vector<ItemGroup*> itemGroups;
+    public:
+        vector<ItemGroup*> itemGroups; /**< Stores items and their data. */
 
     public:
         LeafNode(TSK_IMG_INFO*, BtrfsHeader*, TSK_ENDIAN_ENUM, uint64_t);
 
-        const std::string info() const;
+        const std::string info() const override;
     };
 }
 

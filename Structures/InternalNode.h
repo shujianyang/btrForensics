@@ -6,6 +6,7 @@
 #define INTERNAL_NODE_H
 
 #include <vector>
+#include <tsk/libtsk.h>
 #include "BtrfsNode.h"
 
 using std::vector;
@@ -13,11 +14,13 @@ using std::vector;
 namespace btrForensics{
     /** Internal node in B-tree structure. */
     class InternalNode : public BtrfsNode {
-    private:
-        vector<KeyPtr> keyPointers;
+    public:
+        vector<KeyPtr> keyPointers; /**< Key pointers to other nodes. */
 
     public:
-        InternalNode(BtrfsHeader *header, TSK_ENDIAN_ENUM endian, uint8_t arr[]);
+        InternalNode(TSK_IMG_INFO*, BtrfsHeader*, TSK_ENDIAN_ENUM, uint64_t);
+
+        const std::string info() const override;
     };
 
 }

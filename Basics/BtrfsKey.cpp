@@ -108,6 +108,9 @@ namespace btrForensics{
             case 0xa8:
                 type = "extent item";
                 break;
+            case 0xa9:
+                type = "metadata item";
+                break;
             case 0xb0:
                 type = "tree block ref";
                 break;

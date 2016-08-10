@@ -14,6 +14,7 @@ namespace btrForensics{
     /** Unknown item data. */
     class UnknownItem : public ItemData {
     public:
+        /** Infomation unavailable yet. */
         std::string info() const override { return "Unknown item"; }
     };
 }

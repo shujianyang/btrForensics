@@ -9,9 +9,10 @@ namespace btrForensics{
     /**
      * Constructor of btrfs leaf node.
      *
+     * \param img Image file.
      * \param header Pointer to header of a node.
      * \param endian The endianess of the array.
-     * \param arr Byte array storing leaf node data.
+     * \param startOffset Offset of the node, right after header.
      *
      */
     LeafNode::LeafNode(TSK_IMG_INFO *img, BtrfsHeader *header, 
@@ -23,8 +24,6 @@ namespace btrForensics{
         uint32_t itemNum = header -> getNumOfItems();
 
         for(uint32_t i=0; i<itemNum; ++i){
-            ItemGroup *group;
-
             diskArr = new char[BtrfsItem::SIZE_OF_ITEM]();
             tsk_img_read(img, startOffset + itemOffset,
                     diskArr, BtrfsItem::SIZE_OF_ITEM);
@@ -47,8 +46,7 @@ namespace btrForensics{
             }
 
             if(item != nullptr && itmData != nullptr){
-                group = new ItemGroup(item, itmData);
-                itemGroups.push_back(group);
+                itemGroups.push_back(new ItemGroup(item, itmData));
             }
 
             delete [] diskArr;

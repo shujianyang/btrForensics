@@ -11,11 +11,13 @@
 
 namespace btrForensics{
     /** Item data, this is an abstract class. */
-    class ItemData{
+    class ItemData {
     public:
-        //ItemData(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
-
+        virtual ~ItemData() = default;
         
+        /**
+         * Overloaded stream operator.
+         */
         friend std::ostream &operator<<(std::ostream &os, const ItemData &itmData)
         {
             os << itmData.info() << '\n';
@@ -23,9 +25,11 @@ namespace btrForensics{
         }
         
 
+        /**
+         * Return infomation about the item data.
+         * Virtual function to be overridden by derived classes.
+         */
         virtual std::string info() const = 0;
-
-        virtual ~ItemData() = default;
     };
 }
 

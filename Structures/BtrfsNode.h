@@ -15,10 +15,16 @@ namespace btrForensics{
     /** Represent a node in B-tree structure. */
     class BtrfsNode {
     public:
-        const BtrfsHeader *nodeHeader;
+        const BtrfsHeader *nodeHeader; /**< Header of a node. */
 
         BtrfsNode(BtrfsHeader *header);
         ~BtrfsNode() { delete nodeHeader; }
+
+        /**
+         * Return infomation about the node.
+         * Virtual function to be overridden by derived classes.
+         */
+        virtual const std::string info() const = 0;
     };
 
 }

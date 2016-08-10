@@ -12,11 +12,11 @@
 
 namespace btrForensics{
     /** Node items, stored right after node header. */
-    class BtrfsItem{
+    class BtrfsItem {
     public:
-        const BtrfsKey key;
+        const BtrfsKey key; /**< Key of the item. */
     private:
-        uint32_t dataOffset; //Relative to end of header
+        uint32_t dataOffset; /**< Relative to end of header. */
         uint32_t dataSize;
 
         //Total bytes: 0x19
@@ -24,8 +24,14 @@ namespace btrForensics{
     public:
         BtrfsItem(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
 
-        const uint32_t getDataOffset() const { return dataOffset; }  /**< Return offset of data linked to this item. */
-        const uint32_t getDataSize() const { return dataSize; }  /**< Return size of data linked to this item. */
+        /**
+         * Return offset of data linked to this item,
+         * relative to end of header.
+         */
+        const uint32_t getDataOffset() const { return dataOffset; } 
+
+        /** Return size of data linked to this item. */
+        const uint32_t getDataSize() const { return dataSize; }
 
         friend std::ostream &operator<<(
             std::ostream &os, const BtrfsItem &item);

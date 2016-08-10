@@ -14,7 +14,7 @@ namespace btrForensics{
     /** Root item data. */
     class RootItem : public ItemData {
     public:
-        const InodeItem inode;
+        const InodeItem inode; /**< Inode */
     private:
         uint64_t exptGen; //0xa0
         uint64_t objIdInThisTree;
@@ -28,7 +28,7 @@ namespace btrForensics{
         uint8_t flags[8]; //0xd0
         uint32_t numOfRefs;
     public:
-        const BtrfsKey dropProgress;
+        const BtrfsKey dropProgress; /**< Always 0(?) */
     private:
         uint8_t dropLevel;
         uint8_t rootLevel;

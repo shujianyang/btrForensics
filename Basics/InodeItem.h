@@ -35,7 +35,7 @@ namespace btrForensics{
 
         std::string info() const override;
         
-        static const int SIZE_OF_INODE_ITEM = 0xa0;
+        static const int SIZE_OF_INODE_ITEM = 0xa0; /**< Size of an inode in bytes. */
     };
 }
 

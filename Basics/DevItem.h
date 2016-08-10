@@ -9,7 +9,7 @@
 #include "ItemData.h"
 
 namespace btrForensics{
-
+    /** Device item data. */
     class DevItem: public ItemData {
     private:
         uint64_t deviceId; //0x0

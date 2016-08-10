@@ -11,11 +11,11 @@
 
 namespace btrForensics{
     /** Key of an item */
-    class BtrfsKey{
-    private:
-        uint64_t objId;
+    class BtrfsKey {
+    public:
+        uint64_t objId; /**< Object id. */
         uint8_t itemType; /**< For detailed list, please read Btrfs Wiki. */
-        uint64_t offset;
+        uint64_t offset; /**< The meaning depends on the item type. */
 
         //Total bytes: 0x11
 
@@ -28,7 +28,7 @@ namespace btrForensics{
         const uint8_t getItemType() const;
         const std::string getItemTypeStr() const;
 
-        static const int SIZE_OF_KEY = 0x11;
+        static const int SIZE_OF_KEY = 0x11; /**< Size of a key in bytes. */
     };
 }
 
