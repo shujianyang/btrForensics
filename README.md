@@ -22,7 +22,8 @@ make
 Raw image of a btrfs partition, or a partition using btrfs.
 
 ###Current capability:
-Reads nodes in B-tree manually and prints information.
+1. Reads nodes in B-tree manually and prints information.
+2. List all directory items in filesystem tree.
 
 ###Note:
 Reference of Btrfs structure can be found in [btrfs Wiki](https://btrfs.wiki.kernel.org/index.php/Main_Page).

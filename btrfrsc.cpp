@@ -159,7 +159,48 @@ int main(int argc, char *argv[])
         else {
             node = new InternalNode(img, header, TSK_LIT_ENDIAN, itemOffset);
         }
-        
+
+    }
+    cout << endl;
+
+    string answer;
+    cout << "Do you want to list all directory items in filesystem tree? (y/n)" << endl;
+    cin >> answer;
+
+    if(answer == "y") {
+        uint64_t offset(0);
+        map<uint64_t, uint64_t> nodeAddrs;
+  
+        for(auto group : rootTree->itemGroups){
+            if(group->getItemType() == 0x84){
+                RootItem *rootItm = (RootItem*)(group->data);
+                nodeAddrs[group->item->key.objId]
+                    = rootItm->getBlockNumber();
+            }
+        }
+        if(nodeAddrs.find(5) == nodeAddrs.end()) {
+            cout << "Error. Filesystem tree not found." << endl;
+            return 1;
+        }
+        offset = nodeAddrs[5];
+
+        char *headerArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
+        tsk_img_read(img, offset, headerArr, BtrfsHeader::SIZE_OF_HEADER);
+        BtrfsHeader *fileTreeHeader = new BtrfsHeader(TSK_LIT_ENDIAN, (uint8_t*)headerArr);
+        delete [] headerArr;
+
+        uint64_t itemOffset = offset + BtrfsHeader::SIZE_OF_HEADER;
+
+        BtrfsNode *fileTreeRoot;
+        if(fileTreeHeader->isLeafNode()){
+            fileTreeRoot = new LeafNode(img, fileTreeHeader, TSK_LIT_ENDIAN, itemOffset);
+        }
+        else {
+            fileTreeRoot = new InternalNode(img, fileTreeHeader, TSK_LIT_ENDIAN, itemOffset);
+        }
+
+        TreeAnalyzer ana(img, fileTreeRoot, TSK_LIT_ENDIAN);
+        ana.listDirItems(cout);
     }
 
     cout << endl;
