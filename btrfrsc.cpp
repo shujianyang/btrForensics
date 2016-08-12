@@ -77,132 +77,40 @@ int main(int argc, char *argv[])
     cout << "\n\n" << endl;
     delete [] diskArr;
 
-    cout << "Root tree info:" << endl;
-
     diskArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
     tsk_img_read(img, supblk.getRootTrRootAddr(), diskArr, BtrfsHeader::SIZE_OF_HEADER);
     BtrfsHeader *rootHeader = new BtrfsHeader(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
     delete [] diskArr;
 
     uint64_t itemListStart = supblk.getRootTrRootAddr() + BtrfsHeader::SIZE_OF_HEADER;
-    //cout << "Item list start address: " << itemListStart << endl;
 
-    shared_ptr<LeafNode> rootTree = make_shared<LeafNode>(img, rootHeader, TSK_LIT_ENDIAN, itemListStart);
-
-    BtrfsHeader *header = rootHeader;
-    shared_ptr<BtrfsNode> node = rootTree;
-    while(true){
-        bool quit(false);
-        cout << node->info() << endl;
-
-        uint64_t offset(0);
-        map<uint64_t, uint64_t> nodeAddrs;
-        if(header->isLeafNode()){
-            LeafNode *leaf = (LeafNode*)(node.get());
-
-            for(auto group : leaf->itemGroups){
-                if(group->getItemType() == 0x84){
-                    RootItem *rootItm = (RootItem*)(group->data);
-                    nodeAddrs[group->item->key.objId]
-                        = rootItm->getBlockNumber();
-                }
-            }
-        }
-        else {
-            InternalNode *internal = (InternalNode*)(node.get());
-
-            for(auto ptr : internal->keyPointers) {
-                nodeAddrs[ptr.key.objId] = ptr.getBlkNum();
-            }
-        }
-
-        if(nodeAddrs.size() == 0) {
-            cout << "This is a leaf node with no root items." << endl;
-            break;
-        }
-
-        string input;
-        uint64_t inOffset;
-        do{
-            cout << "----Child nodes with following object ids are found." << endl;
-            for(auto addr : nodeAddrs)
-                cout << addr.first << " ";
-            cout << endl;
-            cout << "To read a child node, please enter its object id in the list: ";
-            cout << "(Enter 'q' to quit.)" << endl;
-            cin >> input;
-            
-            quit = (input == "q");
-            if(quit) break;
-
-            stringstream(input) >> inOffset;
-            if(nodeAddrs.find(inOffset) != nodeAddrs.end()) break;
-            cout << "Wrong object id, please enter a correct one.\n" << endl;
-        } while(true);
-
-        if(quit) break;
-        cout << endl;
-
-        offset = nodeAddrs[inOffset];
-
-        char *headerArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
-        tsk_img_read(img, offset, headerArr, BtrfsHeader::SIZE_OF_HEADER);
-        header = new BtrfsHeader(TSK_LIT_ENDIAN, (uint8_t*)headerArr);
-        delete [] headerArr;
-
-        uint64_t itemOffset = offset + BtrfsHeader::SIZE_OF_HEADER;
-
-        //delete node;
-
-        if(header->isLeafNode()){
-            node = make_shared<LeafNode>(img, header, TSK_LIT_ENDIAN, itemOffset);
-        }
-        else {
-            node = make_shared<InternalNode>(img, header, TSK_LIT_ENDIAN, itemOffset);
-        }
-
-    }
-    cout << endl;
+    const LeafNode *rootTree = new LeafNode(img, rootHeader, TSK_LIT_ENDIAN, itemListStart);
+    //Root tree root built.
 
     string answer;
-    cout << "Do you want to list all directory items in filesystem tree? (y/n)" << endl;
-    cin >> answer;
+    
+    do {
+        cout << "MAIN MENU -- What do you want to do?" << endl;
+        cout << "[1] Navigate to selected node and print information." << endl;
+        cout << "[2] List all directory items in filesystem tree." << endl;
+        cout << "[q] Quit." << endl;
+        cout << "Enter your choice: ";
+        cin >> answer;
 
-    if(answer == "y") {
-        uint64_t offset(0);
-        map<uint64_t, uint64_t> nodeAddrs;
-  
-        for(auto group : rootTree->itemGroups){
-            if(group->getItemType() == 0x84){
-                RootItem *rootItm = (RootItem*)(group->data);
-                nodeAddrs[group->item->key.objId]
-                    = rootItm->getBlockNumber();
-            }
+        if(answer == "1"){
+            TreeAnalyzer navigator(img, rootTree, TSK_LIT_ENDIAN);
+            navigator.navigateNodes(cout, cin);
         }
-        if(nodeAddrs.find(5) == nodeAddrs.end()) {
-            cout << "Error. Filesystem tree not found." << endl;
-            return 1;
+        else if(answer == "2") {
+            TreeAnalyzer list(img, rootTree, TSK_LIT_ENDIAN);
+            list.listDirItems(cout);
         }
-        offset = nodeAddrs[5];
+        else if(answer == "q") break;
+        else
+            cout << "Invalid option. Please choose again." << endl;
 
-        char *headerArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
-        tsk_img_read(img, offset, headerArr, BtrfsHeader::SIZE_OF_HEADER);
-        BtrfsHeader *fileTreeHeader = new BtrfsHeader(TSK_LIT_ENDIAN, (uint8_t*)headerArr);
-        delete [] headerArr;
-
-        uint64_t itemOffset = offset + BtrfsHeader::SIZE_OF_HEADER;
-
-        BtrfsNode *fileTreeRoot;
-        if(fileTreeHeader->isLeafNode()){
-            fileTreeRoot = new LeafNode(img, fileTreeHeader, TSK_LIT_ENDIAN, itemOffset);
-        }
-        else {
-            fileTreeRoot = new InternalNode(img, fileTreeHeader, TSK_LIT_ENDIAN, itemOffset);
-        }
-
-        TreeAnalyzer ana(img, fileTreeRoot, TSK_LIT_ENDIAN);
-        ana.listDirItems(cout);
-    }
+        cout << endl;
+    } while(true);
 
     cout << endl;
 

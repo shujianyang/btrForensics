@@ -11,6 +11,6 @@ namespace btrForensics{
      * \param header Pointer to header of a node.
      *
      */
-    BtrfsNode::BtrfsNode(BtrfsHeader *header)
+    BtrfsNode::BtrfsNode(const BtrfsHeader *header)
         :nodeHeader(header) {}
 }

@@ -15,7 +15,7 @@ namespace btrForensics{
      * \param startOffset Offset of the node, right after header.
      *
      */
-    LeafNode::LeafNode(TSK_IMG_INFO *img, BtrfsHeader *header, 
+    LeafNode::LeafNode(TSK_IMG_INFO *img, const BtrfsHeader *header, 
             TSK_ENDIAN_ENUM endian, uint64_t startOffset)
         :BtrfsNode(header)
     {

@@ -22,7 +22,7 @@ make
 Raw image of a btrfs partition, or a partition using btrfs.
 
 ###Current capability:
-1. Reads nodes in B-tree manually and prints information.
+1. Navigates to selected nodes in B-tree and prints information.
 2. List all directory items in filesystem tree.
 
 ###Note:

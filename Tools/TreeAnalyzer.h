@@ -6,7 +6,7 @@
 #define TREE_ANA_H
 
 #include <iostream>
-#include <map>
+#include <vector>
 #include <tsk/libtsk.h>
 #include "Tools.h"
 
@@ -14,15 +14,19 @@ namespace btrForensics {
     /** Analyze a tree in btrfs. */
     class TreeAnalyzer {
     public:
-        const BtrfsNode *root; /**< Root node of the tree. */
+        const LeafNode *root; /**< Root node of the tree. */
+        const BtrfsNode *fileTreeRoot; /**< Root node of the filesystem tree. */
         TSK_IMG_INFO *image; /**< Image file. */
         TSK_ENDIAN_ENUM endian; /**< Endianness. */
 
     public:
-        TreeAnalyzer(TSK_IMG_INFO*, BtrfsNode*, TSK_ENDIAN_ENUM);
+        TreeAnalyzer(TSK_IMG_INFO*, const LeafNode*, TSK_ENDIAN_ENUM);
 
-        void recursiveListDir(const BtrfsNode*, std::ostream&) const;
-        void listDirItems(std::ostream&) const;
+        const void navigateNodes(std::ostream&, std::istream&) const;
+
+        const void recursiveListDir(const BtrfsNode*,
+                std::ostream&, std::vector<uint64_t>&) const;
+        const void listDirItems(std::ostream&) const;
     };
 }
 

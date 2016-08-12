@@ -36,6 +36,7 @@ btrfrsc
 
 # Auto generated documents
 docs/*
+*.swp
 
 # Input files
 files/*

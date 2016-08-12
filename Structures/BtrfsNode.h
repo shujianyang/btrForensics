@@ -17,7 +17,7 @@ namespace btrForensics{
     public:
         const BtrfsHeader *nodeHeader; /**< Header of a node. */
 
-        BtrfsNode(BtrfsHeader *header);
+        BtrfsNode(const BtrfsHeader *header);
         ~BtrfsNode() { delete nodeHeader; }
 
         /**
