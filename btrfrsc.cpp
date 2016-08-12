@@ -8,6 +8,7 @@
 #include <iomanip>
 #include <string>
 #include <map>
+#include <memory>
 #include <unistd.h>
 #include <tsk/libtsk.h>
 #include <unistd.h>
@@ -86,10 +87,10 @@ int main(int argc, char *argv[])
     uint64_t itemListStart = supblk.getRootTrRootAddr() + BtrfsHeader::SIZE_OF_HEADER;
     //cout << "Item list start address: " << itemListStart << endl;
 
-    LeafNode *rootTree = new LeafNode(img, rootHeader, TSK_LIT_ENDIAN, itemListStart);
+    shared_ptr<LeafNode> rootTree = make_shared<LeafNode>(img, rootHeader, TSK_LIT_ENDIAN, itemListStart);
 
     BtrfsHeader *header = rootHeader;
-    BtrfsNode *node = rootTree;
+    shared_ptr<BtrfsNode> node = rootTree;
     while(true){
         bool quit(false);
         cout << node->info() << endl;
@@ -97,7 +98,7 @@ int main(int argc, char *argv[])
         uint64_t offset(0);
         map<uint64_t, uint64_t> nodeAddrs;
         if(header->isLeafNode()){
-            LeafNode *leaf = (LeafNode*)node;
+            LeafNode *leaf = (LeafNode*)(node.get());
 
             for(auto group : leaf->itemGroups){
                 if(group->getItemType() == 0x84){
@@ -108,7 +109,7 @@ int main(int argc, char *argv[])
             }
         }
         else {
-            InternalNode *internal = (InternalNode*)node;
+            InternalNode *internal = (InternalNode*)(node.get());
 
             for(auto ptr : internal->keyPointers) {
                 nodeAddrs[ptr.key.objId] = ptr.getBlkNum();
@@ -151,13 +152,13 @@ int main(int argc, char *argv[])
 
         uint64_t itemOffset = offset + BtrfsHeader::SIZE_OF_HEADER;
 
-        delete node;
+        //delete node;
 
         if(header->isLeafNode()){
-            node = new LeafNode(img, header, TSK_LIT_ENDIAN, itemOffset);
+            node = make_shared<LeafNode>(img, header, TSK_LIT_ENDIAN, itemOffset);
         }
         else {
-            node = new InternalNode(img, header, TSK_LIT_ENDIAN, itemOffset);
+            node = make_shared<InternalNode>(img, header, TSK_LIT_ENDIAN, itemOffset);
         }
 
     }
