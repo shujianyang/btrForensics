@@ -1,13 +1,18 @@
-/** \file
+/**
+ * \file
+ * \author Shujian Yang
+ *
  * Implementation of class TreeAnalyzer.
  */
 
 #include <map>
-#include <iostream>
 #include <sstream>
+#include <functional>
 #include "TreeAnalyzer.h"
+#include "Functions.h"
 
 using namespace std;
+using namespace std::placeholders;
 
 namespace btrForensics {
     /**
@@ -206,17 +211,21 @@ namespace btrForensics {
     /** List all dir items in this tree. */
     const void TreeAnalyzer::listDirItems(ostream &os) const
     {
-        vector<uint64_t> trace;
-        recursiveListDir(fileTreeRoot, os, trace);
-        //leafRecursion(fileTreeRoot, printLeafDir);
+        //vector<uint64_t> trace;
+        //recursiveListDir(fileTreeRoot, os, trace);
+
+        leafRecursion(fileTreeRoot, printLeafDir);
+        
+        //leafRecursion(fileTreeRoot, bind(printLeafDir, _1, 6) );
     }
 
 
-    void TreeAnalyzer::leafRecursion(const BtrfsNode *node, void(*process)(const LeafNode*))
+    void TreeAnalyzer::leafRecursion(const BtrfsNode *node,
+            void readOnly(const LeafNode*)) const
     {
         if(node->nodeHeader->isLeafNode()){
             LeafNode *leaf = (LeafNode*)node;
-            process(leaf);
+            readOnly(leaf);
         }
         else {
             map<uint64_t, uint64_t> nodeAddrs;
@@ -243,22 +252,8 @@ namespace btrForensics {
                     newNode = new InternalNode(image, header, endian, itemOffset);
                 }
 
-                leafRecursion(newNode, process);
+                leafRecursion(newNode, readOnly);
             }
         }
-    }
-
-
-    void TreeAnalyzer::printLeafDir(const LeafNode *leaf)
-    {
-            bool foundDir(false);
-
-            for(auto group : leaf->itemGroups){
-                if(group->getItemType() == 0x54){
-                    foundDir = true;
-                    DirItem *dir = (DirItem*)(group->data);
-                    cout << dir->getDirName() << '\n';
-                }
-            }
     }
 }

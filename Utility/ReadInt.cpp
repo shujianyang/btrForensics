@@ -1,6 +1,9 @@
-/** \file
-  * File containing useful functions.
-  */
+/**
+ * \file
+ * \author Shujian Yang
+ *
+ * File containing useful functions.
+ */
 
 #include "ReadInt.h"
 

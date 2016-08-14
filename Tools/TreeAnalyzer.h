@@ -1,4 +1,7 @@
-/** \file
+/**
+ * \file
+ * \author Shujian Yang
+ *
  * Header file of class TreeAnalyzer.
  */
 
@@ -28,8 +31,7 @@ namespace btrForensics {
                 std::ostream&, std::vector<uint64_t>&) const;
         const void listDirItems(std::ostream&) const;
 
-        void leafRecursion(const BtrfsNode*, void(*process)(const LeafNode*));
-        void printLeafDir(const LeafNode*);
+        void leafRecursion(const BtrfsNode*, void (*)(const LeafNode*)) const;
     };
 }
 

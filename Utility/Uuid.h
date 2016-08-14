@@ -1,6 +1,9 @@
-/** \file
-  * Header file of UUID.
-  */
+/**
+ * \file
+ * \author Shujian Yang
+ *
+ * Header file of UUID.
+ */
 
 #ifndef UUID_H
 #define UUID_H

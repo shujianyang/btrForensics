@@ -1,6 +1,9 @@
-/** \file
-  * UUID processing.
-  */
+/**
+ * \file
+ * \author Shujian Yang
+ *
+ * UUID processing.
+ */
 
 #include <sstream>
 #include <bitset>

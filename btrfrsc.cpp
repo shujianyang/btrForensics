@@ -1,6 +1,10 @@
-/** \file btrfrsc.cpp
-  * Main function.
-  */
+/**
+ * \file btrfrsc.cpp
+ * \author Shujian Yang
+ *
+ * Main function.
+ *
+ */
 
 #include <iostream>
 #include <fstream>
@@ -97,11 +101,13 @@ int main(int argc, char *argv[])
         cout << "Enter your choice: ";
         cin >> answer;
 
+        cout << endl;
         if(answer == "1"){
             TreeAnalyzer navigator(img, rootTree, TSK_LIT_ENDIAN);
             navigator.navigateNodes(cout, cin);
         }
         else if(answer == "2") {
+            cout << "Listing directory items...\n" << endl;
             TreeAnalyzer list(img, rootTree, TSK_LIT_ENDIAN);
             list.listDirItems(cout);
         }

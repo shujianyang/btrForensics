@@ -1,9 +1,12 @@
+/**
+ * \file
+ * \author Shujian Yang
+ *
+ * Header file of utility.
+ */
+
 #ifndef READINT_H
 #define READINT_H
-
-/** \file
-  * Header file of utility.
-  */
 
 #include <tsk/libtsk.h>
 
