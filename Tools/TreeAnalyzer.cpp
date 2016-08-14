@@ -3,6 +3,7 @@
  */
 
 #include <map>
+#include <iostream>
 #include <sstream>
 #include "TreeAnalyzer.h"
 
@@ -207,5 +208,57 @@ namespace btrForensics {
     {
         vector<uint64_t> trace;
         recursiveListDir(fileTreeRoot, os, trace);
+        //leafRecursion(fileTreeRoot, printLeafDir);
+    }
+
+
+    void TreeAnalyzer::leafRecursion(const BtrfsNode *node, void(*process)(const LeafNode*))
+    {
+        if(node->nodeHeader->isLeafNode()){
+            LeafNode *leaf = (LeafNode*)node;
+            process(leaf);
+        }
+        else {
+            map<uint64_t, uint64_t> nodeAddrs;
+            InternalNode *internal = (InternalNode*)node;
+
+            for(const auto &ptr : internal->keyPointers) {
+                nodeAddrs.insert({ptr.key.objId, ptr.getBlkNum()});
+            }
+
+            for(const auto &addr : nodeAddrs) {
+
+                char *headerArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
+                tsk_img_read(image, addr.second, headerArr, BtrfsHeader::SIZE_OF_HEADER);
+                BtrfsHeader *header = new BtrfsHeader(TSK_LIT_ENDIAN, (uint8_t*)headerArr);
+                delete [] headerArr; 
+
+                uint64_t itemOffset = addr.second + BtrfsHeader::SIZE_OF_HEADER;
+
+                BtrfsNode *newNode;
+                if(header->isLeafNode()){
+                    newNode = new LeafNode(image, header, endian, itemOffset);
+                }
+                else {
+                    newNode = new InternalNode(image, header, endian, itemOffset);
+                }
+
+                leafRecursion(newNode, process);
+            }
+        }
+    }
+
+
+    void TreeAnalyzer::printLeafDir(const LeafNode *leaf)
+    {
+            bool foundDir(false);
+
+            for(auto group : leaf->itemGroups){
+                if(group->getItemType() == 0x54){
+                    foundDir = true;
+                    DirItem *dir = (DirItem*)(group->data);
+                    cout << dir->getDirName() << '\n';
+                }
+            }
     }
 }

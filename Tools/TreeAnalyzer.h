@@ -27,6 +27,9 @@ namespace btrForensics {
         const void recursiveListDir(const BtrfsNode*,
                 std::ostream&, std::vector<uint64_t>&) const;
         const void listDirItems(std::ostream&) const;
+
+        void leafRecursion(const BtrfsNode*, void(*process)(const LeafNode*));
+        void printLeafDir(const LeafNode*);
     };
 }
 
