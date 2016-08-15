@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <vector>
+#include <functional>
 #include <tsk/libtsk.h>
 #include "Tools.h"
 
@@ -27,11 +28,13 @@ namespace btrForensics {
 
         const void navigateNodes(std::ostream&, std::istream&) const;
 
-        const void recursiveListDir(const BtrfsNode*,
-                std::ostream&, std::vector<uint64_t>&) const;
+        /*const void recursiveListDir(const BtrfsNode*,
+                std::ostream&, std::vector<uint64_t>&) const;*/
         const void listDirItems(std::ostream&) const;
 
-        void leafRecursion(const BtrfsNode*, void (*)(const LeafNode*)) const;
+        void leafRecursion(const BtrfsNode* node, std::vector<uint64_t>& idTrace,
+            std::function<void(const LeafNode*, std::vector<uint64_t>&)> readOnlyFunc
+                           ) const;
     };
 }
 

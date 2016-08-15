@@ -9,11 +9,13 @@
  #ifndef FUNCTIONS_H
  #define FUNCTIONS_H
 
+#include <iostream>
+#include <vector>
 #include "Tools.h"
 
 namespace btrForensics{
 
-    void printLeafDir(const LeafNode*);
+    void printLeafDir(const LeafNode*, std::vector<uint64_t>&, std::ostream&);
 
 }
 

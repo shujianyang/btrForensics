@@ -1,6 +1,9 @@
-/** \file
-  * SuperBlock implementation.
-  */
+/**
+ * \file
+ * \author Shujian Yang
+ *
+ * SuperBlock implementation.
+ */
 
 #include <sstream>
 #include "SuperBlock.h"

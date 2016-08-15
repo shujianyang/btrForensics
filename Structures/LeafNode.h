@@ -1,4 +1,7 @@
-/** \file
+/**
+ * \file
+ * \author Shujian Yang
+ *
  * Header file of class LeafNode.
  */
 

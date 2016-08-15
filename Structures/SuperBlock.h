@@ -1,6 +1,9 @@
-/** \file
-  * Header file of SuperBlock.
-  */
+/**
+ * \file
+ * \author Shujian Yang
+ *
+ * Header file of SuperBlock.
+ */
 
 #ifndef SUP_BLK_H
 #define SUP_BLK_H

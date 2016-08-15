@@ -1,4 +1,7 @@
-/** \file
+/**
+ * \file
+ * \author Shujian Yang
+ *
  * Implementation of class LeafNode.
  */
 
