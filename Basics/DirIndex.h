@@ -1,6 +1,9 @@
-/** \file
-  * Header file of class DirIndex
-  */
+/**
+ * \file
+ * \author Shujian Yang
+ *
+ * Header file of class DirIndex
+ */
 
 #ifndef DIR_INDEX_H
 #define DIR_INDEX_H

@@ -38,17 +38,21 @@ namespace btrForensics{
             uint64_t dataOffset = startOffset + item->getDataOffset();
             tsk_img_read(img, dataOffset, itmArr, item->getDataSize());
 
-            if(item->key.getItemType() == 0x54){
-                itmData = new DirItem(TSK_LIT_ENDIAN, (uint8_t*)itmArr);
-            }
-            else if(item->key.getItemType() == 0x60){
-                itmData = new DirIndex(TSK_LIT_ENDIAN, (uint8_t*)itmArr);
-            }
-            else if(item->key.getItemType() == 0x84){
-                itmData = new RootItem(TSK_LIT_ENDIAN, (uint8_t*)itmArr);
-            }
-            else{
-                itmData = new UnknownItem();
+            switch(item->key.getItemType()){
+                case 0x0c:
+                    itmData = new InodeRef(TSK_LIT_ENDIAN, (uint8_t*)itmArr);
+                    break;
+                case 0x54:
+                    itmData = new DirItem(TSK_LIT_ENDIAN, (uint8_t*)itmArr);
+                    break;
+                case 0x60:
+                    itmData = new DirIndex(TSK_LIT_ENDIAN, (uint8_t*)itmArr);
+                    break;
+                case 0x84:
+                    itmData = new RootItem(TSK_LIT_ENDIAN, (uint8_t*)itmArr);
+                    break;
+                default:
+                    itmData = new UnknownItem();
             }
 
             if(item != nullptr && itmData != nullptr){

@@ -10,6 +10,7 @@
 #include "InodeItem.h"
 #include "RootItem.h"
 
+#include "InodeRef.h"
 #include "DevItem.h"
 #include "DirItem.h"
 #include "DirIndex.h"
