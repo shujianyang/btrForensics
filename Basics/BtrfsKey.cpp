@@ -34,8 +34,8 @@ namespace btrForensics{
      */
     std::ostream &operator<<(std::ostream &os, const BtrfsKey &key)
     {
+        os << "Key - Object id: " << std::dec << key.objId << '\n';
         os << std::uppercase << std::hex;
-        os << "Key - Object id: " << key.objId << '\n';
         os << "Key - Item type: " << key.getItemTypeStr() << '\n';
         os << "Key - Offset: " << key.offset << '\n';
     }

@@ -1,21 +1,21 @@
 /** \file
- * Implementation of class DirItem
+ * Implementation of class DirIndex
  */
 
 #include <sstream>
-#include "DirItem.h"
+#include "DirIndex.h"
 #include "Utility/ReadInt.h"
 
 namespace btrForensics{
 
     /**
-     * Constructor of dir item.
+     * Constructor of dir index.
      *
      * \param endian The endianess of the array.
-     * \param arr Byte array storing dir item data.
+     * \param arr Byte array storing dir index data.
      *
      */
-    DirItem::DirItem(TSK_ENDIAN_ENUM endian, uint8_t arr[])
+    DirIndex::DirIndex(TSK_ENDIAN_ENUM endian, uint8_t arr[])
         :key(endian, arr)
     {
         int arIndex(BtrfsKey::SIZE_OF_KEY); //Key initialized already.
@@ -41,7 +41,7 @@ namespace btrForensics{
     /**
      * Return name of the directory.
      */
-    std::string DirItem::getDirName() const
+    std::string DirIndex::getDirName() const
     {
         return std::string(dirName, nameSize);
     }
@@ -50,7 +50,7 @@ namespace btrForensics{
     /**
      * Return infomation about the item data as string.
      */
-    std::string DirItem::info() const
+    std::string DirIndex::info() const
     {
         std::ostringstream oss;
         oss << key;

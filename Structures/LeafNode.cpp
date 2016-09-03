@@ -41,6 +41,9 @@ namespace btrForensics{
             if(item->key.getItemType() == 0x54){
                 itmData = new DirItem(TSK_LIT_ENDIAN, (uint8_t*)itmArr);
             }
+            else if(item->key.getItemType() == 0x60){
+                itmData = new DirIndex(TSK_LIT_ENDIAN, (uint8_t*)itmArr);
+            }
             else if(item->key.getItemType() == 0x84){
                 itmData = new RootItem(TSK_LIT_ENDIAN, (uint8_t*)itmArr);
             }
