@@ -1,19 +1,18 @@
-/** \file
-  * Implementation of class BtrfsKey
-  */
+//! \file
+//! \author Shujian Yang
+//!
+//! Implementation of class BtrfsKey
 
 #include "BtrfsKey.h"
 #include "Utility/ReadInt.h"
 
 namespace btrForensics{
 
-    /**
-     * Constructor of key.
-     * 
-     * \param endian The endianess of byte array.
-     * \param arr Byte array storing key data.
-     * 
-     */
+    ///! Constructor of key.
+    //! 
+    //! \param endian The endianess of byte array.
+    //! \param arr Byte array storing key data.
+    //!
     BtrfsKey::BtrfsKey(TSK_ENDIAN_ENUM endian, uint8_t arr[])
     {
         int arIndex = 0;
@@ -28,37 +27,30 @@ namespace btrForensics{
 
 
 
-    /**
-     * Overloaded stream operator.
-     *
-     */
+    //! Overloaded stream operator.
     std::ostream &operator<<(std::ostream &os, const BtrfsKey &key)
     {
         os << "Key - Object id: " << std::dec << key.objId << '\n';
         os << std::uppercase << std::hex;
         os << "Key - Item type: " << key.getItemTypeStr() << '\n';
-        os << "Key - Offset: " << key.offset << '\n';
+        os << "Key - Offset: 0x" << key.offset << '\n';
     }
 
 
-    /**
-     * Get type code of the item.
-     *
-     * \return Item type code.
-     *
-     */
+    //! Get type code of the item.
+    //!
+    //! \return Item type code.
+    //!
     const uint8_t BtrfsKey::getItemType() const
     {
         return itemType;
     }
 
 
-    /**
-     * Get type description of the item.
-     *
-     * \return Item type in string.
-     *
-     */
+    //! Get type description of the item.
+    //!
+    //! \return Item type in string.
+    //!
     const std::string BtrfsKey::getItemTypeStr() const
     {
         std::string type;

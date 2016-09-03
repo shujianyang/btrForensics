@@ -1,6 +1,7 @@
-/** \file
-  * Header file of class DirItem
-  */
+//! \file
+//! \author Shujian Yang
+//!
+//! Header file of class DirItem
 
 #ifndef DIR_ITEM_H
 #define DIR_ITEM_H
@@ -11,10 +12,10 @@
 #include "Basics.h"
 
 namespace btrForensics{
-    /** Directory item data. */
+    //! Directory item data.
     class DirItem : public ItemData {
     public:
-        const BtrfsKey key; /**< Key of the item. */
+        const BtrfsKey key; //!< Key of the item.
     private:
         uint64_t transId;
         uint16_t dataSize;
@@ -26,6 +27,7 @@ namespace btrForensics{
     public:
         DirItem(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
 
+        uint8_t getType() { return childType; } //!< Get the type of directory item.
         std::string getDirName() const;
 
         std::string info() const override;

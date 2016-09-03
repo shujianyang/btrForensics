@@ -1,6 +1,7 @@
-/** \file
-  * Header file of class InodeItem
-  */
+//! \file
+//! \author Shujian Yang
+//!
+//! Header file of class InodeItem
 
 #ifndef INODE_ITEM_H
 #define INODE_ITEM_H
@@ -11,7 +12,7 @@
 #include "ItemData.h"
 
 namespace btrForensics{
-    /** Inode item data. */
+    //! Inode item data.
     class InodeItem : public ItemData {
     private:
         uint64_t generation;
@@ -35,7 +36,7 @@ namespace btrForensics{
 
         std::string info() const override;
         
-        static const int SIZE_OF_INODE_ITEM = 0xa0; /**< Size of an inode in bytes. */
+        static const int SIZE_OF_INODE_ITEM = 0xa0; //!< Size of an inode in bytes.
     };
 }
 

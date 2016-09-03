@@ -1,9 +1,7 @@
-/**
- * \file
- * \author Shujian Yang
- *
- * Implementation of class TreeAnalyzer.
- */
+//! \file
+//! \author Shujian Yang
+//!
+//! Implementation of class TreeAnalyzer.
 
 #include <map>
 #include <sstream>
@@ -15,58 +13,22 @@ using namespace std;
 //using namespace std::placeholders;
 
 namespace btrForensics {
-    /**
-     * Constructor of tree analyzer.
-     *
-     * \param img Image file.
-     * \param rootNode Root node of the tree to be analyzed.
-     * \param end The endianess of the array.
-     *
-     */
+    //! Constructor of tree analyzer.
+    //!
+    //! \param img Image file.
+    //! \param rootNode Root node of the tree to be analyzed.
+    //! \param end The endianess of the array.
+    //!
     TreeAnalyzer::TreeAnalyzer(TSK_IMG_INFO *img,
             const LeafNode *rootNode, TSK_ENDIAN_ENUM end)
-        :image(img), root(rootNode), endian(end)
-    {
-        uint64_t offset(0);
-        map<uint64_t, uint64_t> nodeAddrs;
-  
-        for(auto group : root->itemGroups){
-            if(group->getItemType() == 0x84){
-                RootItem *rootItm = (RootItem*)(group->data);
-                nodeAddrs[group->item->key.objId]
-                    = rootItm->getBlockNumber();
-            }
-        }
-        if(nodeAddrs.find(5) == nodeAddrs.end()) {
-            cerr << "Error. Filesystem tree not found." << endl;
-            exit(1);
-        }
-        offset = nodeAddrs[5];
-
-        char *headerArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
-        tsk_img_read(image, offset, headerArr, BtrfsHeader::SIZE_OF_HEADER);
-        const BtrfsHeader *fileTreeHeader = 
-            new BtrfsHeader(TSK_LIT_ENDIAN, (uint8_t*)headerArr);
-        delete [] headerArr;
-
-        uint64_t itemOffset = offset + BtrfsHeader::SIZE_OF_HEADER;
-
-        if(fileTreeHeader->isLeafNode()){
-            fileTreeRoot = new LeafNode(image, fileTreeHeader, TSK_LIT_ENDIAN, itemOffset);
-        }
-        else {
-            fileTreeRoot = new InternalNode(image, fileTreeHeader, TSK_LIT_ENDIAN, itemOffset);
-        }
-    }
+        :image(img), root(rootNode), endian(end) {}
 
 
-    /**
-     * Navigate to selected node and print information.
-     *
-     * \param os Output stream where the infomation is printed.
-     * \param is Input stream telling which node is the one to be read.
-     *
-     */
+    //! Navigate to selected node and print information.
+    //!
+    //! \param os Output stream where the infomation is printed.
+    //! \param is Input stream telling which node is the one to be read.
+    //!
     const void TreeAnalyzer::navigateNodes(ostream& os, istream& is) const
     {
         const BtrfsNode *node = root;
@@ -124,15 +86,15 @@ namespace btrForensics {
             if(quit) break;
             os << endl;
 
-            if(inputId == 0x05) {
+            /*if(inputId == 0x05) {
                 if(node != root) delete node;
                 node = fileTreeRoot;
                 continue;
-            }
+            }*/
 
             offset = nodeAddrs[inputId];
 
-            if(node != root && node != fileTreeRoot) delete node;
+            if(node != root /*&& node != fileTreeRoot*/) delete node;
 
             char *headerArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
             tsk_img_read(image, offset, headerArr, BtrfsHeader::SIZE_OF_HEADER);
@@ -151,35 +113,13 @@ namespace btrForensics {
     }
 
 
-    /**
-     * List all dir items in this tree.
-     *
-     * \param os Output stream where the infomation is printed.
-     *
-     */
-    const void TreeAnalyzer::listDirItems(ostream &os) const
-    {
-        vector<uint64_t> trace{0x05};
-
-        //leafRecursion(fileTreeRoot, trace, bind(printLeafDir, _1, _2, ref(os)));
-
-        //Choose Lamba over std::bind.
-        //See "Effective Modern C++" Item 34.
-        leafRecursion(fileTreeRoot, trace,
-                [&os](const LeafNode *leaf, vector<uint64_t> &idTrace)
-                { printLeafDir(leaf, idTrace, os); });
-    }
-
-
-    /**
-     * Recursively traverse child nodes and process it if it is a leaf node.
-     *
-     * \param node Node being processed.
-     * \param idTrace The vector used to trace node ids on the path from root to node.
-     * \param readOnlyFunc A function type which accepts a LeafNode* 
-     *        and a vector<uint64_t>& parameters and returns void.
-     *
-     */
+    //! Recursively traverse child nodes and process it if it is a leaf node.
+    //!
+    //! \param node Node being processed.
+    //! \param idTrace The vector used to trace node ids on the path from root to node.
+    //! \param readOnlyFunc A function type which accepts a LeafNode* 
+    //!        and a vector<uint64_t>& parameters and returns void.
+    //!
     void TreeAnalyzer::leafRecursion(const BtrfsNode *node,
             std::vector<uint64_t> &idTrace,
             function<void(const LeafNode*, std::vector<uint64_t>&)> readOnlyFunc) const
@@ -216,6 +156,51 @@ namespace btrForensics {
 
                 leafRecursion(newNode, idTrace, readOnlyFunc);
                 idTrace.pop_back();
+            }
+        }
+    }
+
+
+    //! Recursively traverse child nodes and search if it is a leaf node.
+    //!
+    //! \param node Node being processed.
+    //! \param searchFunc A function type which accepts a LeafNode* 
+    //!        parameter and returns true if certain object is found.
+    //!
+    bool TreeAnalyzer::leafSearch(const BtrfsNode *node,
+            function<bool(const LeafNode*)> searchFunc) const
+    {
+        if(node->nodeHeader->isLeafNode()){
+            LeafNode *leaf = (LeafNode*)node;
+            return searchFunc(leaf);
+        }
+        else {
+            map<uint64_t, uint64_t> nodeAddrs;
+            InternalNode *internal = (InternalNode*)node;
+
+            for(const auto &ptr : internal->keyPointers) {
+                nodeAddrs.insert({ptr.key.objId, ptr.getBlkNum()});
+            }
+
+            for(const auto &addr : nodeAddrs) {
+
+                char *headerArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
+                tsk_img_read(image, addr.second, headerArr, BtrfsHeader::SIZE_OF_HEADER);
+                BtrfsHeader *header = new BtrfsHeader(TSK_LIT_ENDIAN, (uint8_t*)headerArr);
+                delete [] headerArr; 
+
+                uint64_t itemOffset = addr.second + BtrfsHeader::SIZE_OF_HEADER;
+
+                BtrfsNode *newNode;
+                if(header->isLeafNode()){
+                    newNode = new LeafNode(image, header, endian, itemOffset);
+                }
+                else {
+                    newNode = new InternalNode(image, header, endian, itemOffset);
+                }
+
+                if(leafSearch(newNode, searchFunc))
+                    return true;
             }
         }
     }

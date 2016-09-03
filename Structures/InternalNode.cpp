@@ -1,23 +1,19 @@
-/**
- * \file
- * \author Shujian Yang
- *
- * Implementation of class InternalNode.
- */
+//! \file
+//! \author Shujian Yang
+//!
+//! Implementation of class InternalNode.
 
 #include <sstream>
 #include "InternalNode.h"
 
 namespace btrForensics{
-    /**
-     * Constructor of btrfs leaf node.
-     *
-     * \param img Image file.
-     * \param header Pointer to header of a node.
-     * \param endian The endianess of the array.
-     * \param startOffset Offset of the node, right after header.
-     *
-     */
+    //! Constructor of btrfs leaf node.
+    //!
+    //! \param img Image file.
+    //! \param header Pointer to header of a node.
+    //! \param endian The endianess of the array.
+    //! \param startOffset Offset of the node, right after header.
+    //!
     InternalNode::InternalNode(TSK_IMG_INFO *img, const BtrfsHeader *header, 
             TSK_ENDIAN_ENUM endian, uint64_t startOffset)
         :BtrfsNode(header)
@@ -39,9 +35,7 @@ namespace btrForensics{
     }
 
 
-    /**
-     * Print info about this node.
-     */
+    //! Print info about this node.
     const std::string InternalNode::info() const
     {
         std::ostringstream oss;

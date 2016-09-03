@@ -1,23 +1,19 @@
-/**
- * \file
- * \author Shujian Yang
- *
- * Implementation of class LeafNode.
- */
+//! \file
+//! \author Shujian Yang
+//!
+//! Implementation of class LeafNode.
 
 #include <sstream>
 #include "LeafNode.h"
 
 namespace btrForensics{
-    /**
-     * Constructor of btrfs leaf node.
-     *
-     * \param img Image file.
-     * \param header Pointer to header of a node.
-     * \param endian The endianess of the array.
-     * \param startOffset Offset of the node, right after header.
-     *
-     */
+    //! Constructor of btrfs leaf node.
+    //!
+    //! \param img Image file.
+    //! \param header Pointer to header of a node.
+    //! \param endian The endianess of the array.
+    //! \param startOffset Offset of the node, right after header.
+    //!
     LeafNode::LeafNode(TSK_IMG_INFO *img, const BtrfsHeader *header, 
             TSK_ENDIAN_ENUM endian, uint64_t startOffset)
         :BtrfsNode(header)
@@ -39,6 +35,9 @@ namespace btrForensics{
             tsk_img_read(img, dataOffset, itmArr, item->getDataSize());
 
             switch(item->key.getItemType()){
+                case 0x01:
+                    itmData = new InodeItem(TSK_LIT_ENDIAN, (uint8_t*)itmArr);
+                    break;
                 case 0x0c:
                     itmData = new InodeRef(TSK_LIT_ENDIAN, (uint8_t*)itmArr);
                     break;
@@ -67,9 +66,7 @@ namespace btrForensics{
     }
 
 
-    /**
-     * Print info about this node.
-     */
+    //! Print info about this node.
     const std::string LeafNode::info() const
     {
         std::ostringstream oss;

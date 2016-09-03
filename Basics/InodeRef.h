@@ -1,9 +1,7 @@
-/**
- * \file
- * \author Shujian Yang
- *
- * Header file of class InodeRef
- */
+//! \file
+//! \author Shujian Yang
+//!
+//! Header file of class InodeRef
 
 #ifndef INODE_REF_H
 #define INODE_REF_H
@@ -14,7 +12,7 @@
 #include "Basics.h"
 
 namespace btrForensics{
-    /** Inode reference data. */
+    //! Inode reference data.
     class InodeRef : public ItemData {
     private:
         uint64_t indexInDir;

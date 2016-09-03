@@ -1,9 +1,7 @@
-/**
- * \file
- * \author Shujian Yang
- *
- * Implementation of class InodeRef
- */
+//! \file
+//! \author Shujian Yang
+//!
+//! Implementation of class InodeRef
 
 #include <sstream>
 #include "InodeRef.h"
@@ -11,13 +9,11 @@
 
 namespace btrForensics{
 
-    /**
-     * Constructor of inode ref.
-     *
-     * \param endian The endianess of the array.
-     * \param arr Byte array storing inode ref data.
-     *
-     */
+    //! Constructor of inode ref.
+    //!
+    //! \param endian The endianess of the array.
+    //! \param arr Byte array storing inode ref data.
+    //!
     InodeRef::InodeRef(TSK_ENDIAN_ENUM endian, uint8_t arr[])
     {
         int arIndex(0);
@@ -34,18 +30,14 @@ namespace btrForensics{
     }
 
 
-    /**
-     * Return name of the inode reference.
-     */
+    //! Return name of the inode reference.
     std::string InodeRef::getDirName() const
     {
         return std::string(nameInDir, nameSize);
     }
 
 
-    /**
-     * Return infomation about the item data as string.
-     */
+    //! Return infomation about the item data as string.
     std::string InodeRef::info() const
     {
         std::ostringstream oss;

@@ -1,9 +1,7 @@
-/**
- * \file
- * \author Shujian Yang
- *
- * Header file of class LeafNode.
- */
+//! \file
+//! \author Shujian Yang
+//!
+//! Header file of class LeafNode.
 
 #ifndef LEAF_NODE_H
 #define LEAF_NODE_H
@@ -16,10 +14,10 @@
 using std::vector;
 
 namespace btrForensics{
-    /** Leaf node in B-tree structure. */
+    //! Leaf node in B-tree structure.
     class LeafNode : public BtrfsNode {
     public:
-        vector<ItemGroup*> itemGroups; /**< Stores items and their data. */
+        vector<ItemGroup*> itemGroups; //!< Stores items and their data.
 
     public:
         LeafNode(TSK_IMG_INFO*, const BtrfsHeader*, TSK_ENDIAN_ENUM, uint64_t);

@@ -1,9 +1,7 @@
-/**
- * \file
- * \author Shujian Yang
- *
- * Header file of UUID.
- */
+//! \file
+//! \author Shujian Yang
+//!
+//! Header file of UUID.
 
 #ifndef UUID_H
 #define UUID_H
@@ -13,8 +11,7 @@
 #include <tsk/vs/tsk_gpt.h>
 
 
-/** Types of UUID
- */
+//! Types of UUID
 enum Variant{
     NETWORK_COMPUTING_SYSTEM,
     STANDARD,
@@ -22,19 +19,18 @@ enum Variant{
     RESERVED
 };
 
-/** Different versions of UUID.
- */
+//! Different versions of UUID.
 enum Version{
-    MAC_DATE = 1, /**< Time-based version */
-    DCE,  /**< DEC Security version */
-    MD5_NAMESPACE,  /**< Name-based version using MD5 */
-    RANDOM,  /**< Randomly or pseudo-randomly generated version */
-    SHA_NAMESPACE,  /**< Name-based version using SHA-1 */
+    MAC_DATE = 1, //!< Time-based version
+    DCE,  //!< DEC Security version
+    MD5_NAMESPACE,  //!< Name-based version using MD5
+    RANDOM,  //!< Randomly or pseudo-randomly generated version
+    SHA_NAMESPACE,  //!< Name-based version using SHA-1
     UNKNOWN
 };
 
 
-/** Universally Unique IDentifier (UUID). */
+//! Universally Unique IDentifier (UUID).
 class UUID{
 private:
     uint32_t data_1;
@@ -59,8 +55,8 @@ public:
     const std::string variantInfo() const;
     const std::string versionInfo() const;
 
-    static const int BYTES_OF_UUID = 16; /**< UUID byte length when stored in machine, */
-    static const int LENGTH_OF_UUID_STRING = 36; /**< String length used to represent a UUID. */
+    static const int BYTES_OF_UUID = 16; ///!< UUID byte length when stored in machine,
+    static const int LENGTH_OF_UUID_STRING = 36; //!< String length used to represent a UUID.
 };
 
 

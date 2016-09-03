@@ -1,6 +1,7 @@
-/** \file
- * Implementation of class DirItem
- */
+//! \file
+//! \author Shujian Yang
+//!
+//! Implementation of class DirItem
 
 #include <sstream>
 #include "DirItem.h"
@@ -8,13 +9,11 @@
 
 namespace btrForensics{
 
-    /**
-     * Constructor of dir item.
-     *
-     * \param endian The endianess of the array.
-     * \param arr Byte array storing dir item data.
-     *
-     */
+    //! Constructor of dir item.
+    //!
+    //! \param endian The endianess of the array.
+    //! \param arr Byte array storing dir item data.
+    //!
     DirItem::DirItem(TSK_ENDIAN_ENUM endian, uint8_t arr[])
         :key(endian, arr)
     {
@@ -38,18 +37,14 @@ namespace btrForensics{
     }
 
 
-    /**
-     * Return name of the directory.
-     */
+    //! Return name of the directory.
     std::string DirItem::getDirName() const
     {
         return std::string(dirName, nameSize);
     }
 
 
-    /**
-     * Return infomation about the item data as string.
-     */
+    //! Return infomation about the item data as string.
     std::string DirItem::info() const
     {
         std::ostringstream oss;

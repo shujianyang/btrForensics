@@ -1,9 +1,8 @@
-/**
- * \file
- * \author Shujian Yang
- *
- * Header file of SuperBlock.
- */
+//!
+//! \file
+//! \author Shujian Yang
+//!
+//! Header file of SuperBlock.
 
 #ifndef SUP_BLK_H
 #define SUP_BLK_H
@@ -14,7 +13,7 @@
 #include "Basics/Basics.h"
 
 namespace btrForensics{
-    /** Store super block info. */
+    //! Store super block info.
     class SuperBlock{
     private:
         static constexpr int DEV_ITEM_SIZE = 0x62;
@@ -70,8 +69,8 @@ namespace btrForensics{
         const std::string printSpace() const;
         const std::string printLabel() const;
 
-        static const int ADDR_OF_SPR_BLK = 0x10000;  /**< Address of superblock on disk. */
-        static const int SIZE_OF_SPR_BLK = 0x22b;  /**< Size of superblock on disk. */
+        static const int ADDR_OF_SPR_BLK = 0x10000;  //!< Address of superblock on disk.
+        static const int SIZE_OF_SPR_BLK = 0x22b;  //!< Size of superblock on disk.
 
         friend std::ostream &operator<<(std::ostream &os, SuperBlock &supb);
     };

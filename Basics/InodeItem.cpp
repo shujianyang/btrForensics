@@ -1,19 +1,19 @@
-/** \file
-  * Implementation of class InodeItem
-  */
+//! \file
+//! \author Shujian Yang
+//!
+//! Implementation of class InodeItem
 
+#include <sstream>
 #include "InodeItem.h"
 #include "Utility/ReadInt.h"
 
 namespace btrForensics{
 
-    /**
-     * Constructor of InodeItem.
-     *
-     * \param endian The endianess of the array.
-     * \param arr Byte array storing inode data.
-     * 
-     */
+    //! Constructor of InodeItem.
+    //!
+    //! \param endian The endianess of the array.
+    //! \param arr Byte array storing inode data.
+    //!
     InodeItem::InodeItem(TSK_ENDIAN_ENUM endian, uint8_t arr[])
     {
         int arIndex(0);
@@ -56,12 +56,12 @@ namespace btrForensics{
         arIndex += 0x08;
     }
 
-    /**
-     * Return infomation about the item data as string.
-     */
+    //! Return infomation about the item data as string.
     std::string InodeItem::info() const
     {
-        return "Inode item";
+        std::ostringstream oss;
+        oss << "Size: 0x" << stSize;
+        return oss.str();
     }
 
 }

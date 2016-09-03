@@ -1,6 +1,7 @@
-/** \file
-  * Header file of class ItemData
-  */
+//! \file
+//! \author Shujian Yang
+//!
+//! Header file of class ItemData
 
 #ifndef ITEM_DATA_H
 #define ITEM_DATA_H
@@ -10,14 +11,12 @@
 #include <tsk/libtsk.h>
 
 namespace btrForensics{
-    /** Item data, this is an abstract class. */
+    //! Item data, this is an abstract class.
     class ItemData {
     public:
         virtual ~ItemData() = default;
         
-        /**
-         * Overloaded stream operator.
-         */
+        //! Overloaded stream operator.
         friend std::ostream &operator<<(std::ostream &os, const ItemData &itmData)
         {
             os << itmData.info() << '\n';
@@ -25,10 +24,8 @@ namespace btrForensics{
         }
         
 
-        /**
-         * Return infomation about the item data.
-         * Virtual function to be overridden by derived classes.
-         */
+        //! Return infomation about the item data.
+        //! Virtual function to be overridden by derived classes.
         virtual std::string info() const = 0;
     };
 }
