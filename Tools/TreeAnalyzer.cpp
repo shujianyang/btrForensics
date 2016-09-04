@@ -81,18 +81,11 @@ namespace btrForensics {
                 if(nodeAddrs.find(inputId) != nodeAddrs.end()) break;
                 os << "Wrong object id, please enter a correct one.\n" << endl;
             }
-
             os << endl;
-
-            /*if(inputId == 0x05) {
-                if(node != root) delete node;
-                node = fileTreeRoot;
-                continue;
-            }*/
 
             offset = nodeAddrs[inputId];
 
-            if(node != root /*&& node != fileTreeRoot*/) delete node;
+            if(node != root) delete node;
 
             char *headerArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
             tsk_img_read(image, offset, headerArr, BtrfsHeader::SIZE_OF_HEADER);
@@ -126,31 +119,33 @@ namespace btrForensics {
             readOnlyFunc(leaf);
         }
         else {
-            map<uint64_t, uint64_t> nodeAddrs;
             InternalNode *internal = (InternalNode*)node;
+            BtrfsNode *newNode;
 
-            for(const auto &ptr : internal->keyPointers) {
-                nodeAddrs.insert({ptr.key.objId, ptr.getBlkNum()});
-            }
-
-            for(const auto &addr : nodeAddrs) {
-
-                char *headerArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
-                tsk_img_read(image, addr.second, headerArr, BtrfsHeader::SIZE_OF_HEADER);
-                BtrfsHeader *header = new BtrfsHeader(TSK_LIT_ENDIAN, (uint8_t*)headerArr);
-                delete [] headerArr; 
-
-                uint64_t itemOffset = addr.second + BtrfsHeader::SIZE_OF_HEADER;
-
-                BtrfsNode *newNode;
-                if(header->isLeafNode()){
-                    newNode = new LeafNode(image, header, endian, itemOffset);
+            for(auto &ptr : internal->keyPointers) {
+                if(ptr.childNode != nullptr) {
+                    newNode = ptr.childNode;
                 }
                 else {
-                    newNode = new InternalNode(image, header, endian, itemOffset);
+                    char *headerArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
+                    tsk_img_read(image, ptr.getBlkNum(), headerArr, BtrfsHeader::SIZE_OF_HEADER);
+                    BtrfsHeader *header = new BtrfsHeader(TSK_LIT_ENDIAN, (uint8_t*)headerArr);
+                    delete [] headerArr; 
+
+                    uint64_t itemOffset = ptr.getBlkNum() + BtrfsHeader::SIZE_OF_HEADER;
+
+                    if(header->isLeafNode()){
+                        newNode = new LeafNode(image, header, endian, itemOffset);
+                    }
+                    else {
+                        newNode = new InternalNode(image, header, endian, itemOffset);
+                    }
+
+                    ptr.childNode = newNode;
                 }
 
-                leafTraverse(newNode, readOnlyFunc);
+                if(newNode != nullptr)
+                    leafTraverse(newNode, readOnlyFunc);
             }
         }
     }
@@ -161,6 +156,7 @@ namespace btrForensics {
     //! \param node Node being processed.
     //! \param searchFunc A function type which accepts a LeafNode* 
     //!        parameter and returns true if certain object is found.
+    //! \return True if target is found in leaf node.
     //!
     bool TreeAnalyzer::leafSearch(const BtrfsNode *node,
             function<bool(const LeafNode*)> searchFunc) const
@@ -170,33 +166,86 @@ namespace btrForensics {
             return searchFunc(leaf);
         }
         else {
-            map<uint64_t, uint64_t> nodeAddrs;
             InternalNode *internal = (InternalNode*)node;
+            BtrfsNode *newNode;
 
-            for(const auto &ptr : internal->keyPointers) {
-                nodeAddrs.insert({ptr.key.objId, ptr.getBlkNum()});
-            }
-
-            for(const auto &addr : nodeAddrs) {
-
-                char *headerArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
-                tsk_img_read(image, addr.second, headerArr, BtrfsHeader::SIZE_OF_HEADER);
-                BtrfsHeader *header = new BtrfsHeader(TSK_LIT_ENDIAN, (uint8_t*)headerArr);
-                delete [] headerArr; 
-
-                uint64_t itemOffset = addr.second + BtrfsHeader::SIZE_OF_HEADER;
-
-                BtrfsNode *newNode;
-                if(header->isLeafNode()){
-                    newNode = new LeafNode(image, header, endian, itemOffset);
+            for(auto &ptr : internal->keyPointers) {
+                if(ptr.childNode != nullptr) {
+                    newNode = ptr.childNode;
                 }
                 else {
-                    newNode = new InternalNode(image, header, endian, itemOffset);
+                    char *headerArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
+                    tsk_img_read(image, ptr.getBlkNum(), headerArr, BtrfsHeader::SIZE_OF_HEADER);
+                    BtrfsHeader *header = new BtrfsHeader(TSK_LIT_ENDIAN, (uint8_t*)headerArr);
+                    delete [] headerArr; 
+
+                    uint64_t itemOffset = ptr.getBlkNum() + BtrfsHeader::SIZE_OF_HEADER;
+                    
+                    if(header->isLeafNode()){
+                        newNode = new LeafNode(image, header, endian, itemOffset);
+                    }
+                    else {
+                        newNode = new InternalNode(image, header, endian, itemOffset);
+                    }
+
+                    ptr.childNode = newNode;
                 }
 
-                if(leafSearch(newNode, searchFunc))
+                if(newNode != nullptr && leafSearch(newNode, searchFunc))
                     return true;
             }
+            return false;
+        }
+    }
+
+
+    //! Recursively traverse child nodes and search if it is a leaf node.
+    //!
+    //! \param node Node being processed.
+    //! \param targetId Object id of target to search for.
+    //! \param searchFunc A function type which accepts a LeafNode* 
+    //!        parameter and returns true if certain object is found.
+    //! \return True if target is found in leaf node.
+    //!
+    bool TreeAnalyzer::leafSearchById(const BtrfsNode *node, uint64_t targetId,
+            function<bool(const LeafNode*, uint64_t)> searchFunc) const
+    {
+        if(node->nodeHeader->isLeafNode()){
+            LeafNode *leaf = (LeafNode*)node;
+            return searchFunc(leaf, targetId);
+        }
+        else {
+            InternalNode *internal = (InternalNode*)node;
+            BtrfsNode *newNode;
+
+            for(auto &ptr : internal->keyPointers) {
+                if(ptr.key.objId > targetId)
+                    return false;
+                if(ptr.childNode != nullptr) {
+                    newNode = ptr.childNode;
+                }
+                else {
+                    char *headerArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
+                    tsk_img_read(image, ptr.getBlkNum(), headerArr, BtrfsHeader::SIZE_OF_HEADER);
+                    BtrfsHeader *header = new BtrfsHeader(TSK_LIT_ENDIAN, (uint8_t*)headerArr);
+                    delete [] headerArr; 
+
+                    uint64_t itemOffset = ptr.getBlkNum() + BtrfsHeader::SIZE_OF_HEADER;
+                    
+                    if(header->isLeafNode()){
+                        newNode = new LeafNode(image, header, endian, itemOffset);
+                    }
+                    else {
+                        newNode = new InternalNode(image, header, endian, itemOffset);
+                    }
+
+                    ptr.childNode = newNode;
+                }
+
+                if(newNode != nullptr && leafSearchById(newNode, targetId, searchFunc))
+                    return true;
+            }
+            return false;
         }
     }
 }

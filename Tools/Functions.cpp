@@ -36,7 +36,7 @@ namespace btrForensics{
     //!
     //! \return True if the item is found.
     //!
-    bool findItem(const LeafNode* leaf, uint64_t inodeNum,
+    bool searchItem(const LeafNode* leaf, uint64_t inodeNum,
            uint8_t type, const BtrfsItem* &foundItem)
     {
         for(auto item : leaf->itemList) {
@@ -58,9 +58,9 @@ namespace btrForensics{
     //! \param type The type of the item to search for.
     //! \param foundItems Vector storing found items.
     //!
-    //! \return True if the item is found.
+    //! \return True if the item has all been found.
     //!
-    bool findNewItem(const LeafNode* leaf, uint64_t inodeNum, uint8_t type,
+    bool searchMultiItems(const LeafNode* leaf, uint64_t inodeNum, uint8_t type,
            vector<BtrfsItem*> &vec)
     {
         for(auto item : leaf->itemList) {

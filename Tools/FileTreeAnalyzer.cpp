@@ -81,20 +81,20 @@ namespace btrForensics {
     DirContent* FileTreeAnalyzer::getDirConent(uint64_t id) const
     {
         const BtrfsItem* foundItem;
-        if(leafSearch(fileTreeRoot,
-                [&foundItem, id](const LeafNode* leaf)
-                { return findItem(leaf, id, 1, foundItem); })) {
+        if(leafSearchById(fileTreeRoot, id,
+                [&foundItem](const LeafNode* leaf, uint64_t targetId)
+                { return searchItem(leaf, targetId, 1, foundItem); })) {
             InodeItem* rootInode = (InodeItem*)foundItem;
 
-            leafSearch(fileTreeRoot,
-                [&foundItem, id](const LeafNode* leaf)
-                { return findItem(leaf, id, 0xc, foundItem); });
+            leafSearchById(fileTreeRoot, id,
+                [&foundItem](const LeafNode* leaf, uint64_t targetId)
+                { return searchItem(leaf, targetId, 0xc, foundItem); });
             InodeRef* rootRef = (InodeRef*)foundItem;
 
             vector<BtrfsItem*> foundItems;
-            leafSearch(fileTreeRoot,
-                [&foundItems, id](const LeafNode* leaf)
-                { return findNewItem(leaf, id, 0x54, foundItems); });
+            leafSearchById(fileTreeRoot, id,
+                [&foundItems](const LeafNode* leaf, uint64_t targetId)
+                { return searchMultiItems(leaf, targetId, 0x54, foundItems); });
             
             return new DirContent(rootInode, rootRef, foundItems);
         }
@@ -134,10 +134,10 @@ namespace btrForensics {
             if(count == 0) {
                 while(true) {
                     os << "No child directory is found.\n";
-                    os << "(Enter '0' to go back to previous directory or 'q' to quit.)" << endl;
+                    os << "(Enter 'r' to return to previous directory or 'q' to quit.)" << endl;
                     is >> input;
                     if(input == "q") return;
-                    if(input == "0") break;
+                    if(input == "r") break;
                 }
                 targetInode = dir->ref->itemHead->key.offset;
             }
@@ -150,16 +150,16 @@ namespace btrForensics {
                     }
                     os << endl;
                     os << "To visit a child directory, please enter its index in the list:\n";
-                    os << "(Enter '0' to go back to previous directory or 'q' to quit.)" << endl;
+                    os << "(Enter 'r' to return to previous directory or 'q' to quit.)" << endl;
                     is >> input;
                     
                     if(input == "q") return;
-                    stringstream(input) >> inputId;
-                    if(inputId == 0) {
+                    if(input == "r") {
                         targetInode = dir->ref->itemHead->key.offset;
                         break;
                     }
-                    else if(dirList.find(inputId) != dirList.end()) {
+                    stringstream(input) >> inputId;
+                    if(dirList.find(inputId) != dirList.end()) {
                         int target = dirList[inputId];
                         DirItem* targetItem = dir->children[target];
                         targetInode = targetItem->getInodeNum();

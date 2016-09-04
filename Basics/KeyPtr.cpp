@@ -14,7 +14,7 @@ namespace btrForensics{
     //! \param arr Byte array storing key pointer data.
     //!
     KeyPtr::KeyPtr(TSK_ENDIAN_ENUM endian, uint8_t arr[])
-        :key(endian, arr)
+        :key(endian, arr), childNode(nullptr)
     {
         int arIndex(BtrfsKey::SIZE_OF_KEY); //Key initialized already.
         blkNum = read64Bit(endian, arr + arIndex);

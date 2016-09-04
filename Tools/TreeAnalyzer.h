@@ -31,6 +31,9 @@ namespace btrForensics {
 
         bool leafSearch(const BtrfsNode* node,
             std::function<bool(const LeafNode*)> searchFunc) const;
+
+        bool leafSearchById(const BtrfsNode* node, uint64_t targetId,
+            std::function<bool(const LeafNode*, uint64_t)> searchFunc) const;
     };
 }
 

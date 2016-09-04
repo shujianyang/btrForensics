@@ -12,10 +12,13 @@
 #include "BtrfsKey.h"
 
 namespace btrForensics{
+    class BtrfsNode;
+
     //! Key pointers stored in internal nodes, stored right after node header.
     class KeyPtr{
     public:
         const BtrfsKey key; //!< Key of the key pointer.
+        BtrfsNode* childNode;
     private:
         uint64_t blkNum;
         uint64_t generation;
