@@ -1,9 +1,8 @@
-/**
- * \file
- * \author Shujian Yang
- *
- * SuperBlock implementation.
- */
+//!
+//! \file
+//! \author Shujian Yang
+//!
+//! SuperBlock implementation.
 
 #include <sstream>
 #include "SuperBlock.h"
@@ -11,13 +10,11 @@
 
 namespace btrForensics{
     
-    /**
-     * Constructor of super block.
-     * 
-     * \param endian The endianess of the array.
-     * \param arr Byte array storing super block data.
-     * 
-     */
+    //! Constructor of super block.
+    //! 
+    //! \param endian The endianess of the array.
+    //! \param arr Byte array storing super block data.
+    //! 
     SuperBlock::SuperBlock(TSK_ENDIAN_ENUM endian, uint8_t arr[])
         :fsUUID(endian, arr + 0x20), devItemData(endian, arr + 0xc9)
     {
@@ -108,31 +105,24 @@ namespace btrForensics{
     }
 
 
-    /**
-     * Get root tree root address from superblock.
-     *
-     * \return 8 byte root tree root address.
-     */
+    //! Get root tree root address from superblock.
+    //!
+    //! \return 8 byte root tree root address.
+    //!
     const uint64_t SuperBlock::getRootTrRootAddr() const
     {
         return rootTrRootAddr;
     }
 
 
-    /**
-     * Get magic words of btrfs system.
-     *
-     */
+    //! Get magic words of btrfs system.
     const std::string SuperBlock::printMagic() const
     {
         return std::string(magic, 8);
     }
 
 
-    /**
-     * Get info about partition space usage.
-     *
-     */
+    //! Get info about partition space usage.
     const std::string SuperBlock::printSpace() const
     {
         uint64_t total = totalBytes;
@@ -178,10 +168,7 @@ namespace btrForensics{
     }
 
 
-    /**
-     * Get super block label.
-     *
-     */
+    //! Get super block label.
     const std::string SuperBlock::printLabel() const
     {
         std::ostringstream oss;
@@ -193,10 +180,7 @@ namespace btrForensics{
     }
 
 
-    /**
-     * Overloaded stream operator.
-     * 
-     */
+    //! Overloaded stream operator.
     std::ostream &operator<<(std::ostream &os, SuperBlock &supb)
     {
         os << supb.fsUUID.encode()

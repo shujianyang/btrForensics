@@ -11,10 +11,12 @@ namespace btrForensics{
 
     //! Constructor of inode ref.
     //!
+    //! \param head Item head points to this data.
     //! \param endian The endianess of the array.
     //! \param arr Byte array storing inode ref data.
     //!
-    InodeRef::InodeRef(TSK_ENDIAN_ENUM endian, uint8_t arr[])
+    InodeRef::InodeRef(ItemHead* head, TSK_ENDIAN_ENUM endian, uint8_t arr[])
+        :BtrfsItem(head)
     {
         int arIndex(0);
         indexInDir = read64Bit(endian, arr + arIndex);
@@ -38,7 +40,7 @@ namespace btrForensics{
 
 
     //! Return infomation about the item data as string.
-    std::string InodeRef::info() const
+    std::string InodeRef::dataInfo() const
     {
         std::ostringstream oss;
         oss << "Index in directory: " << indexInDir << '\n';

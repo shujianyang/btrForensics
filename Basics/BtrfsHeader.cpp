@@ -1,19 +1,18 @@
-/** \file
-  * Implementation of class BtrfsHeader
-  */
+//! \file
+//! \author Shujian Yang
+//!
+//! Implementation of class BtrfsHeader
 
 #include "BtrfsHeader.h"
 #include "Utility/ReadInt.h"
 
 namespace btrForensics{
 
-    /**
-     * Constructor of Btrfs header.
-     *
-     * \param endian The endianess of the array.
-     * \param arr Byte array storing header data.
-     * 
-     */
+    //! Constructor of Btrfs header.
+    //!
+    //! \param endian The endianess of the array.
+    //! \param arr Byte array storing header data.
+    //!
     BtrfsHeader::BtrfsHeader(TSK_ENDIAN_ENUM endian, uint8_t arr[])
         :fsUUID(endian, arr + 0x20), chunkTrUUID(endian, arr + 0x40)
     {
@@ -46,20 +45,14 @@ namespace btrForensics{
     }
 
 
-    /**
-     * Get number of items stored in this node.
-     *
-     */
+    //! Get number of items stored in this node.
     const uint32_t BtrfsHeader::getNumOfItems() const
     {
         return numOfItems;
     }
 
 
-    /**
-     * Overloaded stream operator.
-     *
-     */
+    //! Overloaded stream operator.
     std::ostream &operator<<(std::ostream &os, const BtrfsHeader &header)
     {
         os << "FS UUID: " << header.fsUUID.encode() << '\n';

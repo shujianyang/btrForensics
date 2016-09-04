@@ -3,15 +3,16 @@
 
 #include "BtrfsKey.h"
 #include "BtrfsHeader.h"
+#include "ItemHead.h"
 #include "BtrfsItem.h"
-#include "ItemData.h"
 #include "KeyPtr.h"
 
+#include "InodeData.h"
 #include "InodeItem.h"
 #include "RootItem.h"
 
 #include "InodeRef.h"
-#include "DevItem.h"
+#include "DevData.h"
 #include "DirItem.h"
 #include "DirIndex.h"
 

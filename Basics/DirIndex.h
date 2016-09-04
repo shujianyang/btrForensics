@@ -1,9 +1,7 @@
-/**
- * \file
- * \author Shujian Yang
- *
- * Header file of class DirIndex
- */
+//! \file
+//! \author Shujian Yang
+//!
+//! Header file of class DirIndex
 
 #ifndef DIR_INDEX_H
 #define DIR_INDEX_H
@@ -14,10 +12,10 @@
 #include "Basics.h"
 
 namespace btrForensics{
-    /** Directory index data. */
-    class DirIndex: public ItemData {
+    //! Directory index data.
+    class DirIndex: public BtrfsItem {
     public:
-        const BtrfsKey key; /**< Key of the index. */
+        const BtrfsKey key; //!< Key of the index.
     private:
         uint64_t transId;
         uint16_t dataSize;
@@ -27,11 +25,11 @@ namespace btrForensics{
         char *dirData;
 
     public:
-        DirIndex(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
+        DirIndex(ItemHead* head, TSK_ENDIAN_ENUM endian, uint8_t arr[]);
 
         std::string getDirName() const;
 
-        std::string info() const override;
+        std::string dataInfo() const override;
     };
 }
 

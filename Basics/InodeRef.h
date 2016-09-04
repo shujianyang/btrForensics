@@ -9,22 +9,22 @@
 #include <iostream>
 #include <string>
 #include <tsk/libtsk.h>
-#include "Basics.h"
+#include "BtrfsItem.h"
 
 namespace btrForensics{
     //! Inode reference data.
-    class InodeRef : public ItemData {
+    class InodeRef : public BtrfsItem {
     private:
         uint64_t indexInDir;
         uint16_t nameSize;
         char *nameInDir;
 
     public:
-        InodeRef(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
+        InodeRef(ItemHead* head, TSK_ENDIAN_ENUM endian, uint8_t arr[]);
 
         std::string getDirName() const;
 
-        std::string info() const override;
+        std::string dataInfo() const override;
     };
 }
 

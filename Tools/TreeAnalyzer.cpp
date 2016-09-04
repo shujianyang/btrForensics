@@ -42,10 +42,10 @@ namespace btrForensics {
             if(header->isLeafNode()){
                 LeafNode *leaf = (LeafNode*)node;
 
-                for(auto group : leaf->itemGroups){
-                    if(group->getItemType() == 0x84){
-                        RootItem *rootItm = (RootItem*)(group->data);
-                        nodeAddrs[group->item->key.objId]
+                for(auto item : leaf->itemList){
+                    if(item->getItemType() == 0x84){
+                        RootItem *rootItm = (RootItem*)item;
+                        nodeAddrs[item->getId()]
                             = rootItm->getBlockNumber();
                     }
                 }
@@ -121,12 +121,11 @@ namespace btrForensics {
     //!        and a vector<uint64_t>& parameters and returns void.
     //!
     void TreeAnalyzer::leafRecursion(const BtrfsNode *node,
-            std::vector<uint64_t> &idTrace,
-            function<void(const LeafNode*, std::vector<uint64_t>&)> readOnlyFunc) const
+            function<void(const LeafNode*)> readOnlyFunc) const
     {
         if(node->nodeHeader->isLeafNode()){
             LeafNode *leaf = (LeafNode*)node;
-            readOnlyFunc(leaf, idTrace);
+            readOnlyFunc(leaf);
         }
         else {
             map<uint64_t, uint64_t> nodeAddrs;
@@ -145,7 +144,6 @@ namespace btrForensics {
 
                 uint64_t itemOffset = addr.second + BtrfsHeader::SIZE_OF_HEADER;
 
-                idTrace.push_back(addr.first);
                 BtrfsNode *newNode;
                 if(header->isLeafNode()){
                     newNode = new LeafNode(image, header, endian, itemOffset);
@@ -154,8 +152,7 @@ namespace btrForensics {
                     newNode = new InternalNode(image, header, endian, itemOffset);
                 }
 
-                leafRecursion(newNode, idTrace, readOnlyFunc);
-                idTrace.pop_back();
+                leafRecursion(newNode, readOnlyFunc);
             }
         }
     }

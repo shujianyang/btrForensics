@@ -17,12 +17,14 @@ namespace btrForensics {
     class FileTreeAnalyzer : public TreeAnalyzer {
     public:
         const BtrfsNode *fileTreeRoot; //!< Root node of the filesystem tree.
+        uint64_t rootDirId;
 
     public:
         FileTreeAnalyzer(TSK_IMG_INFO*, const LeafNode*, TSK_ENDIAN_ENUM);
 
         const void listDirItems(std::ostream& os) const;
 
+        DirContent* getRootDirConent() const;
     };
 }
 

@@ -4,10 +4,11 @@
 #include "Basics/Basics.h"
 #include "SuperBlock.h"
 
-#include "ItemGroup.h"
 #include "BtrfsNode.h"
 #include "InternalNode.h"
 #include "LeafNode.h"
+
+#include "DirContent.h"
 
 #endif
 

@@ -12,7 +12,7 @@
 
 namespace btrForensics{
 
-    void printLeafDir(const LeafNode*, std::vector<uint64_t>&, std::ostream&);
+    void printLeafDir(const LeafNode*, std::ostream&);
 
     bool searchForItem(const LeafNode*, uint64_t, uint8_t, const BtrfsItem* &);
 

@@ -13,7 +13,7 @@
 
 namespace btrForensics{
     //! Directory item data.
-    class DirItem : public ItemData {
+    class DirItem : public BtrfsItem {
     public:
         const BtrfsKey key; //!< Key of the item.
     private:
@@ -25,12 +25,12 @@ namespace btrForensics{
         char *dirData;
 
     public:
-        DirItem(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
+        DirItem(ItemHead* head, TSK_ENDIAN_ENUM endian, uint8_t arr[]);
 
         uint8_t getType() { return childType; } //!< Get the type of directory item.
         std::string getDirName() const;
 
-        std::string info() const override;
+        std::string dataInfo() const override;
     };
 }
 

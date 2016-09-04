@@ -57,7 +57,7 @@ namespace btrForensics{
         uint8_t chunkRootLevel;
         uint8_t logRootLevel;
 
-        const DevItem devItemData; //0xc9
+        const DevData devItemData; //0xc9
         uint8_t label[LABEL_SIZE];
 
     public:

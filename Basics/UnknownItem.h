@@ -1,6 +1,7 @@
-/** \file
-  * Header file of class UnknownItem
-  */
+//! \file
+//! \author Shujian Yang
+//!
+//! Header file of class UnknownItem
 
 #ifndef UNKNOWN_ITEM_H
 #define UNKNOWN_ITEM_H
@@ -11,11 +12,12 @@
 #include "Basics.h"
 
 namespace btrForensics{
-    /** Unknown item data. */
-    class UnknownItem : public ItemData {
+    //! Unknown item data.
+    class UnknownItem : public BtrfsItem {
     public:
-        /** Infomation unavailable yet. */
-        std::string info() const override { return "Unknown item"; }
+        UnknownItem(ItemHead* head):BtrfsItem(head) {}
+        //! Infomation unavailable yet.
+        std::string dataInfo() const override { return "Unknown item"; }
     };
 }
 

@@ -1,6 +1,7 @@
-/** \file
-  * Implementation of class RootItem
-  */
+//! \file
+//! \author Shujian Yang
+//!
+//! Implementation of class RootItem
 
 #include <sstream>
 #include "RootItem.h"
@@ -8,22 +9,21 @@
 
 namespace btrForensics{
 
-    /**
-     * Constructor of root item.
-     *
-     * \param endian The endianess of the array.
-     * \param arr Byte array storing root item data.
-     * 
-     */
-    RootItem::RootItem(TSK_ENDIAN_ENUM endian, uint8_t arr[])
-        :inode(endian, arr), dropProgress(endian, arr + 0xdc)
+    //! Constructor of root item.
+    //!
+    //! \param head Item head points to this data.
+    //! \param endian The endianess of the array.
+    //! \param arr Byte array storing root item data.
+    //!
+    RootItem::RootItem(ItemHead* head, TSK_ENDIAN_ENUM endian, uint8_t arr[])
+        :BtrfsItem(head), inode(endian, arr), dropProgress(endian, arr + 0xdc)
     {
-        int arIndex(InodeItem::SIZE_OF_INODE_ITEM);
+        int arIndex(InodeData::SIZE_OF_INODE_DATA);
 
         exptGen = read64Bit(endian, arr + arIndex);
         arIndex += 0x08;
 
-        objIdInThisTree = read64Bit(endian, arr + arIndex);
+        rootObjId = read64Bit(endian, arr + arIndex);
         arIndex += 0x08;
 
         blkNum = read64Bit(endian, arr + arIndex);
@@ -66,7 +66,7 @@ namespace btrForensics{
      * Overloaded stream operator.
      *
      */
-    std::ostream &operator<<(std::ostream &os, const RootItem &root)
+    /*std::ostream &operator<<(std::ostream &os, const RootItem &root)
     {
         os << "Object id in tree: " << root.objIdInThisTree << '\n';
 
@@ -79,16 +79,21 @@ namespace btrForensics{
         //os << "Level: " << (int)header.level;
 
         return os;
-    }
+    }*/
 
 
     /**
      * Return infomation about the item data as string.
      */
-    std::string RootItem::info() const
+    std::string RootItem::dataInfo() const
     {
         std::ostringstream oss;
-        oss << *this;
+        oss << "Object id of root directory: " << rootObjId << '\n';
+
+        oss << std::uppercase << std::hex
+            << "Block number: " << blkNum << '\n';
+
+        oss << "Bytes used: " << byteUsed << '\n';
         return oss.str();
     }
 

@@ -1,6 +1,7 @@
-/** \file
-  * Header file of class RootItem
-  */
+//! \file
+//! \author Shujian Yang
+//!
+//! Header file of class RootItem
 
 #ifndef ROOT_ITEM_H
 #define ROOT_ITEM_H
@@ -8,16 +9,17 @@
 #include <iostream>
 #include <string>
 #include <tsk/libtsk.h>
-#include "Basics.h"
+#include "BtrfsItem.h"
+#include "InodeData.h"
 
 namespace btrForensics{
-    /** Root item data. */
-    class RootItem : public ItemData {
+    //! Root item data.
+    class RootItem : public BtrfsItem {
     public:
-        const InodeItem inode; /**< Inode */
-    private:
+        const InodeData inode; //!< Inode
+
         uint64_t exptGen; //0xa0
-        uint64_t objIdInThisTree;
+        uint64_t rootObjId;
 
         uint64_t blkNum;  //0xb0
         uint64_t byteLimit;
@@ -27,17 +29,17 @@ namespace btrForensics{
 
         uint8_t flags[8]; //0xd0
         uint32_t numOfRefs;
-    public:
-        const BtrfsKey dropProgress; /**< Always 0(?) */
-    private:
+
+        const BtrfsKey dropProgress; //!< Always 0(?)
+
         uint8_t dropLevel;
         uint8_t rootLevel;
 
     public:
-        RootItem(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
+        RootItem(ItemHead* head, TSK_ENDIAN_ENUM endian, uint8_t arr[]);
 
         const uint64_t getBlockNumber() const;
-        std::string info() const override;
+        std::string dataInfo() const override;
         
         friend std::ostream &operator<<(std::ostream &os, const RootItem &root);
     };

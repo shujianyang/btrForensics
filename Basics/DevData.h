@@ -1,16 +1,17 @@
-/** \file
-  * Header file of DevItem.
-  */
+//! \file
+//! \author Shujian Yang
+//!
+//! Header file of DevData.
 
-#ifndef DEV_ITEM
-#define DEV_ITEM
+#ifndef DEV_DATA
+#define DEV_DATA
 
 #include "Utility/Uuid.h"
-#include "ItemData.h"
+#include "BtrfsItem.h"
 
 namespace btrForensics{
-    /** Device item data. */
-    class DevItem: public ItemData {
+    //! Device item data.
+    class DevData {
     private:
         uint64_t deviceId; //0x0
         uint64_t bytes;
@@ -32,9 +33,9 @@ namespace btrForensics{
         UUID fsUUID;
 
     public:
-        DevItem(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
+        DevData(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
 
-        std::string info() const override;
+        //std::string info() const override;
     };
 }
 

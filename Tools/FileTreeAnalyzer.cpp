@@ -23,20 +23,23 @@ namespace btrForensics {
         :TreeAnalyzer(img, rootNode, end)
     {
         uint64_t offset(0);
-        map<uint64_t, uint64_t> nodeAddrs;
+        bool foundFSTree(false);
+        RootItem *rootItm;
   
-        for(auto group : root->itemGroups){
-            if(group->getItemType() == 0x84){
-                RootItem *rootItm = (RootItem*)(group->data);
-                nodeAddrs[group->item->key.objId]
-                    = rootItm->getBlockNumber();
+        for(auto item : root->itemList){
+            if(item->getItemType() == 0x84 && item->getId() == 5){
+                rootItm = (RootItem*)item;
+                foundFSTree = true;
+                break;
             }
         }
-        if(nodeAddrs.find(5) == nodeAddrs.end()) {
+        if(!foundFSTree) {
             cerr << "Error. Filesystem tree not found." << endl;
             exit(1);
         }
-        offset = nodeAddrs[5];
+
+        offset = rootItm->getBlockNumber();
+        rootDirId = rootItm->rootObjId;
 
         char *headerArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
         tsk_img_read(image, offset, headerArr, BtrfsHeader::SIZE_OF_HEADER);
@@ -60,15 +63,23 @@ namespace btrForensics {
     //! \param os Output stream where the infomation is printed.
     const void FileTreeAnalyzer::listDirItems(ostream &os) const
     {
-        vector<uint64_t> trace{0x05};
-
-        //leafRecursion(fileTreeRoot, trace, bind(printLeafDir, _1, _2, ref(os)));
+        //leafRecursion(fileTreeRoot, bind(printLeafDir, _1, _2, ref(os)));
 
         //Choose Lamba over std::bind.
         //See "Effective Modern C++" Item 34.
-        leafRecursion(fileTreeRoot, trace,
-                [&os](const LeafNode *leaf, vector<uint64_t> &idTrace)
-                { printLeafDir(leaf, idTrace, os); });
+        leafRecursion(fileTreeRoot,
+                [&os](const LeafNode *leaf) { printLeafDir(leaf, os); });
     }
+
+
+    //! Retrieve the root directory.
+    /*DirContent* FileTreeAnalyzer::getRootDirConent() const
+    {
+        BtrfsItem* foundItem;
+        if(leafSearch(fileTreeRoot,
+                [&foundItem](const LeafNode* leaf)
+                { return searchForItem(leaf, rootDirId, 1, foundItem); })) {
+        }
+    }*/
 
 }

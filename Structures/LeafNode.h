@@ -17,7 +17,7 @@ namespace btrForensics{
     //! Leaf node in B-tree structure.
     class LeafNode : public BtrfsNode {
     public:
-        vector<ItemGroup*> itemGroups; //!< Stores items and their data.
+        vector<BtrfsItem*> itemList; //!< Stores items and their data.
 
     public:
         LeafNode(TSK_IMG_INFO*, const BtrfsHeader*, TSK_ENDIAN_ENUM, uint64_t);

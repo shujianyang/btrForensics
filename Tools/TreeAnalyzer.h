@@ -26,9 +26,8 @@ namespace btrForensics {
 
         const void navigateNodes(std::ostream& os, std::istream& is) const;
 
-        void leafRecursion(const BtrfsNode* node, std::vector<uint64_t>& idTrace,
-            std::function<void(const LeafNode*, std::vector<uint64_t>&)> readOnlyFunc
-                           ) const;
+        void leafRecursion(const BtrfsNode* node,
+            std::function<void(const LeafNode*)> readOnlyFunc) const;
 
         bool leafSearch(const BtrfsNode* node,
             std::function<bool(const LeafNode*)> searchFunc) const;

@@ -1,9 +1,7 @@
-/**
- * \file
- * \author Shujian Yang
- *
- * Implementation of class DirIndex
- */
+//! \file
+//! \author Shujian Yang
+//!
+//! Implementation of class DirIndex
 
 #include <sstream>
 #include "DirIndex.h"
@@ -11,15 +9,14 @@
 
 namespace btrForensics{
 
-    /**
-     * Constructor of dir index.
-     *
-     * \param endian The endianess of the array.
-     * \param arr Byte array storing dir index data.
-     *
-     */
-    DirIndex::DirIndex(TSK_ENDIAN_ENUM endian, uint8_t arr[])
-        :key(endian, arr)
+    //! Constructor of dir index.
+    //!
+    //! \param head Item head points to this data.
+    //! \param endian The endianess of the array.
+    //! \param arr Byte array storing root item data.
+    //!
+    DirIndex::DirIndex(ItemHead* head, TSK_ENDIAN_ENUM endian, uint8_t arr[])
+        :BtrfsItem(head), key(endian, arr)
     {
         int arIndex(BtrfsKey::SIZE_OF_KEY); //Key initialized already.
         transId = read64Bit(endian, arr + arIndex);
@@ -41,19 +38,15 @@ namespace btrForensics{
     }
 
 
-    /**
-     * Return name of the directory.
-     */
+    //! Return name of the directory.
     std::string DirIndex::getDirName() const
     {
         return std::string(dirName, nameSize);
     }
 
 
-    /**
-     * Return infomation about the item data as string.
-     */
-    std::string DirIndex::info() const
+    //! Return infomation about the item data as string.
+    std::string DirIndex::dataInfo() const
     {
         std::ostringstream oss;
         oss << key;

@@ -23,45 +23,45 @@ namespace btrForensics{
         uint32_t itemNum = header -> getNumOfItems();
 
         for(uint32_t i=0; i<itemNum; ++i){
-            diskArr = new char[BtrfsItem::SIZE_OF_ITEM]();
+            diskArr = new char[ItemHead::SIZE_OF_ITEM_HEAD]();
             tsk_img_read(img, startOffset + itemOffset,
-                    diskArr, BtrfsItem::SIZE_OF_ITEM);
+                    diskArr, ItemHead::SIZE_OF_ITEM_HEAD);
 
-            BtrfsItem *item = new BtrfsItem(endian, (uint8_t*)diskArr);
+            ItemHead *itemHead = new ItemHead(endian, (uint8_t*)diskArr);
 
-            ItemData *itmData = nullptr;
-            char *itmArr = new char[item->getDataSize()]();
-            uint64_t dataOffset = startOffset + item->getDataOffset();
-            tsk_img_read(img, dataOffset, itmArr, item->getDataSize());
+            BtrfsItem *newItem = nullptr;
+            char *itmArr = new char[itemHead->getDataSize()]();
+            uint64_t dataOffset = startOffset + itemHead->getDataOffset();
+            tsk_img_read(img, dataOffset, itmArr, itemHead->getDataSize());
 
-            switch(item->key.getItemType()){
+            switch(itemHead->key.getItemType()){
                 case 0x01:
-                    itmData = new InodeItem(TSK_LIT_ENDIAN, (uint8_t*)itmArr);
+                    newItem = new InodeItem(itemHead, TSK_LIT_ENDIAN, (uint8_t*)itmArr);
                     break;
                 case 0x0c:
-                    itmData = new InodeRef(TSK_LIT_ENDIAN, (uint8_t*)itmArr);
+                    newItem = new InodeRef(itemHead, TSK_LIT_ENDIAN, (uint8_t*)itmArr);
                     break;
                 case 0x54:
-                    itmData = new DirItem(TSK_LIT_ENDIAN, (uint8_t*)itmArr);
+                    newItem = new DirItem(itemHead, TSK_LIT_ENDIAN, (uint8_t*)itmArr);
                     break;
                 case 0x60:
-                    itmData = new DirIndex(TSK_LIT_ENDIAN, (uint8_t*)itmArr);
+                    newItem = new DirIndex(itemHead, TSK_LIT_ENDIAN, (uint8_t*)itmArr);
                     break;
                 case 0x84:
-                    itmData = new RootItem(TSK_LIT_ENDIAN, (uint8_t*)itmArr);
+                    newItem = new RootItem(itemHead, TSK_LIT_ENDIAN, (uint8_t*)itmArr);
                     break;
                 default:
-                    itmData = new UnknownItem();
+                    newItem = new UnknownItem(itemHead);
             }
 
-            if(item != nullptr && itmData != nullptr){
-                itemGroups.push_back(new ItemGroup(item, itmData));
+            if(newItem != nullptr){
+                itemList.push_back(newItem);
             }
 
             delete [] diskArr;
             delete [] itmArr;
 
-            itemOffset += BtrfsItem::SIZE_OF_ITEM;
+            itemOffset += ItemHead::SIZE_OF_ITEM_HEAD;
         }
     }
 
@@ -75,8 +75,8 @@ namespace btrForensics{
         oss << "Item list:" << '\n';
         oss << std::string(30, '=') << "\n\n";
 
-        for(auto &ig : itemGroups){
-            oss << *ig;
+        for(auto &item : itemList){
+            oss << *item;
             oss << std::string(30, '=') << "\n\n";
         }
 

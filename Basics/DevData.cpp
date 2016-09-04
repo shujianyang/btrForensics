@@ -1,20 +1,19 @@
-/** \file
-  * SuperBlock implementation.
-  */
+//! \file
+//! \author Shujian Yang
+//!
+//! Dev item infomation.
 
-#include "DevItem.h"
+#include "DevData.h"
 #include "Utility/ReadInt.h"
 
 namespace btrForensics{
 
-  /**
-    * Constructor of device item.
-    * 
-    * \param endian The endianess of the array.
-    * \param arr Byte array storing device item data.
-    * 
-    */
-  DevItem::DevItem(TSK_ENDIAN_ENUM endian, uint8_t arr[])
+  //! Constructor of device item.
+  //! 
+  //! \param endian The endianess of the array.
+  //! \param arr Byte array storing device item data.
+  //!
+  DevData::DevData(TSK_ENDIAN_ENUM endian, uint8_t arr[])
       :devUUID(endian, arr + 0x42), fsUUID(endian, arr + 0x52)
   {
       int arIndex(0);
@@ -52,13 +51,4 @@ namespace btrForensics{
       seekSpeed = arr[arIndex++];
       bandWidth = arr[arIndex++];
   }
-
-
-  /**
-     * Return infomation about the item data as string.
-     */
-    std::string DevItem::info() const
-    {
-        return "";
-    }
 }

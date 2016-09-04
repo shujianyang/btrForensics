@@ -12,29 +12,17 @@ namespace btrForensics{
     //! \param idTrace The vector used to trace node ids on the path from root to node.
     //! \param os Output stream where the infomation is printed.
     //!
-    void printLeafDir(const LeafNode* leaf,
-                      vector<uint64_t> &idTrace,
-                      std::ostream &os)
+    void printLeafDir(const LeafNode* leaf, std::ostream &os)
     {
-        bool foundDir(false);
-
-        for(auto group : leaf->itemGroups){
-            if(group->getItemType() == 0x54){
-                foundDir = true;
-                DirItem *dir = (DirItem*)(group->data);
+        for(auto item : leaf->itemList){
+            if(item->getItemType() == 0x54){
+                DirItem *dir = (DirItem*)item;
                 if(dir->getType() == 0x2)
                     os << "[Directory] ";
                 os << dir->getDirName() << '\n';
             }
         }
-
-        if(foundDir){
-            os << "Node id --- ";
-            for(auto id: idTrace){
-                os << "[" << id << "] ";
-            }
-            os << '\n' << std::endl;
-        }
+        os << '\n';
     }
 
 
@@ -43,17 +31,17 @@ namespace btrForensics{
     //! \param leaf Pointer to the leaf node.
     //! \param inodeNum The inode number to search for.
     //! \param type The type of the item to search for.
-    //! \param item Found BtrfsItem pointer.
+    //! \param item Found ItemHead pointer.
     //!
     //! \return True if the item is found.
     //!
     bool searchForItem(const LeafNode* leaf, uint64_t inodeNum,
-           uint8_t type, const BtrfsItem* &item)
+           uint8_t type, const BtrfsItem* &foundItem)
     {
-        for(auto group : leaf->itemGroups) {
-            if(group->getId() == inodeNum &&
-                    group->getItemType() == type) {
-                item = group->item;
+        for(auto item : leaf->itemList) {
+            if(item->getId() == inodeNum &&
+                    item->getItemType() == type) {
+                foundItem = item;
                 return true;
             }
         }

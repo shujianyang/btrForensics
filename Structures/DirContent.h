@@ -1,9 +1,7 @@
-/**
- * \file
- * \author Shujian Yang
- *
- * Header file of class DirContent.
- */
+//! \file
+//! \author Shujian Yang
+//!
+//! Header file of class DirContent.
 
 #ifndef DIR_CONTENT_H
 #define DIR_CONTENT_H
@@ -15,21 +13,19 @@
 #include "Basics/Basics.h"
 
 namespace btrForensics{
-    /**
-     * Record of a directory.
-     */
+    class FileTreeAnalyzer;
+
+    //! Record of a directory.
     class DirContent {
     public:
-        const InodeItem *inode; /**< Inode of the directory. */
-        const InodeRef *ref; /**< Inode of the directory. */
+        const InodeItem *inode; //!< Inode of the directory.
+        const InodeRef *ref; //!< Inode of the directory.
         std::vector<DirItem*> children;
 
-        /** Constructor of DirContent. */
-        DirContent(InodeItem*);
+        //! Constructor of DirContent.
+        DirContent(InodeItem* inode, FileTreeAnalyzer* fsTree);
 
-        /**
-         * Overloaded stream operator.
-         */
+        //! Overloaded stream operator.
         friend std::ostream &operator<<(std::ostream&, const DirContent&);
     };
 

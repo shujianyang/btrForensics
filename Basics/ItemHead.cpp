@@ -1,9 +1,9 @@
 //! \file
 //! \author Shujian Yang
 //!
-//! Implementation of class BtrfsItem
+//! Implementation of class ItemHead
 
-#include "BtrfsItem.h"
+#include "ItemHead.h"
 #include "Utility/ReadInt.h"
 
 namespace btrForensics{
@@ -11,9 +11,9 @@ namespace btrForensics{
     //! Constructor of Btrfs header.
     //!
     //! \param endian The endianess of the array.
-    //! \param arr Byte array storing item data.
+    //! \param arr Byte array storing item head data.
     //!
-    BtrfsItem::BtrfsItem(TSK_ENDIAN_ENUM endian, uint8_t arr[])
+    ItemHead::ItemHead(TSK_ENDIAN_ENUM endian, uint8_t arr[])
         :key(endian, arr)
     {
         int arIndex(BtrfsKey::SIZE_OF_KEY); //Key initialized already.
@@ -26,11 +26,11 @@ namespace btrForensics{
 
 
     //! Overloaded stream operator.
-    std::ostream &operator<<(std::ostream &os, const BtrfsItem &item)
+    std::ostream &operator<<(std::ostream &os, const ItemHead &itemHead)
     {
-        os << item.key;
-        os << "Data offset: 0x" << item.dataOffset << '\n';
-        os << "Data size: " << item.dataSize << '\n';
+        os << itemHead.key;
+        os << "Data offset: 0x" << itemHead.dataOffset << '\n';
+        os << "Data size: " << itemHead.dataSize << '\n';
 
         return os;
     }

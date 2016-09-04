@@ -11,11 +11,12 @@ namespace btrForensics{
 
     //! Constructor of dir item.
     //!
+    //! \param head Item head points to this data.
     //! \param endian The endianess of the array.
     //! \param arr Byte array storing dir item data.
     //!
-    DirItem::DirItem(TSK_ENDIAN_ENUM endian, uint8_t arr[])
-        :key(endian, arr)
+    DirItem::DirItem(ItemHead* head, TSK_ENDIAN_ENUM endian, uint8_t arr[])
+        :BtrfsItem(head), key(endian, arr)
     {
         int arIndex(BtrfsKey::SIZE_OF_KEY); //Key initialized already.
         transId = read64Bit(endian, arr + arIndex);
@@ -45,7 +46,7 @@ namespace btrForensics{
 
 
     //! Return infomation about the item data as string.
-    std::string DirItem::info() const
+    std::string DirItem::dataInfo() const
     {
         std::ostringstream oss;
         oss << key;
