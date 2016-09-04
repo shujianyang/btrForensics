@@ -3,6 +3,7 @@
 //!
 //! Implementations of functions declared in Functions.h.
 
+#include <algorithm>
 #include "Functions.h"
 
 namespace btrForensics{
@@ -35,14 +36,40 @@ namespace btrForensics{
     //!
     //! \return True if the item is found.
     //!
-    bool searchForItem(const LeafNode* leaf, uint64_t inodeNum,
+    bool findItem(const LeafNode* leaf, uint64_t inodeNum,
            uint8_t type, const BtrfsItem* &foundItem)
     {
         for(auto item : leaf->itemList) {
+            if(item->getId() > inodeNum) return false;
             if(item->getId() == inodeNum &&
                     item->getItemType() == type) {
                 foundItem = item;
                 return true;
+            }
+        }
+        return false;
+    }
+
+
+    //! Search for an item not found before with given inode number in a leaf node.
+    //!
+    //! \param leaf Pointer to the leaf node.
+    //! \param inodeNum The inode number to search for.
+    //! \param type The type of the item to search for.
+    //! \param foundItems Vector storing found items.
+    //!
+    //! \return True if the item is found.
+    //!
+    bool findNewItem(const LeafNode* leaf, uint64_t inodeNum, uint8_t type,
+           vector<BtrfsItem*> &vec)
+    {
+        for(auto item : leaf->itemList) {
+            if(item->getId() > inodeNum) return true;
+            if(item->getId() == inodeNum &&
+                    item->getItemType() == type) {
+                auto result = find(vec.cbegin(), vec.cend(), item);
+                if(result == vec.cend())
+                    vec.push_back(item);
             }
         }
         return false;

@@ -22,10 +22,9 @@ namespace btrForensics{
         const InodeRef *ref; //!< Inode of the directory.
         std::vector<DirItem*> children;
 
-        //! Constructor of DirContent.
-        DirContent(InodeItem* inode, FileTreeAnalyzer* fsTree);
+        DirContent(InodeItem* inodeItem, InodeRef* inodeRef,
+                std::vector<BtrfsItem*> &dirItems);
 
-        //! Overloaded stream operator.
         friend std::ostream &operator<<(std::ostream&, const DirContent&);
     };
 

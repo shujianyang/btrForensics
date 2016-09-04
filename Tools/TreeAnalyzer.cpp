@@ -66,7 +66,7 @@ namespace btrForensics {
             bool quit(false);
             string input;
             uint64_t inputId;
-            do{
+            while(true) {
                 os << "----Child nodes with following object ids are found." << endl;
                 for(auto addr : nodeAddrs)
                     os << addr.first << " ";
@@ -75,15 +75,13 @@ namespace btrForensics {
                 os << "(Enter 'q' to quit.)" << endl;
                 is >> input;
                 
-                quit = (input == "q");
-                if(quit) break;
+                if(input == "q") return;
 
                 stringstream(input) >> inputId;
                 if(nodeAddrs.find(inputId) != nodeAddrs.end()) break;
                 os << "Wrong object id, please enter a correct one.\n" << endl;
-            } while(true);
+            }
 
-            if(quit) break;
             os << endl;
 
             /*if(inputId == 0x05) {
@@ -120,7 +118,7 @@ namespace btrForensics {
     //! \param readOnlyFunc A function type which accepts a LeafNode* 
     //!        and a vector<uint64_t>& parameters and returns void.
     //!
-    void TreeAnalyzer::leafRecursion(const BtrfsNode *node,
+    void TreeAnalyzer::leafTraverse(const BtrfsNode *node,
             function<void(const LeafNode*)> readOnlyFunc) const
     {
         if(node->nodeHeader->isLeafNode()){
@@ -152,7 +150,7 @@ namespace btrForensics {
                     newNode = new InternalNode(image, header, endian, itemOffset);
                 }
 
-                leafRecursion(newNode, readOnlyFunc);
+                leafTraverse(newNode, readOnlyFunc);
             }
         }
     }

@@ -94,6 +94,7 @@ int main(int argc, char *argv[])
         cout << "MAIN MENU -- What do you want to do?" << endl;
         cout << "[1] Navigate to selected node and print information." << endl;
         cout << "[2] List all directory items in filesystem tree." << endl;
+        cout << "[3] Explor files from root directory." << endl;
         cout << "[q] Quit." << endl;
         cout << "Enter your choice: ";
         cin >> answer;
@@ -107,6 +108,10 @@ int main(int argc, char *argv[])
             cout << "Listing directory items...\n" << endl;
             FileTreeAnalyzer list(img, rootTree, TSK_LIT_ENDIAN);
             list.listDirItems(cout);
+        }
+        else if(answer == "3") {
+            FileTreeAnalyzer explorer(img, rootTree, TSK_LIT_ENDIAN);
+            explorer.explorFiles(cout, cin);
         }
         else if(answer == "q") break;
         else

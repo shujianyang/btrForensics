@@ -24,7 +24,10 @@ namespace btrForensics {
 
         const void listDirItems(std::ostream& os) const;
 
-        DirContent* getRootDirConent() const;
+        DirContent* getDirConent(uint64_t id) const;
+        DirContent* getRootDir() const;
+
+        const void explorFiles(std::ostream& os, std::istream& is) const;
     };
 }
 

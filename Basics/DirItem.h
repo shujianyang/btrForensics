@@ -28,6 +28,7 @@ namespace btrForensics{
         DirItem(ItemHead* head, TSK_ENDIAN_ENUM endian, uint8_t arr[]);
 
         uint8_t getType() { return childType; } //!< Get the type of directory item.
+        uint64_t getInodeNum() { return key.objId; }
         std::string getDirName() const;
 
         std::string dataInfo() const override;
