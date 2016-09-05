@@ -18,9 +18,9 @@ namespace btrForensics{
     //! Record of a directory.
     class DirContent {
     public:
-        const InodeItem *inode; //!< Inode of the directory.
-        const InodeRef *ref; //!< Inode of the directory.
-        std::vector<DirItem*> children;
+        const InodeItem *inode; //!< Inode of this directory.
+        const InodeRef *ref; //!< Inode points to this directory.
+        std::vector<DirItem*> children; //!< Entries of this directory.
 
         DirContent(InodeItem* inodeItem, InodeRef* inodeRef,
                 std::vector<BtrfsItem*> &dirItems);

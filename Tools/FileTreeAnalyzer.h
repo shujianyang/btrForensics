@@ -17,10 +17,11 @@ namespace btrForensics {
     class FileTreeAnalyzer : public TreeAnalyzer {
     public:
         const BtrfsNode *fileTreeRoot; //!< Root node of the filesystem tree.
-        uint64_t rootDirId;
+        uint64_t rootDirId; //!< Inode number of root directory.
 
     public:
         FileTreeAnalyzer(TSK_IMG_INFO*, const LeafNode*, TSK_ENDIAN_ENUM);
+        ~FileTreeAnalyzer() { delete fileTreeRoot; }
 
         const void listDirItems(std::ostream& os) const;
 

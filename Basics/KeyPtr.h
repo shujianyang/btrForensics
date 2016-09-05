@@ -18,7 +18,7 @@ namespace btrForensics{
     class KeyPtr{
     public:
         const BtrfsKey key; //!< Key of the key pointer.
-        BtrfsNode* childNode;
+        BtrfsNode* childNode; //!< Pointer to the child node pointed by this key pointer.
     private:
         uint64_t blkNum;
         uint64_t generation;

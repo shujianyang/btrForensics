@@ -16,14 +16,12 @@ namespace btrForensics{
     void printLeafDir(const LeafNode* leaf, std::ostream &os)
     {
         for(auto item : leaf->itemList){
-            if(item->getItemType() == 0x54){
+            if(item->getItemType() == ItemType::DIR_ITEM){
                 DirItem *dir = (DirItem*)item;
-                if(dir->getType() == 0x2)
-                    os << "[Directory] ";
-                os << dir->getDirName() << '\n';
+                if(dir->type == DirItemType::REGULAR_FILE)
+                    os << dir->getDirName() << '\n';
             }
         }
-        os << '\n';
     }
 
 
@@ -37,7 +35,7 @@ namespace btrForensics{
     //! \return True if the item is found.
     //!
     bool searchItem(const LeafNode* leaf, uint64_t inodeNum,
-           uint8_t type, const BtrfsItem* &foundItem)
+           ItemType type, const BtrfsItem* &foundItem)
     {
         for(auto item : leaf->itemList) {
             if(item->getId() > inodeNum) return false;
@@ -56,11 +54,11 @@ namespace btrForensics{
     //! \param leaf Pointer to the leaf node.
     //! \param inodeNum The inode number to search for.
     //! \param type The type of the item to search for.
-    //! \param foundItems Vector storing found items.
+    //! \param vec Vector storing found items.
     //!
-    //! \return True if the item has all been found.
+    //! \return True if all items with the inodeNum has been found.
     //!
-    bool searchMultiItems(const LeafNode* leaf, uint64_t inodeNum, uint8_t type,
+    bool searchMultiItems(const LeafNode* leaf, uint64_t inodeNum, ItemType type,
            vector<BtrfsItem*> &vec)
     {
         for(auto item : leaf->itemList) {

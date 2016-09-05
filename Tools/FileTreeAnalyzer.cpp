@@ -19,6 +19,7 @@ namespace btrForensics {
     //! \param img Image file.
     //! \param rootNode Root node of the tree to be analyzed.
     //! \param end The endianess of the array.
+    //!
     FileTreeAnalyzer::FileTreeAnalyzer(TSK_IMG_INFO *img,
             const LeafNode *rootNode, TSK_ENDIAN_ENUM end)
         :TreeAnalyzer(img, rootNode, end)
@@ -28,7 +29,7 @@ namespace btrForensics {
         RootItem *rootItm;
   
         for(auto item : root->itemList){
-            if(item->getItemType() == 0x84 && item->getId() == 5){
+            if(item->getItemType() == ItemType::ROOT_ITEM && item->getId() == 5){
                 rootItm = (RootItem*)item;
                 foundFSTree = true;
                 break;
@@ -40,7 +41,7 @@ namespace btrForensics {
         }
 
         offset = rootItm->getBlockNumber();
-        rootDirId = rootItm->rootObjId;
+        rootDirId = rootItm->getRootObjId();
 
         char *headerArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
         tsk_img_read(image, offset, headerArr, BtrfsHeader::SIZE_OF_HEADER);
@@ -76,25 +77,25 @@ namespace btrForensics {
 
     //! Locate the directory with give inode number.
     //!
-    //! \param Inode number of directory.
+    //! \param id Inode number of directory.
     //!
     DirContent* FileTreeAnalyzer::getDirConent(uint64_t id) const
     {
         const BtrfsItem* foundItem;
         if(leafSearchById(fileTreeRoot, id,
                 [&foundItem](const LeafNode* leaf, uint64_t targetId)
-                { return searchItem(leaf, targetId, 1, foundItem); })) {
+                { return searchItem(leaf, targetId, ItemType::INODE_ITEM, foundItem); })) {
             InodeItem* rootInode = (InodeItem*)foundItem;
 
             leafSearchById(fileTreeRoot, id,
                 [&foundItem](const LeafNode* leaf, uint64_t targetId)
-                { return searchItem(leaf, targetId, 0xc, foundItem); });
+                { return searchItem(leaf, targetId, ItemType::INODE_REF, foundItem); });
             InodeRef* rootRef = (InodeRef*)foundItem;
 
             vector<BtrfsItem*> foundItems;
             leafSearchById(fileTreeRoot, id,
                 [&foundItems](const LeafNode* leaf, uint64_t targetId)
-                { return searchMultiItems(leaf, targetId, 0x54, foundItems); });
+                { return searchMultiItems(leaf, targetId, ItemType::DIR_ITEM, foundItems); });
             
             return new DirContent(rootInode, rootRef, foundItems);
         }
@@ -108,7 +109,11 @@ namespace btrForensics {
     }
 
 
-
+    //! List files in a directory and navigate to subdirectory.
+    //!
+    //! \param os Output stream where the infomation is printed.
+    //! \param is Input stream telling which directory is the one to be read.
+    //!
     const void FileTreeAnalyzer::explorFiles(std::ostream& os, istream& is) const
     {
         DirContent* dir = getRootDir();
@@ -128,7 +133,7 @@ namespace btrForensics {
 
             int count(0);
             for(int i = 0; i < dir->children.size(); ++i) {
-                if(dir->children[i]->getType() == 0x2)
+                if(dir->children[i]->type == DirItemType::DIRECTORY)
                     dirList[++count] = i;
             }
             if(count == 0) {

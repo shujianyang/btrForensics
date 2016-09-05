@@ -23,7 +23,8 @@ Raw image of a btrfs partition, or a partition using btrfs.
 
 ###Current capability:
 1. Navigates to selected nodes in B-tree and prints information.
-2. List all directory items in filesystem tree.
+2. List all files in filesystem tree.
+3. Explor files in root and sub directories.
 
 ###Note:
 Reference of Btrfs structure can be found in [btrfs Wiki](https://btrfs.wiki.kernel.org/index.php/Main_Page).

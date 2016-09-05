@@ -43,7 +43,7 @@ namespace btrForensics {
                 LeafNode *leaf = (LeafNode*)node;
 
                 for(auto item : leaf->itemList){
-                    if(item->getItemType() == 0x84){
+                    if(item->getItemType() == ItemType::ROOT_ITEM){
                         RootItem *rootItm = (RootItem*)item;
                         nodeAddrs[item->getId()]
                             = rootItm->getBlockNumber();
@@ -107,7 +107,6 @@ namespace btrForensics {
     //! Recursively traverse child nodes and process it if it is a leaf node.
     //!
     //! \param node Node being processed.
-    //! \param idTrace The vector used to trace node ids on the path from root to node.
     //! \param readOnlyFunc A function type which accepts a LeafNode* 
     //!        and a vector<uint64_t>& parameters and returns void.
     //!

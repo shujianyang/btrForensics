@@ -11,11 +11,12 @@
 #include <tsk/libtsk.h>
 #include "Basics.h"
 
-namespace btrForensics{
+namespace btrForensics {
     //! Directory item data.
     class DirItem : public BtrfsItem {
     public:
         const BtrfsKey key; //!< Key of the item.
+        DirItemType type; //!< Type of directory item.
     private:
         uint64_t transId;
         uint16_t dataSize;
@@ -27,8 +28,8 @@ namespace btrForensics{
     public:
         DirItem(ItemHead* head, TSK_ENDIAN_ENUM endian, uint8_t arr[]);
 
-        uint8_t getType() { return childType; } //!< Get the type of directory item.
-        uint64_t getInodeNum() { return key.objId; }
+        //uint8_t getType() { return childType; } //!< Get the type of directory item.
+        uint64_t getInodeNum() { return key.objId; }  //!< Get inode number of target this item points to.
         std::string getDirName() const;
 
         std::string dataInfo() const override;

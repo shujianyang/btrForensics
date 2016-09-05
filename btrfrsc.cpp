@@ -93,8 +93,8 @@ int main(int argc, char *argv[])
     do {
         cout << "MAIN MENU -- What do you want to do?" << endl;
         cout << "[1] Navigate to selected node and print information." << endl;
-        cout << "[2] List all directory items in filesystem tree." << endl;
-        cout << "[3] Explor files from root directory." << endl;
+        cout << "[2] List all files in filesystem tree." << endl;
+        cout << "[3] Explor files in root and sub directories." << endl;
         cout << "[q] Quit." << endl;
         cout << "Enter your choice: ";
         cin >> answer;

@@ -23,6 +23,7 @@ namespace btrForensics {
 
     public:
         TreeAnalyzer(TSK_IMG_INFO*, const LeafNode*, TSK_ENDIAN_ENUM);
+        ~TreeAnalyzer() = default;
 
         const void navigateNodes(std::ostream& os, std::istream& is) const;
 

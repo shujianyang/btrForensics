@@ -52,39 +52,14 @@ namespace btrForensics{
     }
 
 
-    /**
-     * Get block number of the root node.
-     *
-     */
+    //! Get block number of the root node.
     const uint64_t RootItem::getBlockNumber() const
     {
         return blkNum;
     }
 
 
-    /**
-     * Overloaded stream operator.
-     *
-     */
-    /*std::ostream &operator<<(std::ostream &os, const RootItem &root)
-    {
-        os << "Object id in tree: " << root.objIdInThisTree << '\n';
-
-        os << std::uppercase << std::hex
-            << "Block number: " << root.blkNum << '\n';
-
-        os << "Bytes used: " << root.byteUsed << '\n';
-
-        //os << "Number of items: " << header.numOfItems << '\n';
-        //os << "Level: " << (int)header.level;
-
-        return os;
-    }*/
-
-
-    /**
-     * Return infomation about the item data as string.
-     */
+    //! Return infomation about the item data as string.
     std::string RootItem::dataInfo() const
     {
         std::ostringstream oss;

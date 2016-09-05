@@ -24,7 +24,7 @@ namespace btrForensics{
         //! Get id of the item.
         const uint64_t getId() const { return itemHead->key.objId; }
         //! Get type code of the item.
-        const uint8_t getItemType() const { return itemHead->key.getItemType(); }
+        const ItemType getItemType() const { return itemHead->key.itemType; }
         
         //! Overloaded stream operator.
         friend std::ostream &operator<<(std::ostream &os, const BtrfsItem &item)

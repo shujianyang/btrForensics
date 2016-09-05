@@ -23,7 +23,7 @@ namespace btrForensics {
     {
         for(auto child : dirc.children) {
             os << "  \e(0\x74\x71\e(B";
-            if(child->getType() == 0x2)
+            if(child->type == DirItemType::DIRECTORY)
                 os << "[" << child->getInodeNum() << "] ";
             else
                 os << " " << child->getInodeNum() << "  ";

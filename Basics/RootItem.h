@@ -15,11 +15,11 @@
 namespace btrForensics{
     //! Root item data.
     class RootItem : public BtrfsItem {
-    public:
+    private:
         const InodeData inode; //!< Inode
 
         uint64_t exptGen; //0xa0
-        uint64_t rootObjId;
+        uint64_t rootObjId; //!< Id of root directory, always 0x100.
 
         uint64_t blkNum;  //0xb0
         uint64_t byteLimit;
@@ -38,10 +38,9 @@ namespace btrForensics{
     public:
         RootItem(ItemHead* head, TSK_ENDIAN_ENUM endian, uint8_t arr[]);
 
+        const uint64_t getRootObjId() const { return rootObjId; } //!< Get id of root directory
         const uint64_t getBlockNumber() const;
         std::string dataInfo() const override;
-        
-        friend std::ostream &operator<<(std::ostream &os, const RootItem &root);
     };
 }
 

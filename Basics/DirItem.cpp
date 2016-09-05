@@ -34,6 +34,36 @@ namespace btrForensics{
             dirName[i] = arr[arIndex++];
         }
 
+        switch(childType) {
+            case 0:
+                type = DirItemType::UNKNOWN;
+                break;
+            case 1:
+                type = DirItemType::REGULAR_FILE;
+                break;
+            case 2:
+                type = DirItemType::DIRECTORY;
+                break;
+            case 3:
+                type = DirItemType::CHAR_DEVICE;
+                break;
+            case 4:
+                type = DirItemType::BLK_DEVICE;
+                break;
+            case 5:
+                type = DirItemType::FIFO;
+                break;
+            case 6:
+                type = DirItemType::SOCKET;
+                break;
+            case 7:
+                type = DirItemType::SYMB_LINK;
+                break;
+            case 8:
+                type = DirItemType::EXT_ATTR;
+                break;
+        }
+
         //Directory data not processed yet.
     }
 

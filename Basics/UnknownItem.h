@@ -15,6 +15,7 @@ namespace btrForensics{
     //! Unknown item data.
     class UnknownItem : public BtrfsItem {
     public:
+        //! Constructor of unknown item.
         UnknownItem(ItemHead* head):BtrfsItem(head) {}
         //! Infomation unavailable yet.
         std::string dataInfo() const override { return "Unknown item"; }

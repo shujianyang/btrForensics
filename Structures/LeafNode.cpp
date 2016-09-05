@@ -34,20 +34,20 @@ namespace btrForensics{
             uint64_t dataOffset = startOffset + itemHead->getDataOffset();
             tsk_img_read(img, dataOffset, itmArr, itemHead->getDataSize());
 
-            switch(itemHead->key.getItemType()){
-                case 0x01:
+            switch(itemHead->key.itemType){
+                case ItemType::INODE_ITEM:
                     newItem = new InodeItem(itemHead, TSK_LIT_ENDIAN, (uint8_t*)itmArr);
                     break;
-                case 0x0c:
+                case ItemType::INODE_REF:
                     newItem = new InodeRef(itemHead, TSK_LIT_ENDIAN, (uint8_t*)itmArr);
                     break;
-                case 0x54:
+                case ItemType::DIR_ITEM:
                     newItem = new DirItem(itemHead, TSK_LIT_ENDIAN, (uint8_t*)itmArr);
                     break;
-                case 0x60:
+                case ItemType::DIR_INDEX:
                     newItem = new DirIndex(itemHead, TSK_LIT_ENDIAN, (uint8_t*)itmArr);
                     break;
-                case 0x84:
+                case ItemType::ROOT_ITEM:
                     newItem = new RootItem(itemHead, TSK_LIT_ENDIAN, (uint8_t*)itmArr);
                     break;
                 default:
