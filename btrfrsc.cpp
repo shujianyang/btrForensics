@@ -85,7 +85,11 @@ int main(int argc, char *argv[])
 
     uint64_t itemListStart = supblk.getRootTrRootAddr() + BtrfsHeader::SIZE_OF_HEADER;
 
-    const LeafNode *rootTree = new LeafNode(img, rootHeader, TSK_LIT_ENDIAN, itemListStart);
+    const BtrfsNode* rootTree;
+    if(rootHeader->isLeafNode())
+        rootTree = new LeafNode(img, rootHeader, TSK_LIT_ENDIAN, itemListStart);
+    else
+        rootTree = new InternalNode(img, rootHeader, TSK_LIT_ENDIAN, itemListStart);
     //Root tree root built.
 
     string answer;

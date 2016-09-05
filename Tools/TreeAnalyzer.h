@@ -17,12 +17,12 @@ namespace btrForensics {
     //! Analyze a tree in btrfs.
     class TreeAnalyzer {
     public:
-        const LeafNode *root; //!< Root node of the tree.
+        const BtrfsNode* root; //!< Root node of the tree.
         TSK_IMG_INFO *image; //!< Image file.
         TSK_ENDIAN_ENUM endian; //!< Endianness.
 
     public:
-        TreeAnalyzer(TSK_IMG_INFO*, const LeafNode*, TSK_ENDIAN_ENUM);
+        TreeAnalyzer(TSK_IMG_INFO*, const BtrfsNode*, TSK_ENDIAN_ENUM);
         ~TreeAnalyzer() = default;
 
         const void navigateNodes(std::ostream& os, std::istream& is) const;

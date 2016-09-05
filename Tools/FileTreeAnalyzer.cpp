@@ -21,21 +21,27 @@ namespace btrForensics {
     //! \param end The endianess of the array.
     //!
     FileTreeAnalyzer::FileTreeAnalyzer(TSK_IMG_INFO *img,
-            const LeafNode *rootNode, TSK_ENDIAN_ENUM end)
+            const BtrfsNode* rootNode, TSK_ENDIAN_ENUM end)
         :TreeAnalyzer(img, rootNode, end)
     {
         uint64_t offset(0);
         bool foundFSTree(false);
-        RootItem *rootItm;
+        RootItem* rootItm;
   
-        for(auto item : root->itemList){
+        /*for(auto item : root->itemList){
             if(item->getItemType() == ItemType::ROOT_ITEM && item->getId() == 5){
                 rootItm = (RootItem*)item;
                 foundFSTree = true;
                 break;
             }
+        }*/
+        const BtrfsItem* foundItem;
+        if(leafSearchById(rootNode, 5,
+                [&foundItem](const LeafNode* leaf, uint64_t targetId)
+                { return searchItem(leaf, targetId, ItemType::ROOT_ITEM, foundItem); })) {
+            rootItm = (RootItem*)foundItem;
         }
-        if(!foundFSTree) {
+        else {
             cerr << "Error. Filesystem tree not found." << endl;
             exit(1);
         }

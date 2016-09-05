@@ -20,7 +20,7 @@ namespace btrForensics {
     //! \param end The endianess of the array.
     //!
     TreeAnalyzer::TreeAnalyzer(TSK_IMG_INFO *img,
-            const LeafNode *rootNode, TSK_ENDIAN_ENUM end)
+            const BtrfsNode* rootNode, TSK_ENDIAN_ENUM end)
         :image(img), root(rootNode), endian(end) {}
 
 

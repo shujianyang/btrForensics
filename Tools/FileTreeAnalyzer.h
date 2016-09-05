@@ -20,7 +20,7 @@ namespace btrForensics {
         uint64_t rootDirId; //!< Inode number of root directory.
 
     public:
-        FileTreeAnalyzer(TSK_IMG_INFO*, const LeafNode*, TSK_ENDIAN_ENUM);
+        FileTreeAnalyzer(TSK_IMG_INFO*, const BtrfsNode*, TSK_ENDIAN_ENUM);
         ~FileTreeAnalyzer() { delete fileTreeRoot; }
 
         const void listDirItems(std::ostream& os) const;
