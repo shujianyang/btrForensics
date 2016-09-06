@@ -1,13 +1,13 @@
 //! \file
 //! \author Shujian Yang
 //!
-//! Implementation of class FileTreeAnalyzer.
+//! Implementation of class FilesystemTree.
 
 #include <map>
 #include <sstream>
 #include <functional>
 #include <vector>
-#include "FileTreeAnalyzer.h"
+#include "FilesystemTree.h"
 #include "Functions.h"
 
 using namespace std;
@@ -20,23 +20,27 @@ namespace btrForensics {
     //! \param rootNode Root node of the tree to be analyzed.
     //! \param end The endianess of the array.
     //!
-    FileTreeAnalyzer::FileTreeAnalyzer(TSK_IMG_INFO *img,
-            const BtrfsNode* rootNode, TSK_ENDIAN_ENUM end)
-        :TreeAnalyzer(img, rootNode, end)
+    FilesystemTree::FilesystemTree(const BtrfsNode* rootNode, const TreeExaminer* treeExaminer)
+            :examiner(treeExaminer)
     {
         uint64_t offset(0);
         bool foundFSTree(false);
         RootItem* rootItm;
-  
-        /*for(auto item : root->itemList){
-            if(item->getItemType() == ItemType::ROOT_ITEM && item->getId() == 5){
-                rootItm = (RootItem*)item;
-                foundFSTree = true;
-                break;
-            }
-        }*/
+
+        uint64_t defaultId(0);
         const BtrfsItem* foundItem;
-        if(leafSearchById(rootNode, 5,
+        if(examiner->leafSearchById(rootNode, 6,
+                [&foundItem](const LeafNode* leaf, uint64_t targetId)
+                { return searchItem(leaf, targetId, ItemType::DIR_ITEM, foundItem); })) {
+            DirItem* dir = (DirItem*)foundItem;
+            defaultId = dir->key.objId;
+        }
+        else {
+            cerr << "Error. Filesystem tree not found." << endl;
+            exit(1);
+        }
+  
+        if(examiner->leafSearchById(rootNode, defaultId,
                 [&foundItem](const LeafNode* leaf, uint64_t targetId)
                 { return searchItem(leaf, targetId, ItemType::ROOT_ITEM, foundItem); })) {
             rootItm = (RootItem*)foundItem;
@@ -47,21 +51,22 @@ namespace btrForensics {
         }
 
         offset = rootItm->getBlockNumber();
+        uint64_t physicalAddr = examiner->getPhysicalAddr(offset);
         rootDirId = rootItm->getRootObjId();
 
         char *headerArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
-        tsk_img_read(image, offset, headerArr, BtrfsHeader::SIZE_OF_HEADER);
+        tsk_img_read(examiner->image, physicalAddr, headerArr, BtrfsHeader::SIZE_OF_HEADER);
         const BtrfsHeader *fileTreeHeader = 
             new BtrfsHeader(TSK_LIT_ENDIAN, (uint8_t*)headerArr);
         delete [] headerArr;
 
-        uint64_t itemOffset = offset + BtrfsHeader::SIZE_OF_HEADER;
+        uint64_t itemOffset = physicalAddr + BtrfsHeader::SIZE_OF_HEADER;
 
         if(fileTreeHeader->isLeafNode()){
-            fileTreeRoot = new LeafNode(image, fileTreeHeader, TSK_LIT_ENDIAN, itemOffset);
+            fileTreeRoot = new LeafNode(examiner->image, fileTreeHeader, examiner->endian, itemOffset);
         }
         else {
-            fileTreeRoot = new InternalNode(image, fileTreeHeader, TSK_LIT_ENDIAN, itemOffset);
+            fileTreeRoot = new InternalNode(examiner->image, fileTreeHeader, examiner->endian, itemOffset);
         }
     }
 
@@ -70,13 +75,13 @@ namespace btrForensics {
     //!
     //! \param os Output stream where the infomation is printed.
     //!
-    const void FileTreeAnalyzer::listDirItems(ostream &os) const
+    const void FilesystemTree::listDirItems(ostream &os) const
     {
         //leafTraverse(fileTreeRoot, bind(printLeafDir, _1, _2, ref(os)));
 
         //Choose Lamba over std::bind.
         //See "Effective Modern C++" Item 34.
-        leafTraverse(fileTreeRoot,
+        examiner->leafTraverse(fileTreeRoot,
                 [&os](const LeafNode *leaf) { printLeafDir(leaf, os); });
     }
 
@@ -85,21 +90,21 @@ namespace btrForensics {
     //!
     //! \param id Inode number of directory.
     //!
-    DirContent* FileTreeAnalyzer::getDirConent(uint64_t id) const
+    DirContent* FilesystemTree::getDirConent(uint64_t id) const
     {
         const BtrfsItem* foundItem;
-        if(leafSearchById(fileTreeRoot, id,
+        if(examiner->leafSearchById(fileTreeRoot, id,
                 [&foundItem](const LeafNode* leaf, uint64_t targetId)
                 { return searchItem(leaf, targetId, ItemType::INODE_ITEM, foundItem); })) {
             InodeItem* rootInode = (InodeItem*)foundItem;
 
-            leafSearchById(fileTreeRoot, id,
+            examiner->leafSearchById(fileTreeRoot, id,
                 [&foundItem](const LeafNode* leaf, uint64_t targetId)
                 { return searchItem(leaf, targetId, ItemType::INODE_REF, foundItem); });
             InodeRef* rootRef = (InodeRef*)foundItem;
 
             vector<BtrfsItem*> foundItems;
-            leafSearchById(fileTreeRoot, id,
+            examiner->leafSearchById(fileTreeRoot, id,
                 [&foundItems](const LeafNode* leaf, uint64_t targetId)
                 { return searchMultiItems(leaf, targetId, ItemType::DIR_ITEM, foundItems); });
             
@@ -109,7 +114,7 @@ namespace btrForensics {
     }
 
     //! Locate the root directory.
-    DirContent* FileTreeAnalyzer::getRootDir() const
+    DirContent* FilesystemTree::getRootDir() const
     {
         return getDirConent(rootDirId);
     }
@@ -120,7 +125,7 @@ namespace btrForensics {
     //! \param os Output stream where the infomation is printed.
     //! \param is Input stream telling which directory is the one to be read.
     //!
-    const void FileTreeAnalyzer::explorFiles(std::ostream& os, istream& is) const
+    const void FilesystemTree::explorFiles(std::ostream& os, istream& is) const
     {
         DirContent* dir = getRootDir();
         if(dir == nullptr) {

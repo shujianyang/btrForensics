@@ -61,8 +61,13 @@ namespace btrForensics{
         uint8_t label[LABEL_SIZE];
 
     public:
+        const BtrfsKey chunkKey;
+        const ChunkData chunkData;
+
+    public:
         SuperBlock(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
 
+        const uint64_t getChunkTrRootAddr() const;
         const uint64_t getRootTrRootAddr() const;
 
         const std::string printMagic() const;
@@ -70,7 +75,7 @@ namespace btrForensics{
         const std::string printLabel() const;
 
         static const int ADDR_OF_SPR_BLK = 0x10000;  //!< Address of superblock on disk.
-        static const int SIZE_OF_SPR_BLK = 0x22b;  //!< Size of superblock on disk.
+        static const int SIZE_OF_SPR_BLK = 0xb2b;  //!< Size of superblock on disk.
 
         friend std::ostream &operator<<(std::ostream &os, SuperBlock &supb);
     };

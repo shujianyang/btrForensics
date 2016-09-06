@@ -16,7 +16,8 @@ namespace btrForensics{
     //! \param arr Byte array storing super block data.
     //! 
     SuperBlock::SuperBlock(TSK_ENDIAN_ENUM endian, uint8_t arr[])
-        :fsUUID(endian, arr + 0x20), devItemData(endian, arr + 0xc9)
+        :fsUUID(endian, arr + 0x20), devItemData(endian, arr + 0xc9),
+         chunkKey(endian, arr + 0x32b), chunkData(endian, arr + 0x33c)
     {
         int arIndex(0);
         for(int i=0; i<0x20; i++){
@@ -105,9 +106,22 @@ namespace btrForensics{
     }
 
 
+    //! Get chunk tree root address from superblock.
+    //!
+    //! \return 8-byte chunk tree root address.
+    //!
+    const uint64_t SuperBlock::getChunkTrRootAddr() const
+    {
+        //if(chunkTrRootAddr == chunkKey.offset)
+        //    return chunkData.getOffset();
+        //else
+            return chunkTrRootAddr;
+    }
+
+
     //! Get root tree root address from superblock.
     //!
-    //! \return 8 byte root tree root address.
+    //! \return 8-byte root tree root address.
     //!
     const uint64_t SuperBlock::getRootTrRootAddr() const
     {
@@ -200,6 +214,8 @@ namespace btrForensics{
         os << "Sector\tNode\tLeaf\tStripe" << '\n';
         os << supb.sectorSize << "\t" << supb.nodeSize << "\t" << 
             supb.leafSize << "\t" << supb.stripeSize;
+        os << std::endl;
+
         return os;
     }
 

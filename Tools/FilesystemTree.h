@@ -1,27 +1,29 @@
 //! \file
 //! \author Shujian Yang
 //!
-//! Header file of class FileTreeAnalyzer.
+//! Header file of class FilesystemTree.
 
-#ifndef FILE_TREE_ANA_H
-#define FILE_TREE_ANA_H
+#ifndef FILE_TREE_H
+#define FILE_TREE_H
 
 #include <iostream>
 #include <vector>
 #include <functional>
 #include <tsk/libtsk.h>
-#include "TreeAnalyzer.h"
+#include "TreeExaminer.h"
 
 namespace btrForensics {
     //! Analyze the file system tree in btrfs.
-    class FileTreeAnalyzer : public TreeAnalyzer {
+    class FilesystemTree {
     public:
         const BtrfsNode *fileTreeRoot; //!< Root node of the filesystem tree.
         uint64_t rootDirId; //!< Inode number of root directory.
 
+        const TreeExaminer* examiner;
+
     public:
-        FileTreeAnalyzer(TSK_IMG_INFO*, const BtrfsNode*, TSK_ENDIAN_ENUM);
-        ~FileTreeAnalyzer() { delete fileTreeRoot; }
+        FilesystemTree(const BtrfsNode*, const TreeExaminer*);
+        ~FilesystemTree() { delete fileTreeRoot; }
 
         const void listDirItems(std::ostream& os) const;
 

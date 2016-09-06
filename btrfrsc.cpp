@@ -66,31 +66,19 @@ int main(int argc, char *argv[])
     SuperBlock supblk(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
 
     cout << supblk << endl;
-    cout << endl;
 
-    cout << supblk.printMagic() << endl;
+    cout << "Magic: " << supblk.printMagic() << endl;
 
     cout << supblk.printSpace() << endl;
     cout << endl;
 
     cout << "Label: " << supblk.printLabel() << endl;
+    cout << "Chunk tree physical address: 0x" << supblk.getChunkTrRootAddr() << endl;
 
-    cout << "\n\n" << endl;
+    cout << "\n" << endl;
     delete [] diskArr;
 
-    diskArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
-    tsk_img_read(img, supblk.getRootTrRootAddr(), diskArr, BtrfsHeader::SIZE_OF_HEADER);
-    BtrfsHeader *rootHeader = new BtrfsHeader(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
-    delete [] diskArr;
-
-    uint64_t itemListStart = supblk.getRootTrRootAddr() + BtrfsHeader::SIZE_OF_HEADER;
-
-    const BtrfsNode* rootTree;
-    if(rootHeader->isLeafNode())
-        rootTree = new LeafNode(img, rootHeader, TSK_LIT_ENDIAN, itemListStart);
-    else
-        rootTree = new InternalNode(img, rootHeader, TSK_LIT_ENDIAN, itemListStart);
-    //Root tree root built.
+    TreeExaminer examiner(img, TSK_LIT_ENDIAN, &supblk);
 
     string answer;
     
@@ -105,17 +93,14 @@ int main(int argc, char *argv[])
 
         cout << endl;
         if(answer == "1"){
-            TreeAnalyzer navigator(img, rootTree, TSK_LIT_ENDIAN);
-            navigator.navigateNodes(cout, cin);
+            examiner.navigateNodes(cout, cin);
         }
         else if(answer == "2") {
             cout << "Listing directory items...\n" << endl;
-            FileTreeAnalyzer list(img, rootTree, TSK_LIT_ENDIAN);
-            list.listDirItems(cout);
+            examiner.fsTree->listDirItems(cout);
         }
         else if(answer == "3") {
-            FileTreeAnalyzer explorer(img, rootTree, TSK_LIT_ENDIAN);
-            explorer.explorFiles(cout, cin);
+            examiner.fsTree->explorFiles(cout, cin);
         }
         else if(answer == "q") break;
         else

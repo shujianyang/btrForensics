@@ -17,6 +17,11 @@ namespace btrForensics{
     bool searchItem(const LeafNode*, uint64_t, ItemType, const BtrfsItem*&);
 
     bool searchMultiItems(const LeafNode*, uint64_t, ItemType, vector<BtrfsItem*>&);
+
+    bool getPhyAddr(const LeafNode* leaf, uint64_t targetLogAddr, uint64_t& targetPhyAddr);
+
+    uint64_t getChunkAddr(uint64_t logicalAddr,
+                const BtrfsKey* key, const ChunkData* chunkData);
 }
 
 #endif

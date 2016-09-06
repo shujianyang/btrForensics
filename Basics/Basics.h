@@ -17,6 +17,8 @@
 #include "DirItem.h"
 #include "DirIndex.h"
 
+#include "ChunkItem.h"
+
 #include "UnknownItem.h"
 
 #endif

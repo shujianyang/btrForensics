@@ -73,5 +73,54 @@ namespace btrForensics{
         return false;
     }
 
+
+    //! Search for an item with given inode number in a leaf node.
+    //!
+    //! \param leaf Pointer to the leaf node.
+    //! \param inodeNum The inode number to search for.
+    //! \param type The type of the item to search for.
+    //! \param item Found ItemHead pointer.
+    //!
+    //! \return True if the item is found.
+    //!
+    bool getPhyAddr(const LeafNode* leaf, uint64_t targetLogAddr,
+           uint64_t& targetPhyAddr)
+    {
+        BtrfsItem* target(nullptr);
+
+        for(auto item : leaf->itemList) {
+            if(item->getItemType() != ItemType::CHUNK_ITEM)
+                continue;
+            if(item->itemHead->key.offset <= targetLogAddr)
+                target = item;
+            else
+                break;
+        }
+
+        if(target == nullptr)
+            targetPhyAddr = targetLogAddr;
+
+        ChunkItem* chunk = (ChunkItem*)target;
+        targetPhyAddr = 
+            getChunkAddr(targetLogAddr, &chunk->itemHead->key, &chunk->data);
+        
+        return true;
+    }
+
+
+    uint64_t getChunkAddr(uint64_t logicalAddr,
+            const BtrfsKey* key, const ChunkData* chunkData)
+    {
+        uint64_t physicalAddr;
+        uint64_t chunkLogical = key->offset;
+        uint64_t chunkPhysical = chunkData->getOffset();
+
+        if(logicalAddr < chunkLogical)
+            return 0;
+        
+        physicalAddr = logicalAddr - chunkLogical + chunkPhysical;
+        return physicalAddr;
+    }
+
 }
 

@@ -1,10 +1,10 @@
 //! \file
 //! \author Shujian Yang
 //!
-//! Header file of class TreeAnalyzer.
+//! Header file of class TreeExaminer.
 
-#ifndef TREE_ANA_H
-#define TREE_ANA_H
+#ifndef TREE_EXAMINER_H
+#define TREE_EXAMINER_H
 
 #include <iostream>
 #include <vector>
@@ -14,16 +14,24 @@
 #include "Structures/Structures.h"
 
 namespace btrForensics {
-    //! Analyze a tree in btrfs.
-    class TreeAnalyzer {
+    class ChunkTree;
+    class FilesystemTree;
+
+    //! Examine a tree in btrfs.
+    class TreeExaminer {
     public:
-        const BtrfsNode* root; //!< Root node of the tree.
-        TSK_IMG_INFO *image; //!< Image file.
+        ChunkTree* chunkTree; //!< The chunk tree.
+        FilesystemTree* fsTree; //!< The file system tree.
+        const BtrfsNode* rootTree; //!< Root node of the root tree.
+
+        TSK_IMG_INFO* image; //!< Image file.
         TSK_ENDIAN_ENUM endian; //!< Endianness.
 
     public:
-        TreeAnalyzer(TSK_IMG_INFO*, const BtrfsNode*, TSK_ENDIAN_ENUM);
-        ~TreeAnalyzer() = default;
+        TreeExaminer(TSK_IMG_INFO*, TSK_ENDIAN_ENUM, const SuperBlock*);
+        ~TreeExaminer() = default;
+
+        uint64_t getPhysicalAddr(uint64_t logicalAddr) const;
 
         const void navigateNodes(std::ostream& os, std::istream& is) const;
 

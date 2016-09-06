@@ -6,8 +6,9 @@
 
 #include "btrfrsc.h"
 
-#include "TreeAnalyzer.h"
-#include "FileTreeAnalyzer.h"
+#include "TreeExaminer.h"
+#include "ChunkTree.h"
+#include "FilesystemTree.h"
 
 #include "Functions.h"
 
