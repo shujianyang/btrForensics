@@ -29,8 +29,6 @@ namespace btrForensics{
     std::ostream &operator<<(std::ostream &os, const ItemHead &itemHead)
     {
         os << itemHead.key;
-        os << "Data offset: 0x" << itemHead.dataOffset << '\n';
-        os << "Data size: " << itemHead.dataSize << '\n';
 
         return os;
     }

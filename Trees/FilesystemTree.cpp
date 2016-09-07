@@ -5,10 +5,11 @@
 
 #include <map>
 #include <sstream>
+#include <iomanip>
 #include <functional>
 #include <vector>
 #include "FilesystemTree.h"
-#include "Functions.h"
+#include "Tools/Functions.h"
 
 using namespace std;
 //using namespace std::placeholders;
@@ -16,9 +17,8 @@ using namespace std;
 namespace btrForensics {
     //! Constructor of tree analyzer.
     //!
-    //! \param img Image file.
-    //! \param rootNode Root node of the tree to be analyzed.
-    //! \param end The endianess of the array.
+    //! \param rootNode Root node of the root tree to be analyzed.
+    //! \param treeExaminer Tree examiner used to analyze file system tree.
     //!
     FilesystemTree::FilesystemTree(const BtrfsNode* rootNode, const TreeExaminer* treeExaminer)
             :examiner(treeExaminer)
@@ -33,7 +33,7 @@ namespace btrForensics {
                 [&foundItem](const LeafNode* leaf, uint64_t targetId)
                 { return searchItem(leaf, targetId, ItemType::DIR_ITEM, foundItem); })) {
             DirItem* dir = (DirItem*)foundItem;
-            defaultId = dir->key.objId;
+            defaultId = dir->targetKey.objId;
         }
         else {
             cerr << "Error. Filesystem tree not found." << endl;
@@ -136,6 +136,18 @@ namespace btrForensics {
         os << "Root directory content:" <<endl;
         os << *dir;
 
+        os << "The following items are subvolumes or snapshots:" << endl;
+        for(auto dirItem : dir->children) {
+            if(dirItem->getTargetType() == ItemType::ROOT_ITEM) {
+                ostringstream oss;
+                os << "  \e(0\x74\x71\e(B" << dec;
+                oss << "[" << dirItem->getInodeNum() << "]";
+                os << setfill(' ') << setw(9) << oss.str();
+                os << "  " << dirItem->getDirName() << '\n';
+            }
+        }
+        os << endl;
+
         while(true) {
             uint64_t targetInode;
             map<int, int> dirList;
@@ -144,7 +156,8 @@ namespace btrForensics {
 
             int count(0);
             for(int i = 0; i < dir->children.size(); ++i) {
-                if(dir->children[i]->type == DirItemType::DIRECTORY)
+                if(dir->children[i]->type == DirItemType::DIRECTORY 
+                        && dir->children[i]->getTargetType() == ItemType::INODE_ITEM)
                     dirList[++count] = i;
             }
             if(count == 0) {
@@ -162,7 +175,8 @@ namespace btrForensics {
                     os << "Child directory with following inode numbers are found." << endl;
                     for(auto entry : dirList) {
                         DirItem* item = dir->children[entry.second];
-                        os << "[" << entry.first << "] " << item->getInodeNum() << " " << item->getDirName() << '\n';
+                        os << "[" << dec << setfill(' ') << setw(2) << entry.first << "] "
+                            << setw(7) << item->getInodeNum() << "   " << item->getDirName() << '\n';
                     }
                     os << endl;
                     os << "To visit a child directory, please enter its index in the list:\n";
@@ -194,7 +208,7 @@ namespace btrForensics {
                 os << "Error, Directory not found." << endl;
                 return;
             }
-            os << std::string(30, '=') << "\n\n";
+            os << std::string(60, '=') << "\n\n";
             os << "Directory content:" <<endl;
             os << *dir;
         }

@@ -4,7 +4,6 @@
 //! Implementation of class TreeExaminer.
 
 #include <map>
-#include <iostream>
 #include <sstream>
 #include <functional>
 #include "TreeExaminer.h"
@@ -18,6 +17,7 @@ namespace btrForensics {
     //!
     //! \param img Image file.
     //! \param end The endianess of the array.
+    //! \param superBlk Pointer to btrfs super block.
     //!
     TreeExaminer::TreeExaminer(TSK_IMG_INFO *img, TSK_ENDIAN_ENUM end,
             const SuperBlock* superBlk)
@@ -25,13 +25,9 @@ namespace btrForensics {
     {
         chunkTree = new ChunkTree(superBlk, this);
 
-        uint64_t rootTreelogAddr = superBlk->getRootTrRootAddr();
-        cout << std::uppercase << std::hex;
-        //cout << "[[[[[[[[[[" << rootTreelogAddr << "]]]]]]]]]]" << endl;
+        uint64_t rootTreelogAddr = superBlk->getRootLogAddr();
 
         uint64_t rootTreePhyAddr = chunkTree->getPhysicalAddr(rootTreelogAddr);
-
-        //cout << "[[[[[[[[[[" << rootTreePhyAddr << "]]]]]]]]]]" << endl;
 
         char* diskArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
         tsk_img_read(image, rootTreePhyAddr, diskArr, BtrfsHeader::SIZE_OF_HEADER);
@@ -49,6 +45,11 @@ namespace btrForensics {
     }
 
 
+    //! Convert logical address to physical address.
+    //!
+    //! \param logicalAddr 64-bit logial address.
+    //! \return 64-bit physical address.
+    //!
     uint64_t TreeExaminer::getPhysicalAddr(uint64_t logicalAddr) const
     {
         return chunkTree->getPhysicalAddr(logicalAddr);

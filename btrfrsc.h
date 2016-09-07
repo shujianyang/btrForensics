@@ -2,7 +2,7 @@
 #define BTRFRSC_H
 
 #include "Basics/Basics.h"
-#include "Structures/Structures.h"
+#include "Trees/Trees.h"
 #include "Tools/Tools.h"
 #include "Utility/Utility.h"
 

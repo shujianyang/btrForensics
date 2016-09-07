@@ -16,7 +16,7 @@ namespace btrForensics{
     //! Chunk item data.
     class ChunkItem : public BtrfsItem {
     public:
-        ChunkData data;
+        ChunkData data; //!< Data part of chunk item.
 
     public:
         ChunkItem(ItemHead* head, TSK_ENDIAN_ENUM endian, uint8_t arr[]);

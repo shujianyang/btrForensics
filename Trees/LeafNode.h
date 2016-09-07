@@ -9,7 +9,7 @@
 #include <vector>
 #include <string>
 #include <tsk/libtsk.h>
-#include "Structures.h"
+#include "Trees.h"
 
 using std::vector;
 

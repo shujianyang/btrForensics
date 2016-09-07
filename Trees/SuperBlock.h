@@ -60,15 +60,14 @@ namespace btrForensics{
         const DevData devItemData; //0xc9
         uint8_t label[LABEL_SIZE];
 
-    public:
         const BtrfsKey chunkKey;
         const ChunkData chunkData;
 
     public:
         SuperBlock(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
 
-        const uint64_t getChunkTrRootAddr() const;
-        const uint64_t getRootTrRootAddr() const;
+        const uint64_t getChunkPhyAddr() const;
+        const uint64_t getRootLogAddr() const;
 
         const std::string printMagic() const;
         const std::string printSpace() const;

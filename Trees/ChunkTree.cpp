@@ -5,15 +5,18 @@
 
 #include <iostream>
 #include "ChunkTree.h"
-#include "Functions.h"
+#include "Tools/Functions.h"
 
 namespace btrForensics {
+    //! Constructor of tree analyzer.
+    //!
+    //! \param superBlk Pointer to btrfs super block.
+    //! \param treeExaminer Pointer to a tree examiner.
+    //!
     ChunkTree::ChunkTree(const SuperBlock* superBlk, const TreeExaminer* treeExaminer)
             :examiner(treeExaminer)
     {
-        uint64_t chunkTreePhyAddr = 
-            getChunkAddr(superBlk->getChunkTrRootAddr(), &superBlk->chunkKey, &superBlk->chunkData);
-        //std::cout << "---------------------" << chunkTreePhyAddr << std::endl;
+        uint64_t chunkTreePhyAddr = superBlk->getChunkPhyAddr();
 
         char* diskArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
         tsk_img_read(examiner->image, chunkTreePhyAddr, diskArr, BtrfsHeader::SIZE_OF_HEADER);
@@ -30,6 +33,11 @@ namespace btrForensics {
     }
 
 
+    //! Convert logical address to physical address.
+    //!
+    //! \param logicalAddr 64-bit logial address.
+    //! \return 64-bit physical address.
+    //!
     uint64_t ChunkTree::getPhysicalAddr(uint64_t logicalAddr)
     {
         uint64_t physicalAddr(0);

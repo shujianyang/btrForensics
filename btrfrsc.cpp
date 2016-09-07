@@ -73,8 +73,6 @@ int main(int argc, char *argv[])
     cout << endl;
 
     cout << "Label: " << supblk.printLabel() << endl;
-    cout << "Chunk tree physical address: 0x" << supblk.getChunkTrRootAddr() << endl;
-
     cout << "\n" << endl;
     delete [] diskArr;
 

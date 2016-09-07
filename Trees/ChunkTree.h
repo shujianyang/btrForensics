@@ -10,14 +10,15 @@
 #include <string>
 #include <tsk/libtsk.h>
 #include "Basics/Basics.h"
-#include "Structures/Structures.h"
-#include "TreeExaminer.h"
+#include "SuperBlock.h"
 
 namespace btrForensics {
+    class TreeExaminer;
+
     //! Process chunk tree of Btrfs.
     class ChunkTree {
     private:
-        const BtrfsNode* chunkRoot;
+        const BtrfsNode* chunkRoot; //!< Root of chunk tree.
 
         const TreeExaminer* examiner;
 

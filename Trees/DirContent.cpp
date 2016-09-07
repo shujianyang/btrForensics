@@ -3,7 +3,11 @@
 //!
 //! Implementation of class DirContent.
 
+#include <sstream>
+#include <iomanip>
 #include "DirContent.h"
+
+using namespace std;
 
 namespace btrForensics {
     //! Constructor of DirContent.
@@ -22,14 +26,16 @@ namespace btrForensics {
     std::ostream &operator<<(std::ostream& os, const DirContent& dirc)
     {
         for(auto child : dirc.children) {
-            os << "  \e(0\x74\x71\e(B";
+            ostringstream oss;
+            os << "  \e(0\x74\x71\e(B" << dec;
             if(child->type == DirItemType::DIRECTORY)
-                os << "[" << child->getInodeNum() << "] ";
+                oss << "[" << child->getInodeNum() << "]";
             else
-                os << " " << child->getInodeNum() << "  ";
-            os << child->getDirName() << '\n';
+                oss << child->getInodeNum();
+            os << setfill(' ') << setw(9) << oss.str();
+            os << "  " << child->getDirName() << '\n';
         }
-        os << std::endl;
+        os << endl;
     }
 
 }

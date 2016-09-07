@@ -7,6 +7,7 @@
 #include <sstream>
 #include "SuperBlock.h"
 #include "Utility/ReadInt.h"
+#include "Tools/Functions.h"
 
 namespace btrForensics{
     
@@ -108,22 +109,19 @@ namespace btrForensics{
 
     //! Get chunk tree root address from superblock.
     //!
-    //! \return 8-byte chunk tree root address.
+    //! \return 8-byte chunk tree root physical address.
     //!
-    const uint64_t SuperBlock::getChunkTrRootAddr() const
+    const uint64_t SuperBlock::getChunkPhyAddr() const
     {
-        //if(chunkTrRootAddr == chunkKey.offset)
-        //    return chunkData.getOffset();
-        //else
-            return chunkTrRootAddr;
+        return getChunkAddr(chunkTrRootAddr, &chunkKey, &chunkData);
     }
 
 
     //! Get root tree root address from superblock.
     //!
-    //! \return 8-byte root tree root address.
+    //! \return 8-byte root tree root logical address.
     //!
-    const uint64_t SuperBlock::getRootTrRootAddr() const
+    const uint64_t SuperBlock::getRootLogAddr() const
     {
         return rootTrRootAddr;
     }
@@ -199,14 +197,14 @@ namespace btrForensics{
     {
         os << supb.fsUUID.encode()
             << std::uppercase << std::hex;
-        os << "\nRoot tree root address: ";
+        os << "\nRoot tree root address: 0x";
         os.fill('0');
         os.width(16);
         os << supb.rootTrRootAddr;
-        os << "\nChunk tree root address: ";
+        os << "\nChunk tree root address: 0x";
         os.width(16);
         os << supb.chunkTrRootAddr;    
-        os << "\nLog tree root address: ";
+        os << "\nLog tree root address: 0x";
         os.width(16);
         os << supb.logTrRootAddr << '\n';
         os << std::dec;

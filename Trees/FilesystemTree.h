@@ -10,20 +10,24 @@
 #include <vector>
 #include <functional>
 #include <tsk/libtsk.h>
-#include "TreeExaminer.h"
+#include "Basics/Basics.h"
+#include "DirContent.h"
 
 namespace btrForensics {
+    class TreeExaminer;
+
     //! Analyze the file system tree in btrfs.
     class FilesystemTree {
     public:
         const BtrfsNode *fileTreeRoot; //!< Root node of the filesystem tree.
         uint64_t rootDirId; //!< Inode number of root directory.
 
+    private:
         const TreeExaminer* examiner;
 
     public:
         FilesystemTree(const BtrfsNode*, const TreeExaminer*);
-        ~FilesystemTree() { delete fileTreeRoot; }
+        //~FilesystemTree() { delete fileTreeRoot; }
 
         const void listDirItems(std::ostream& os) const;
 

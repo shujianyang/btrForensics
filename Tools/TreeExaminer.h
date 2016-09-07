@@ -11,12 +11,9 @@
 #include <functional>
 #include <tsk/libtsk.h>
 #include "Basics/Basics.h"
-#include "Structures/Structures.h"
+#include "Trees/Trees.h"
 
 namespace btrForensics {
-    class ChunkTree;
-    class FilesystemTree;
-
     //! Examine a tree in btrfs.
     class TreeExaminer {
     public:

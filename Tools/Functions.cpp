@@ -74,14 +74,13 @@ namespace btrForensics{
     }
 
 
-    //! Search for an item with given inode number in a leaf node.
+    //! Get the physical address by comparing givel logical address with chunk items in a leaf node.
     //!
     //! \param leaf Pointer to the leaf node.
-    //! \param inodeNum The inode number to search for.
-    //! \param type The type of the item to search for.
-    //! \param item Found ItemHead pointer.
+    //! \param targetLogAddr Logical address to convert.
+    //! \param targetPhyAddr Converted physical address.
     //!
-    //! \return True if the item is found.
+    //! \return Always return true.
     //!
     bool getPhyAddr(const LeafNode* leaf, uint64_t targetLogAddr,
            uint64_t& targetPhyAddr)
@@ -108,6 +107,15 @@ namespace btrForensics{
     }
 
 
+    //! Caculate the physical address by comparing givel logical address
+    //! with (logical, physical) address pair stored in a chunk item.
+    //!
+    //! \param logicalAddr Logical address to convert.
+    //! \param key Key storing logical address.
+    //! \param chunkData Chunk item data storing corresponding physical address.
+    //!
+    //! \return Mapped physical address. 0 if not valid.
+    //!
     uint64_t getChunkAddr(uint64_t logicalAddr,
             const BtrfsKey* key, const ChunkData* chunkData)
     {

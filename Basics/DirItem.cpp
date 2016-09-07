@@ -16,7 +16,7 @@ namespace btrForensics{
     //! \param arr Byte array storing dir item data.
     //!
     DirItem::DirItem(ItemHead* head, TSK_ENDIAN_ENUM endian, uint8_t arr[])
-        :BtrfsItem(head), key(endian, arr)
+        :BtrfsItem(head), targetKey(endian, arr)
     {
         int arIndex(BtrfsKey::SIZE_OF_KEY); //Key initialized already.
         transId = read64Bit(endian, arr + arIndex);
@@ -79,7 +79,7 @@ namespace btrForensics{
     std::string DirItem::dataInfo() const
     {
         std::ostringstream oss;
-        oss << key;
+        oss << targetKey;
         oss << "Type: " << (int)childType << '\n';
         oss << "Name: " << getDirName();
         return oss.str();

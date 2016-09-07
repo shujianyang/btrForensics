@@ -15,7 +15,7 @@ namespace btrForensics {
     //! Directory item data.
     class DirItem : public BtrfsItem {
     public:
-        const BtrfsKey key; //!< Key of the item.
+        const BtrfsKey targetKey; //!< Key of the item.
         DirItemType type; //!< Type of directory item.
     private:
         uint64_t transId;
@@ -28,8 +28,12 @@ namespace btrForensics {
     public:
         DirItem(ItemHead* head, TSK_ENDIAN_ENUM endian, uint8_t arr[]);
 
-        //uint8_t getType() { return childType; } //!< Get the type of directory item.
-        uint64_t getInodeNum() { return key.objId; }  //!< Get inode number of target this item points to.
+        //! Get inode number of target this item points to.
+        uint64_t getInodeNum() { return targetKey.objId; }  
+
+        //! Get item type of target this item points to.
+        ItemType getTargetType() { return targetKey.itemType; }  
+
         std::string getDirName() const;
 
         std::string dataInfo() const override;
