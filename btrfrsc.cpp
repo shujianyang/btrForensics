@@ -80,15 +80,19 @@ int main(int argc, char *argv[])
 
     string answer;
     
-    do {
+    while(true) {
         cout << "MAIN MENU -- What do you want to do?" << endl;
         cout << "[1] Navigate to selected node and print information." << endl;
         cout << "[2] List all files in filesystem tree." << endl;
-        cout << "[3] Explor files in root and sub directories." << endl;
+        cout << "[3] Explor files in default root directory." << endl;
+        cout << "[4] Switch to a subvolume or snapshot and exploere files within." << endl;
         cout << "[q] Quit." << endl;
-        cout << "Enter your choice: ";
+        cout << "Enter your choice > ";
         cin >> answer;
+        cout << endl;
 
+        if(answer == "q") break;
+        cout << std::string(60, '=') << "\n";
         cout << endl;
         if(answer == "1"){
             examiner.navigateNodes(cout, cin);
@@ -100,12 +104,14 @@ int main(int argc, char *argv[])
         else if(answer == "3") {
             examiner.fsTree->explorFiles(cout, cin);
         }
-        else if(answer == "q") break;
+        else if(answer == "4") {
+            examiner.switchFsTrees(cout, cin);
+        }
         else
             cout << "Invalid option. Please choose again." << endl;
 
         cout << endl;
-    } while(true);
+    }
 
     cout << endl;
 

@@ -29,7 +29,7 @@ namespace btrForensics {
         DirItem(ItemHead* head, TSK_ENDIAN_ENUM endian, uint8_t arr[]);
 
         //! Get inode number of target this item points to.
-        uint64_t getInodeNum() { return targetKey.objId; }  
+        uint64_t getTargetInode() { return targetKey.objId; }  
 
         //! Get item type of target this item points to.
         ItemType getTargetType() { return targetKey.itemType; }  

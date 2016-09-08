@@ -25,7 +25,7 @@ namespace btrForensics{
     }
 
 
-    //! Search for an item with given inode number in a leaf node.
+    //! Search for an item with given id in a leaf node.
     //!
     //! \param leaf Pointer to the leaf node.
     //! \param inodeNum The inode number to search for.
@@ -34,7 +34,7 @@ namespace btrForensics{
     //!
     //! \return True if the item is found.
     //!
-    bool searchItem(const LeafNode* leaf, uint64_t inodeNum,
+    bool searchForItem(const LeafNode* leaf, uint64_t inodeNum,
            ItemType type, const BtrfsItem* &foundItem)
     {
         for(auto item : leaf->itemList) {
@@ -49,7 +49,7 @@ namespace btrForensics{
     }
 
 
-    //! Search for an item not found before with given inode number in a leaf node.
+    //! Find all items with given id and type in a leaf node.
     //!
     //! \param leaf Pointer to the leaf node.
     //! \param inodeNum The inode number to search for.
@@ -58,19 +58,35 @@ namespace btrForensics{
     //!
     //! \return True if all items with the inodeNum has been found.
     //!
-    bool searchMultiItems(const LeafNode* leaf, uint64_t inodeNum, ItemType type,
+    bool filterItems(const LeafNode* leaf, uint64_t inodeNum, ItemType type,
            vector<BtrfsItem*> &vec)
     {
         for(auto item : leaf->itemList) {
             if(item->getId() > inodeNum) return true;
             if(item->getId() == inodeNum &&
                     item->getItemType() == type) {
-                auto result = find(vec.cbegin(), vec.cend(), item);
-                if(result == vec.cend())
+                // Is it possible to find duplicate items?
+                //auto result = find(vec.cbegin(), vec.cend(), item);
+                //if(result == vec.cend())
                     vec.push_back(item);
             }
         }
         return false;
+    }
+
+
+    //! Find all items with given id and type in a leaf node.
+    //!
+    //! \param leaf Pointer to the leaf node.
+    //! \param type The type of the item to search for.
+    //! \param vec Vector storing found items.
+    //!
+    void filterItems(const LeafNode* leaf, ItemType type, vector<BtrfsItem*> &vec)
+    {
+        for(auto item : leaf->itemList) {
+            if(item->getItemType() == type)
+                vec.push_back(item);
+        }
     }
 
 

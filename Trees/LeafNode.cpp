@@ -50,6 +50,10 @@ namespace btrForensics{
                 case ItemType::ROOT_ITEM:
                     newItem = new RootItem(itemHead, TSK_LIT_ENDIAN, (uint8_t*)itmArr);
                     break;
+                case ItemType::ROOT_REF: //Both types use the same structure.
+                case ItemType::ROOT_BACKREF:
+                    newItem = new RootRefItem(itemHead, TSK_LIT_ENDIAN, (uint8_t*)itmArr);
+                    break;
                 case ItemType::CHUNK_ITEM:
                     newItem = new ChunkItem(itemHead, TSK_LIT_ENDIAN, (uint8_t*)itmArr);
                     break;

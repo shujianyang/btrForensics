@@ -5,6 +5,7 @@
 
 #include <map>
 #include <sstream>
+#include <iomanip>
 #include <functional>
 #include "TreeExaminer.h"
 #include "Functions.h"
@@ -41,7 +42,27 @@ namespace btrForensics {
         else
             rootTree = new InternalNode(image, rootHeader, endian, itemListStart);
 
-        fsTree = new FilesystemTree(rootTree, this);
+        //Technically, the default volume id should be found in offset 0x80 in superblock.
+        //Currently, it is set as 6 by default.
+        uint64_t defaultVolId(6);
+
+        bool foundFSTree(false);
+
+        uint64_t defaultId(0);
+        const BtrfsItem* foundItem;
+        if(leafSearchById(rootTree, defaultVolId,
+                [&foundItem](const LeafNode* leaf, uint64_t targetId)
+                { return searchForItem(leaf, targetId, ItemType::DIR_ITEM, foundItem); })) {
+            DirItem* dir = (DirItem*)foundItem;
+            defaultId = dir->targetKey.objId;
+        }
+        else {
+            cerr << "Error. Default filesystem tree not found." << endl;
+            exit(1);
+        }
+
+        fsTree = new FilesystemTree(rootTree, defaultId, this);
+        fsTreeDefault = fsTree;
     }
 
 
@@ -100,8 +121,13 @@ namespace btrForensics {
             uint64_t inputId;
             while(true) {
                 os << "----Child nodes with following object ids are found." << endl;
-                for(auto addr : nodeAddrs)
-                    os << dec << addr.first << " ";
+                for(auto addr : nodeAddrs) {
+                    if(header->isLeafNode())
+                        os << dec << addr.first << " ";
+                    else
+                        os << dec << "[" << addr.first << "] ";
+                }
+                    
                 os << endl;
                 os << "To read a child node, please enter its object id in the list: ";
                 os << "(Enter 'q' to quit.)" << endl;
@@ -134,6 +160,58 @@ namespace btrForensics {
                 node = new InternalNode(image, header, endian, itemOffset);
             }
         }
+    }
+
+
+    //! Switch to a subvolume or snapshot and exploere files within.
+    //!
+    //! \param os Output stream where the infomation is printed.
+    //! \param is Input stream telling which node is the one to be read.
+    //!
+    const void TreeExaminer::switchFsTrees(ostream& os, istream& is)
+    {
+        vector<BtrfsItem*> foundRootRefs;
+        leafTraverse(rootTree, [&foundRootRefs](const LeafNode* leaf)
+                { return filterItems(leaf, ItemType::ROOT_BACKREF, foundRootRefs); });
+        
+        if(foundRootRefs.size() == 0) {
+            os << "\nNo subvolumes or snapshots are found.\n" << endl;
+            return;
+        }
+
+        uint64_t selectedId(0);
+        while(true) {
+            os << "The following subvolumes or snapshots are found:" << endl;
+            int index(0);
+            for(auto item : foundRootRefs) {
+                RootRefItem* ref = (RootRefItem*)item;
+                os << "[" << dec << setfill(' ') << setw(2) << ++index << "] "
+                    << setw(7) << ref->getId() << "   " << ref->getDirName() << '\n';
+            }
+            os << endl;
+
+            string input;
+            os << "To visit a subvolume or snapshot, please enter its index in the list:\n";
+            os << "(Enter ''q' to quit.)" << endl;
+            is >> input;
+
+            if(input == "q") return;
+            int inputIndex;
+            stringstream(input) >> inputIndex;
+            if(inputIndex > 0 && inputIndex <= foundRootRefs.size()) {
+                selectedId = foundRootRefs[inputIndex-1]->getId();
+                break;
+            }
+            os << "Wrong index, please enter a correct one.\n\n\n" << endl;
+        }
+        
+        fsTree = new FilesystemTree(rootTree, selectedId, this);
+        os << "\n" << std::string(60, '=') << "\n";
+        os << endl;
+
+        fsTree->explorFiles(os, is);
+
+        fsTree = fsTreeDefault;
     }
 
 

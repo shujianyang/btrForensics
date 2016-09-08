@@ -26,13 +26,12 @@ namespace btrForensics {
         const TreeExaminer* examiner;
 
     public:
-        FilesystemTree(const BtrfsNode*, const TreeExaminer*);
+        FilesystemTree(const BtrfsNode*, uint64_t rootItemId, const TreeExaminer*);
         //~FilesystemTree() { delete fileTreeRoot; }
 
         const void listDirItems(std::ostream& os) const;
 
         DirContent* getDirConent(uint64_t id) const;
-        DirContent* getRootDir() const;
 
         const void explorFiles(std::ostream& os, std::istream& is) const;
     };

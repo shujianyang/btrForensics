@@ -19,6 +19,7 @@ namespace btrForensics {
     public:
         ChunkTree* chunkTree; //!< The chunk tree.
         FilesystemTree* fsTree; //!< The file system tree.
+        FilesystemTree* fsTreeDefault; //!< Default file system tree.
         const BtrfsNode* rootTree; //!< Root node of the root tree.
 
         TSK_IMG_INFO* image; //!< Image file.
@@ -31,6 +32,7 @@ namespace btrForensics {
         uint64_t getPhysicalAddr(uint64_t logicalAddr) const;
 
         const void navigateNodes(std::ostream& os, std::istream& is) const;
+        const void switchFsTrees(std::ostream& os, std::istream& is);
 
         void leafTraverse(const BtrfsNode* node,
             std::function<void(const LeafNode*)> readOnlyFunc) const;

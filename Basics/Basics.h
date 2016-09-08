@@ -11,6 +11,7 @@
 #include "InodeData.h"
 #include "InodeItem.h"
 #include "RootItem.h"
+#include "RootRefItem.h"
 
 #include "InodeRef.h"
 #include "DevData.h"

@@ -18,31 +18,18 @@ namespace btrForensics {
     //! Constructor of tree analyzer.
     //!
     //! \param rootNode Root node of the root tree to be analyzed.
+    //! \praram rootDirId Root item id of the file system tree.
     //! \param treeExaminer Tree examiner used to analyze file system tree.
     //!
-    FilesystemTree::FilesystemTree(const BtrfsNode* rootNode, const TreeExaminer* treeExaminer)
+    FilesystemTree::FilesystemTree(const BtrfsNode* rootNode,
+            uint64_t rootItemId, const TreeExaminer* treeExaminer)
             :examiner(treeExaminer)
     {
-        uint64_t offset(0);
-        bool foundFSTree(false);
-        RootItem* rootItm;
-
-        uint64_t defaultId(0);
         const BtrfsItem* foundItem;
-        if(examiner->leafSearchById(rootNode, 6,
+        RootItem* rootItm;
+        if(examiner->leafSearchById(rootNode, rootItemId,
                 [&foundItem](const LeafNode* leaf, uint64_t targetId)
-                { return searchItem(leaf, targetId, ItemType::DIR_ITEM, foundItem); })) {
-            DirItem* dir = (DirItem*)foundItem;
-            defaultId = dir->targetKey.objId;
-        }
-        else {
-            cerr << "Error. Filesystem tree not found." << endl;
-            exit(1);
-        }
-  
-        if(examiner->leafSearchById(rootNode, defaultId,
-                [&foundItem](const LeafNode* leaf, uint64_t targetId)
-                { return searchItem(leaf, targetId, ItemType::ROOT_ITEM, foundItem); })) {
+                { return searchForItem(leaf, targetId, ItemType::ROOT_ITEM, foundItem); })) {
             rootItm = (RootItem*)foundItem;
         }
         else {
@@ -50,7 +37,7 @@ namespace btrForensics {
             exit(1);
         }
 
-        offset = rootItm->getBlockNumber();
+        uint64_t offset = rootItm->getBlockNumber();
         uint64_t physicalAddr = examiner->getPhysicalAddr(offset);
         rootDirId = rootItm->getRootObjId();
 
@@ -95,39 +82,34 @@ namespace btrForensics {
         const BtrfsItem* foundItem;
         if(examiner->leafSearchById(fileTreeRoot, id,
                 [&foundItem](const LeafNode* leaf, uint64_t targetId)
-                { return searchItem(leaf, targetId, ItemType::INODE_ITEM, foundItem); })) {
+                { return searchForItem(leaf, targetId, ItemType::INODE_ITEM, foundItem); })) {
             InodeItem* rootInode = (InodeItem*)foundItem;
 
             examiner->leafSearchById(fileTreeRoot, id,
                 [&foundItem](const LeafNode* leaf, uint64_t targetId)
-                { return searchItem(leaf, targetId, ItemType::INODE_REF, foundItem); });
+                { return searchForItem(leaf, targetId, ItemType::INODE_REF, foundItem); });
             InodeRef* rootRef = (InodeRef*)foundItem;
 
             vector<BtrfsItem*> foundItems;
             examiner->leafSearchById(fileTreeRoot, id,
                 [&foundItems](const LeafNode* leaf, uint64_t targetId)
-                { return searchMultiItems(leaf, targetId, ItemType::DIR_ITEM, foundItems); });
+                { return filterItems(leaf, targetId, ItemType::DIR_ITEM, foundItems); });
             
             return new DirContent(rootInode, rootRef, foundItems);
         }
         return nullptr;
     }
 
-    //! Locate the root directory.
-    DirContent* FilesystemTree::getRootDir() const
-    {
-        return getDirConent(rootDirId);
-    }
-
 
     //! List files in a directory and navigate to subdirectory.
     //!
+    //! \param rootId Start position of file expoloring.
     //! \param os Output stream where the infomation is printed.
     //! \param is Input stream telling which directory is the one to be read.
     //!
     const void FilesystemTree::explorFiles(std::ostream& os, istream& is) const
     {
-        DirContent* dir = getRootDir();
+        DirContent* dir = getDirConent(rootDirId);
         if(dir == nullptr) {
             os << "Root directory not found." << endl;
             return;
@@ -141,7 +123,7 @@ namespace btrForensics {
             if(dirItem->getTargetType() == ItemType::ROOT_ITEM) {
                 ostringstream oss;
                 os << "  \e(0\x74\x71\e(B" << dec;
-                oss << "[" << dirItem->getInodeNum() << "]";
+                oss << "[" << dirItem->getTargetInode() << "]";
                 os << setfill(' ') << setw(9) << oss.str();
                 os << "  " << dirItem->getDirName() << '\n';
             }
@@ -176,7 +158,7 @@ namespace btrForensics {
                     for(auto entry : dirList) {
                         DirItem* item = dir->children[entry.second];
                         os << "[" << dec << setfill(' ') << setw(2) << entry.first << "] "
-                            << setw(7) << item->getInodeNum() << "   " << item->getDirName() << '\n';
+                            << setw(7) << item->getTargetInode() << "   " << item->getDirName() << '\n';
                     }
                     os << endl;
                     os << "To visit a child directory, please enter its index in the list:\n";
@@ -192,10 +174,10 @@ namespace btrForensics {
                     if(dirList.find(inputId) != dirList.end()) {
                         int target = dirList[inputId];
                         DirItem* targetItem = dir->children[target];
-                        targetInode = targetItem->getInodeNum();
+                        targetInode = targetItem->getTargetInode();
                         break;
                     }
-                    os << "Wrong object id, please enter a correct one.\n" << endl;
+                    os << "Wrong index, please enter a correct one.\n" << endl;
                 } 
                 os << endl;
             }

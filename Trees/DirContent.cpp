@@ -29,9 +29,9 @@ namespace btrForensics {
             ostringstream oss;
             os << "  \e(0\x74\x71\e(B" << dec;
             if(child->type == DirItemType::DIRECTORY)
-                oss << "[" << child->getInodeNum() << "]";
+                oss << "[" << child->getTargetInode() << "]";
             else
-                oss << child->getInodeNum();
+                oss << child->getTargetInode();
             os << setfill(' ') << setw(9) << oss.str();
             os << "  " << child->getDirName() << '\n';
         }
