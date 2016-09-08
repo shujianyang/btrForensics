@@ -4,7 +4,7 @@
 #ifndef TOOLS_H
 #define TOOLS_H
 
-#include "btrfrsc.h"
+#include "Trees/Trees.h"
 
 #include "TreeExaminer.h"
 #include "Functions.h"

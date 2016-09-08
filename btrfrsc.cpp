@@ -13,7 +13,10 @@
 #include <unistd.h>
 #include <tsk/libtsk.h>
 #include <unistd.h>
-#include "btrfrsc.h"
+#include "Basics/Basics.h"
+#include "Trees/Trees.h"
+#include "Tools/Tools.h"
+#include "Utility/Utility.h"
 
 using namespace std;
 
@@ -83,8 +86,8 @@ int main(int argc, char *argv[])
     while(true) {
         cout << "MAIN MENU -- What do you want to do?" << endl;
         cout << "[1] Navigate to selected node and print information." << endl;
-        cout << "[2] List all files in filesystem tree." << endl;
-        cout << "[3] Explor files in default root directory." << endl;
+        cout << "[2] List all files in default filesystem tree." << endl;
+        cout << "[3] Explor files and subdirectories in default root directory." << endl;
         cout << "[4] Switch to a subvolume or snapshot and exploere files within." << endl;
         cout << "[q] Quit." << endl;
         cout << "Enter your choice > ";
