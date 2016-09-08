@@ -21,6 +21,7 @@ namespace btrForensics{
 
     public:
         InodeRef(ItemHead* head, TSK_ENDIAN_ENUM endian, uint8_t arr[]);
+        ~InodeRef();
 
         std::string getDirName() const;
 

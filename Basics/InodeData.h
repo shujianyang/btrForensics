@@ -32,6 +32,7 @@ namespace btrForensics{
 
     public:
         InodeData(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
+        ~InodeData() = default; //!< Destructor
 
         std::string dataInfo() const ;
         

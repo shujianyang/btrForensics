@@ -4,6 +4,7 @@
 //! Implementation of class FilesystemTree.
 
 #include <map>
+#include <string>
 #include <sstream>
 #include <iomanip>
 #include <functional>
@@ -93,7 +94,7 @@ namespace btrForensics {
             vector<BtrfsItem*> foundItems;
             examiner->leafSearchById(fileTreeRoot, id,
                 [&foundItems](const LeafNode* leaf, uint64_t targetId)
-                { return filterItems(leaf, targetId, ItemType::DIR_ITEM, foundItems); });
+                { return filterItems(leaf, targetId, ItemType::DIR_INDEX, foundItems); });
             
             return new DirContent(rootInode, rootRef, foundItems);
         }
@@ -115,7 +116,7 @@ namespace btrForensics {
             return;
         }
 
-        os << "Root directory content:" <<endl;
+        os << "Root directory content:\n" <<endl;
         os << *dir;
 
         os << "The following items are subvolumes or snapshots:" << endl;
@@ -191,7 +192,7 @@ namespace btrForensics {
                 return;
             }
             os << std::string(60, '=') << "\n\n";
-            os << "Directory content:" <<endl;
+            os << "Directory content:\n" <<endl;
             os << *dir;
         }
     }

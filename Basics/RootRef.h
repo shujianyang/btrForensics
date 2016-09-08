@@ -1,7 +1,7 @@
 //! \file
 //! \author Shujian Yang
 //!
-//! Header file of class RootRefItem
+//! Header file of class RootRef
 
 #ifndef DIR_REF_ITEM_H
 #define DIR_REF_ITEM_H
@@ -13,7 +13,7 @@
 
 namespace btrForensics {
     //! Can represent both root_ref and root_backref items.
-    class RootRefItem : public BtrfsItem {
+    class RootRef : public BtrfsItem {
     public:
     private:
         uint64_t dirId;
@@ -22,7 +22,8 @@ namespace btrForensics {
         char *dirName;
 
     public:
-        RootRefItem(ItemHead* head, TSK_ENDIAN_ENUM endian, uint8_t arr[]);
+        RootRef(ItemHead* head, TSK_ENDIAN_ENUM endian, uint8_t arr[]);
+        ~RootRef();
 
         //! Get directory id that contains the subtree.
         uint64_t getDirId() { return dirId; }  

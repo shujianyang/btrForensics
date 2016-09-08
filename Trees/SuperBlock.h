@@ -65,6 +65,7 @@ namespace btrForensics{
 
     public:
         SuperBlock(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
+        ~SuperBlock() = default; //!< Destructor
 
         const uint64_t getChunkPhyAddr() const;
         const uint64_t getRootLogAddr() const;

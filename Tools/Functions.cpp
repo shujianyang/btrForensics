@@ -16,7 +16,7 @@ namespace btrForensics{
     void printLeafDir(const LeafNode* leaf, std::ostream &os)
     {
         for(auto item : leaf->itemList){
-            if(item->getItemType() == ItemType::DIR_ITEM){
+            if(item->getItemType() == ItemType::DIR_INDEX){
                 DirItem *dir = (DirItem*)item;
                 if(dir->type == DirItemType::REGULAR_FILE)
                     os << dir->getDirName() << '\n';

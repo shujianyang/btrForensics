@@ -20,6 +20,7 @@ namespace btrForensics{
     public:
         const InodeItem *inode; //!< Inode of this directory.
         const InodeRef *ref; //!< Inode points to this directory.
+        std::string name; //!< Name of this directory.
         std::vector<DirItem*> children; //!< Entries of this directory.
 
         DirContent(InodeItem* inodeItem, InodeRef* inodeRef,

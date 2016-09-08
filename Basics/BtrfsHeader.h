@@ -33,6 +33,7 @@ namespace btrForensics{
 
     public:
         BtrfsHeader(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
+        ~BtrfsHeader() = default; //!< Destructor
 
         const uint32_t getNumOfItems() const;
 

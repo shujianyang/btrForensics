@@ -68,6 +68,14 @@ namespace btrForensics{
     }
 
 
+    //!< Destructor
+    DirItem::~DirItem()
+    {
+        if(dirName != nullptr)
+            delete [] dirName;
+    }
+
+
     //! Return name of the directory.
     std::string DirItem::getDirName() const
     {

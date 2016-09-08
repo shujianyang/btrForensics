@@ -1,10 +1,10 @@
 //! \file
 //! \author Shujian Yang
 //!
-//! Implementation of class RootRefItem
+//! Implementation of class RootRef
 
 #include <sstream>
-#include "RootRefItem.h"
+#include "RootRef.h"
 #include "Utility/ReadInt.h"
 
 namespace btrForensics{
@@ -15,7 +15,7 @@ namespace btrForensics{
     //! \param endian The endianess of the array.
     //! \param arr Byte array storing root ref item data.
     //!
-    RootRefItem::RootRefItem(ItemHead* head, TSK_ENDIAN_ENUM endian, uint8_t arr[])
+    RootRef::RootRef(ItemHead* head, TSK_ENDIAN_ENUM endian, uint8_t arr[])
         :BtrfsItem(head)
     {
         int arIndex(0); //Key initialized already.
@@ -35,15 +35,23 @@ namespace btrForensics{
     }
 
 
+    //!< Destructor
+    RootRef::~RootRef()
+    {
+        if(dirName != nullptr)
+            delete [] dirName;
+    }
+
+
     //! Return name of the directory.
-    std::string RootRefItem::getDirName() const
+    std::string RootRef::getDirName() const
     {
         return std::string(dirName, nameSize);
     }
 
 
     //! Return infomation about the item data as string.
-    std::string RootRefItem::dataInfo() const
+    std::string RootRef::dataInfo() const
     {
         std::ostringstream oss;
         oss << std::dec;

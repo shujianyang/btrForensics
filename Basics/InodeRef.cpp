@@ -32,6 +32,14 @@ namespace btrForensics{
     }
 
 
+    //!< Destructor
+    InodeRef::~InodeRef()
+    {
+        if(nameInDir != nullptr)
+            delete [] nameInDir;
+    }
+
+
     //! Return name of the inode reference.
     std::string InodeRef::getDirName() const
     {

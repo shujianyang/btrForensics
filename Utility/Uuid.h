@@ -45,6 +45,7 @@ private:
 public:
     UUID(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
     UUID(TSK_ENDIAN_ENUM endian, gpt_entry &entry);
+    ~UUID() = default; //!< Destructor
 
     const bool isUnused() const;
     const bool match(uint32_t, uint16_t, uint16_t, uint64_t) const;

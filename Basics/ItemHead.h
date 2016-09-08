@@ -24,6 +24,7 @@ namespace btrForensics{
 
     public:
         ItemHead(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
+        ~ItemHead() = default; //!< Destructor
 
         //! Return offset of data linked to this item,
         //! relative to end of header.

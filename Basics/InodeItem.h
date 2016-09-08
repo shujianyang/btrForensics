@@ -20,6 +20,7 @@ namespace btrForensics{
 
     public:
         InodeItem(ItemHead* head, TSK_ENDIAN_ENUM endian, uint8_t arr[]);
+        ~InodeItem() = default; //!< Destructor
 
         std::string dataInfo() const override;
     };

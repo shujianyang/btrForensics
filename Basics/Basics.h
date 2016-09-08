@@ -11,12 +11,11 @@
 #include "InodeData.h"
 #include "InodeItem.h"
 #include "RootItem.h"
-#include "RootRefItem.h"
+#include "RootRef.h"
 
 #include "InodeRef.h"
 #include "DevData.h"
 #include "DirItem.h"
-#include "DirIndex.h"
 
 #include "ChunkItem.h"
 

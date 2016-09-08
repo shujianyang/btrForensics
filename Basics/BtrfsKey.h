@@ -22,6 +22,7 @@ namespace btrForensics{
         //Total bytes: 0x11
     public:
         BtrfsKey(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
+        ~BtrfsKey() = default; //!< Destructor
 
         friend std::ostream &operator<<(
             std::ostream &os, const BtrfsKey &key);

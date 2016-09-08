@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 #include <functional>
 #include <tsk/libtsk.h>
 #include "Basics/Basics.h"

@@ -34,6 +34,7 @@ namespace btrForensics{
 
     public:
         DevData(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
+        ~DevData() = default; //!< Destructor
 
         //std::string info() const override;
     };

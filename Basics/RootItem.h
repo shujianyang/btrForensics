@@ -37,6 +37,7 @@ namespace btrForensics{
 
     public:
         RootItem(ItemHead* head, TSK_ENDIAN_ENUM endian, uint8_t arr[]);
+        ~RootItem() = default; //!< Destructor
 
         const uint64_t getRootObjId() const { return rootObjId; } //!< Get id of root directory
         const uint64_t getBlockNumber() const;

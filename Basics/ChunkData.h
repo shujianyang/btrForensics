@@ -33,6 +33,7 @@ namespace btrForensics{
         UUID deviceUUID;
     public:
         ChunkData(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
+        ~ChunkData() = default; //!< Destructor
 
         std::string dataInfo() const ;
 

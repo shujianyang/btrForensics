@@ -11,29 +11,35 @@ using namespace std;
 
 namespace btrForensics {
     //! Constructor of DirContent.
-    DirContent::DirContent(InodeItem* inodeItem, InodeRef* inodeRef,
-            std::vector<BtrfsItem*> &dirItems)
-        :inode(inodeItem), ref(inodeRef)
+    DirContent::DirContent(InodeItem* inodeItem,
+            InodeRef* inodeRef, std::vector<BtrfsItem*> &dirItems)
+        :name(inodeRef->getDirName()), inode(inodeItem), ref(inodeRef)
     {
         for(auto item : dirItems){
             DirItem* dirEntry = (DirItem*)item;
             children.push_back(dirEntry);
         }
+
+        if(name == "..")  // This is the root directory.
+            name = "/";
     }
 
 
     //! Overloaded stream operator.
     std::ostream &operator<<(std::ostream& os, const DirContent& dirc)
     {
+        os << "[" << dirc.name << "]" << endl;
         for(auto child : dirc.children) {
-            ostringstream oss;
+            if(child->getTargetType() == ItemType::ROOT_ITEM)
+                continue;
+
             os << "  \e(0\x74\x71\e(B" << dec;
+            os << setfill(' ') << setw(9) << child->getTargetInode();
+
             if(child->type == DirItemType::DIRECTORY)
-                oss << "[" << child->getTargetInode() << "]";
+                os << "  [" << child->getDirName() << "]\n";
             else
-                oss << child->getTargetInode();
-            os << setfill(' ') << setw(9) << oss.str();
-            os << "  " << child->getDirName() << '\n';
+                os << "  " << child->getDirName() << "\n";
         }
         os << endl;
     }

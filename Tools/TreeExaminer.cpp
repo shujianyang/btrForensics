@@ -184,7 +184,7 @@ namespace btrForensics {
             os << "The following subvolumes or snapshots are found:" << endl;
             int index(0);
             for(auto item : foundRootRefs) {
-                RootRefItem* ref = (RootRefItem*)item;
+                RootRef* ref = (RootRef*)item;
                 os << "[" << dec << setfill(' ') << setw(2) << ++index << "] "
                     << setw(7) << ref->getId() << "   " << ref->getDirName() << '\n';
             }
