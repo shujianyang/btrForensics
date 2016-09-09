@@ -16,9 +16,9 @@ namespace btrForensics{
 
     bool searchForItem(const LeafNode*, uint64_t, ItemType, const BtrfsItem*&);
 
-    bool filterItems(const LeafNode*, uint64_t, ItemType, vector<BtrfsItem*>&);
+    bool filterItems(const LeafNode*, uint64_t, ItemType, vector<const BtrfsItem*>&);
 
-    void filterItems(const LeafNode*, ItemType, vector<BtrfsItem*>&);
+    void filterItems(const LeafNode*, ItemType, vector<const BtrfsItem*>&);
 
     bool getPhyAddr(const LeafNode* leaf, uint64_t targetLogAddr, uint64_t& targetPhyAddr);
 

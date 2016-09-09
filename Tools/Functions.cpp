@@ -17,7 +17,7 @@ namespace btrForensics{
     {
         for(auto item : leaf->itemList){
             if(item->getItemType() == ItemType::DIR_INDEX){
-                DirItem *dir = (DirItem*)item;
+                const DirItem *dir = static_cast<const DirItem*>(item);
                 if(dir->type == DirItemType::REGULAR_FILE)
                     os << dir->getDirName() << '\n';
             }
@@ -59,7 +59,7 @@ namespace btrForensics{
     //! \return True if all items with the inodeNum has been found.
     //!
     bool filterItems(const LeafNode* leaf, uint64_t inodeNum, ItemType type,
-           vector<BtrfsItem*> &vec)
+           vector<const BtrfsItem*> &vec)
     {
         for(auto item : leaf->itemList) {
             if(item->getId() > inodeNum) return true;
@@ -81,7 +81,7 @@ namespace btrForensics{
     //! \param type The type of the item to search for.
     //! \param vec Vector storing found items.
     //!
-    void filterItems(const LeafNode* leaf, ItemType type, vector<BtrfsItem*> &vec)
+    void filterItems(const LeafNode* leaf, ItemType type, vector<const BtrfsItem*> &vec)
     {
         for(auto item : leaf->itemList) {
             if(item->getItemType() == type)
@@ -101,7 +101,7 @@ namespace btrForensics{
     bool getPhyAddr(const LeafNode* leaf, uint64_t targetLogAddr,
            uint64_t& targetPhyAddr)
     {
-        BtrfsItem* target(nullptr);
+        const BtrfsItem* target(nullptr);
 
         for(auto item : leaf->itemList) {
             if(item->getItemType() != ItemType::CHUNK_ITEM)
@@ -115,7 +115,7 @@ namespace btrForensics{
         if(target == nullptr)
             targetPhyAddr = targetLogAddr;
 
-        ChunkItem* chunk = (ChunkItem*)target;
+        const ChunkItem* chunk = static_cast<const ChunkItem*>(target);
         targetPhyAddr = 
             getChunkAddr(targetLogAddr, &chunk->itemHead->key, &chunk->data);
         

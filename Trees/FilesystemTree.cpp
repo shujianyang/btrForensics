@@ -19,7 +19,7 @@ namespace btrForensics {
     //! Constructor of tree analyzer.
     //!
     //! \param rootNode Root node of the root tree to be analyzed.
-    //! \praram rootDirId Root item id of the file system tree.
+    //! \param rootItemId Root item id of the file system tree.
     //! \param treeExaminer Tree examiner used to analyze file system tree.
     //!
     FilesystemTree::FilesystemTree(const BtrfsNode* rootNode,
@@ -99,7 +99,7 @@ namespace btrForensics {
                 { return searchForItem(leaf, targetId, ItemType::INODE_REF, foundItem); });
             InodeRef* rootRef = (InodeRef*)foundItem;
 
-            vector<BtrfsItem*> foundItems;
+            vector<const BtrfsItem*> foundItems;
             examiner->treeSearchById(fileTreeRoot, id,
                 [&foundItems](const LeafNode* leaf, uint64_t targetId)
                 { return filterItems(leaf, targetId, ItemType::DIR_INDEX, foundItems); });
@@ -112,7 +112,6 @@ namespace btrForensics {
 
     //! List files in a directory and navigate to subdirectory.
     //!
-    //! \param rootId Start position of file expoloring.
     //! \param os Output stream where the infomation is printed.
     //! \param is Input stream telling which directory is the one to be read.
     //!

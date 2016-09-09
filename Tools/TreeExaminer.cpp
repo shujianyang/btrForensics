@@ -24,10 +24,13 @@ namespace btrForensics {
             const SuperBlock* superBlk)
         :image(img), endian(end)
     {
+        //Chunk tree is needed at the very beginning
+        //to convert logical address to physical address.
         chunkTree = new ChunkTree(superBlk, this);
 
         uint64_t rootTreelogAddr = superBlk->getRootLogAddr();
 
+        //Pyhsical address of root of Root Tree obtained here.
         uint64_t rootTreePhyAddr = chunkTree->getPhysicalAddr(rootTreelogAddr);
 
         char* diskArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
@@ -35,12 +38,12 @@ namespace btrForensics {
         BtrfsHeader* rootHeader = new BtrfsHeader(endian, (uint8_t*)diskArr);
         delete [] diskArr;
 
-
         uint64_t itemListStart = rootTreePhyAddr + BtrfsHeader::SIZE_OF_HEADER;
         if(rootHeader->isLeafNode())
             rootTree = new LeafNode(image, rootHeader, endian, itemListStart);
         else
             rootTree = new InternalNode(image, rootHeader, endian, itemListStart);
+
 
         //Technically, the default volume id should be found in offset 0x80 in superblock.
         //Currently, it is set as 6 by default.
@@ -53,8 +56,8 @@ namespace btrForensics {
         if(treeSearchById(rootTree, defaultVolId,
                 [&foundItem](const LeafNode* leaf, uint64_t targetId)
                 { return searchForItem(leaf, targetId, ItemType::DIR_ITEM, foundItem); })) {
-            DirItem* dir = (DirItem*)foundItem;
-            defaultId = dir->targetKey.objId;
+            const DirItem* dir = static_cast<const DirItem*>(foundItem);
+            defaultId = dir->targetKey.objId; //This is id of root item to filesystem tree.
         }
         else {
             cerr << "Error. Default filesystem tree not found." << endl;
@@ -107,18 +110,18 @@ namespace btrForensics {
             uint64_t offset(0);
             map<uint64_t, uint64_t> nodeAddrs;
             if(header->isLeafNode()){
-                LeafNode *leaf = (LeafNode*)node;
+                const LeafNode *leaf = static_cast<const LeafNode*>(node);
 
                 for(auto item : leaf->itemList){
                     if(item->getItemType() == ItemType::ROOT_ITEM){
-                        RootItem *rootItm = (RootItem*)item;
+                        const RootItem *rootItm = static_cast<const RootItem*>(item);
                         nodeAddrs[item->getId()]
                             = rootItm->getBlockNumber();
                     }
                 }
             }
             else {
-                InternalNode *internal = (InternalNode*)node;
+                const InternalNode* internal = static_cast<const InternalNode*>(node);
 
                 for(auto ptr : internal->keyPointers) {
                     nodeAddrs[ptr->key.objId] = ptr->getBlkNum();
@@ -134,7 +137,7 @@ namespace btrForensics {
             string input;
             uint64_t inputId;
             while(true) {
-                os << "----Child nodes with following object ids are found." << endl;
+                os << "Child nodes or tree roots with following object ids are found." << endl;
                 for(auto addr : nodeAddrs) {
                     if(header->isLeafNode())
                         os << dec << addr.first << " ";
@@ -143,7 +146,7 @@ namespace btrForensics {
                 }
                     
                 os << endl;
-                os << "To read a child node, please enter its object id in the list: ";
+                os << "To read a child node or a tree root, please enter its object id in the list: ";
                 os << "(Enter 'q' to quit.)" << endl;
                 is >> input;
                 
@@ -156,8 +159,10 @@ namespace btrForensics {
             os << endl;
 
             bool nodeExisted(false);
+            using ConstNodePtr = const BtrfsNode*;
+            ConstNodePtr* childPtr(nullptr);
             if(!header->isLeafNode()) {
-                InternalNode *internal = (InternalNode*)node;
+                const InternalNode* internal = static_cast<const InternalNode*>(node);
 
                 for(auto ptr : internal->keyPointers) {
                     if(ptr->key.objId == inputId && ptr->childNode != nullptr) {
@@ -165,14 +170,16 @@ namespace btrForensics {
                         nodeExisted = true;
                         break;
                     }
+                    else if(ptr->key.objId == inputId) {
+                        childPtr = &ptr->childNode;
+                        break;
+                    }
                 }
             }
-            if(nodeExisted) continue;
+            if(nodeExisted) continue; //The child node has already been built.
 
             offset = nodeAddrs[inputId];
             uint64_t physicalAddr = getPhysicalAddr(offset);
-
-            //if(node != rootTree) delete node;
 
             char *headerArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
             tsk_img_read(image, physicalAddr, headerArr, BtrfsHeader::SIZE_OF_HEADER);
@@ -187,6 +194,9 @@ namespace btrForensics {
             else {
                 node = new InternalNode(image, header, endian, itemOffset);
             }
+
+            if(childPtr!=nullptr)
+                *childPtr = node;
         }
     }
 
@@ -198,7 +208,7 @@ namespace btrForensics {
     //!
     const void TreeExaminer::switchFsTrees(ostream& os, istream& is)
     {
-        vector<BtrfsItem*> foundRootRefs;
+        vector<const BtrfsItem*> foundRootRefs;
         treeTraverse(rootTree, [&foundRootRefs](const LeafNode* leaf)
                 { return filterItems(leaf, ItemType::ROOT_BACKREF, foundRootRefs); });
         
@@ -212,7 +222,7 @@ namespace btrForensics {
             os << "The following subvolumes or snapshots are found:" << endl;
             int index(0);
             for(auto item : foundRootRefs) {
-                RootRef* ref = (RootRef*)item;
+                const RootRef* ref = static_cast<const RootRef*>(item);
                 os << "[" << dec << setfill(' ') << setw(2) << ++index << "] "
                     << setw(7) << ref->getId() << "   " << ref->getDirName() << '\n';
             }
@@ -254,12 +264,12 @@ namespace btrForensics {
             function<void(const LeafNode*)> readOnlyFunc) const
     {
         if(node->nodeHeader->isLeafNode()){
-            LeafNode *leaf = (LeafNode*)node;
+            const LeafNode* leaf = static_cast<const LeafNode*>(node);
             readOnlyFunc(leaf);
         }
         else {
-            InternalNode *internal = (InternalNode*)node;
-            BtrfsNode *newNode;
+            const InternalNode* internal = static_cast<const InternalNode*>(node);
+            const BtrfsNode *newNode;
 
             for(auto ptr : internal->keyPointers) {
                 if(ptr->childNode != nullptr) {
@@ -302,12 +312,12 @@ namespace btrForensics {
             function<bool(const LeafNode*)> searchFunc) const
     {
         if(node->nodeHeader->isLeafNode()){
-            LeafNode *leaf = (LeafNode*)node;
+            const LeafNode *leaf = static_cast<const LeafNode*>(node);
             return searchFunc(leaf);
         }
         else {
-            InternalNode *internal = (InternalNode*)node;
-            BtrfsNode *newNode;
+            const InternalNode *internal = static_cast<const InternalNode*>(node);
+            const BtrfsNode *newNode;
 
             for(auto ptr : internal->keyPointers) {
                 if(ptr->childNode != nullptr) {
@@ -352,12 +362,12 @@ namespace btrForensics {
             function<bool(const LeafNode*, uint64_t)> searchFunc) const
     {
         if(node->nodeHeader->isLeafNode()){
-            LeafNode *leaf = (LeafNode*)node;
+            const LeafNode *leaf = static_cast<const LeafNode*>(node);
             return searchFunc(leaf, targetId);
         }
         else {
-            InternalNode *internal = (InternalNode*)node;
-            BtrfsNode *newNode;
+            const InternalNode *internal = static_cast<const InternalNode*>(node);
+            const BtrfsNode *newNode;
 
             for(auto ptr : internal->keyPointers) {
                 if(ptr->key.objId > targetId)

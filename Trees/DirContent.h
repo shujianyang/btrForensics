@@ -24,7 +24,7 @@ namespace btrForensics{
         std::vector<DirItem*> children; //!< Entries of this directory.
 
         DirContent(InodeItem* inodeItem, InodeRef* inodeRef,
-                std::vector<BtrfsItem*> &dirItems);
+                std::vector<const BtrfsItem*> &dirItems);
 
         friend std::ostream &operator<<(std::ostream&, const DirContent&);
     };
