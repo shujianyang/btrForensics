@@ -5,6 +5,7 @@
 
 #include "KeyPtr.h"
 #include "Utility/ReadInt.h"
+#include "Trees/BtrfsNode.h"
 
 namespace btrForensics{
 
@@ -22,6 +23,14 @@ namespace btrForensics{
 
         generation = read64Bit(endian, arr + arIndex);
         arIndex += 0x08;
+    }
+
+
+    //!< Destructor
+    KeyPtr::~KeyPtr()
+    {
+        if(childNode != nullptr)
+            delete childNode;
     }
 
 

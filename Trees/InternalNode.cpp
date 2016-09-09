@@ -27,11 +27,19 @@ namespace btrForensics{
             tsk_img_read(img, startOffset + itemOffset,
                     diskArr, KeyPtr::SIZE_OF_KEY_PTR);
 
-            keyPointers.push_back(KeyPtr(endian, (uint8_t*)diskArr));
+            keyPointers.push_back(new KeyPtr(endian, (uint8_t*)diskArr));
             delete [] diskArr;
 
             itemOffset += KeyPtr::SIZE_OF_KEY_PTR;
         }
+    }
+
+
+    //! Destructor
+    InternalNode::~InternalNode()
+    {
+        for(auto ptr : keyPointers)
+            delete ptr;
     }
 
 
@@ -44,8 +52,8 @@ namespace btrForensics{
         oss << "Item list:" << '\n';
         oss << std::string(30, '=') << "\n\n";
 
-        for(auto &ptr : keyPointers){
-            oss << ptr;
+        for(auto ptr : keyPointers){
+            oss << *ptr;
             oss << std::string(30, '=') << "\n\n";
         }
 

@@ -10,6 +10,7 @@
 #include <string>
 #include <tsk/libtsk.h>
 #include "BtrfsKey.h"
+//#include "Trees/BtrfsNode.h"
 
 namespace btrForensics{
     class BtrfsNode;
@@ -27,6 +28,7 @@ namespace btrForensics{
 
     public:
         KeyPtr(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
+        ~KeyPtr();
 
         const uint64_t getBlkNum() const { return blkNum; }  //!< Return block number.
         const uint32_t getGeneration() const { return generation; }  //!< Return generation.

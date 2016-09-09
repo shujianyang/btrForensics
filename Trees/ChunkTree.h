@@ -24,6 +24,7 @@ namespace btrForensics {
 
     public:
         ChunkTree(const SuperBlock* superBlk, const TreeExaminer* treeExaminer);
+        ~ChunkTree();
         
         uint64_t getPhysicalAddr(uint64_t logicalAddr);
     };

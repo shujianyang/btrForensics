@@ -33,6 +33,14 @@ namespace btrForensics {
     }
 
 
+    //!< Destructor
+    ChunkTree::~ChunkTree()
+    {
+        if(chunkRoot != nullptr)
+            delete chunkRoot;
+    }
+
+
     //! Convert logical address to physical address.
     //!
     //! \param logicalAddr 64-bit logial address.
@@ -42,7 +50,7 @@ namespace btrForensics {
     {
         uint64_t physicalAddr(0);
         //std::cout << chunkRoot->info() << std::endl;
-        examiner->leafSearchById(chunkRoot, logicalAddr,
+        examiner->treeSearchById(chunkRoot, logicalAddr,
                 [&physicalAddr](const LeafNode* leaf, uint64_t targetLogAddr)
                 { return getPhyAddr(leaf, targetLogAddr, physicalAddr); });
         

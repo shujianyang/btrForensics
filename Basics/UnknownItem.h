@@ -17,6 +17,8 @@ namespace btrForensics{
     public:
         //! Constructor of unknown item.
         UnknownItem(ItemHead* head):BtrfsItem(head) {}
+        ~UnknownItem() = default; //!< Destructor
+
         //! Infomation unavailable yet.
         std::string dataInfo() const override { return "Unknown item"; }
     };

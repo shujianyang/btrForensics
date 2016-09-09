@@ -21,6 +21,7 @@ namespace btrForensics{
 
     public:
         LeafNode(TSK_IMG_INFO*, const BtrfsHeader*, TSK_ENDIAN_ENUM, uint64_t);
+        ~LeafNode();
 
         const std::string info() const override;
     };

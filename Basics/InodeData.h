@@ -6,6 +6,7 @@
 #ifndef INODE_DATA_H
 #define INODE_DATA_H
 
+#include <ctime>
 #include <iostream>
 #include <string>
 #include <tsk/libtsk.h>
@@ -29,6 +30,10 @@ namespace btrForensics{
 
         uint8_t flags[8]; //0x40
         uint64_t sequence;
+
+        time_t accessTime;
+        time_t createdTime;
+        time_t modifiedTime;
 
     public:
         InodeData(TSK_ENDIAN_ENUM endian, uint8_t arr[]);

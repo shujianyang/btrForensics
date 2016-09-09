@@ -71,6 +71,14 @@ namespace btrForensics{
     }
 
 
+    //! Destructor
+    LeafNode::~LeafNode()
+    {
+        for(auto item : itemList)
+            delete item;
+    }
+
+
     //! Print info about this node.
     const std::string LeafNode::info() const
     {

@@ -19,7 +19,7 @@ namespace btrForensics{
         const BtrfsHeader *nodeHeader; //!< Header of a node.
 
         BtrfsNode(const BtrfsHeader *header);
-        ~BtrfsNode() { delete nodeHeader; }
+        ~BtrfsNode() { if(nodeHeader!=nullptr) delete nodeHeader; } //! Destructor
 
         //! Return infomation about the node.
         //! Virtual function to be overridden by derived classes.

@@ -54,13 +54,28 @@ namespace btrForensics{
 
         sequence = read64Bit(endian, arr + arIndex);
         arIndex += 0x08;
+
+        arIndex += 0x20; //Reserved
+
+        accessTime = read64Bit(endian, arr + arIndex);
+        arIndex += 0x0c; //4 extra bytes of nano seconds omitted.
+
+        createdTime = read64Bit(endian, arr + arIndex);
+        arIndex += 0x0c; //4 extra bytes of nano seconds omitted.
+
+        modifiedTime = read64Bit(endian, arr + arIndex);
+        arIndex += 0x0c; //4 extra bytes of nano seconds omitted.
+
     }
 
     //! Return infomation about the item data as string.
     std::string InodeData::dataInfo() const
     {
         std::ostringstream oss;
-        oss << "Size: 0x" << stSize;
+        oss << "Size: " << std::dec << stSize << " bytes\n";
+        oss << "Created time:  " << std::asctime(std::localtime(&createdTime));
+        oss << "Access time:   " << std::asctime(std::localtime(&accessTime));
+        oss << "Modified time: " << std::asctime(std::localtime(&modifiedTime));
         return oss.str();
     }
 

@@ -28,7 +28,7 @@ namespace btrForensics {
     {
         const BtrfsItem* foundItem;
         RootItem* rootItm;
-        if(examiner->leafSearchById(rootNode, rootItemId,
+        if(examiner->treeSearchById(rootNode, rootItemId,
                 [&foundItem](const LeafNode* leaf, uint64_t targetId)
                 { return searchForItem(leaf, targetId, ItemType::ROOT_ITEM, foundItem); })) {
             rootItm = (RootItem*)foundItem;
@@ -59,17 +59,25 @@ namespace btrForensics {
     }
 
 
+    //!< Destructor
+    FilesystemTree::~FilesystemTree()
+    {
+        if(fileTreeRoot != nullptr)
+            delete fileTreeRoot;
+    }
+
+
     //! List all dir items in this tree.
     //!
     //! \param os Output stream where the infomation is printed.
     //!
     const void FilesystemTree::listDirItems(ostream &os) const
     {
-        //leafTraverse(fileTreeRoot, bind(printLeafDir, _1, _2, ref(os)));
+        //treeTraverse(fileTreeRoot, bind(printLeafDir, _1, _2, ref(os)));
 
         //Choose Lamba over std::bind.
         //See "Effective Modern C++" Item 34.
-        examiner->leafTraverse(fileTreeRoot,
+        examiner->treeTraverse(fileTreeRoot,
                 [&os](const LeafNode *leaf) { printLeafDir(leaf, os); });
     }
 
@@ -81,18 +89,18 @@ namespace btrForensics {
     DirContent* FilesystemTree::getDirConent(uint64_t id) const
     {
         const BtrfsItem* foundItem;
-        if(examiner->leafSearchById(fileTreeRoot, id,
+        if(examiner->treeSearchById(fileTreeRoot, id,
                 [&foundItem](const LeafNode* leaf, uint64_t targetId)
                 { return searchForItem(leaf, targetId, ItemType::INODE_ITEM, foundItem); })) {
             InodeItem* rootInode = (InodeItem*)foundItem;
 
-            examiner->leafSearchById(fileTreeRoot, id,
+            examiner->treeSearchById(fileTreeRoot, id,
                 [&foundItem](const LeafNode* leaf, uint64_t targetId)
                 { return searchForItem(leaf, targetId, ItemType::INODE_REF, foundItem); });
             InodeRef* rootRef = (InodeRef*)foundItem;
 
             vector<BtrfsItem*> foundItems;
-            examiner->leafSearchById(fileTreeRoot, id,
+            examiner->treeSearchById(fileTreeRoot, id,
                 [&foundItems](const LeafNode* leaf, uint64_t targetId)
                 { return filterItems(leaf, targetId, ItemType::DIR_INDEX, foundItems); });
             
