@@ -7,7 +7,7 @@
 #include <sstream>
 #include "SuperBlock.h"
 #include "Utility/ReadInt.h"
-#include "Tools/Functions.h"
+#include "Examiners/Functions.h"
 
 namespace btrForensics{
     

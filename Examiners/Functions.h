@@ -8,7 +8,7 @@
 
 #include <iostream>
 #include <vector>
-#include "Tools.h"
+#include "Examiners.h"
 
 namespace btrForensics{
 
@@ -24,6 +24,8 @@ namespace btrForensics{
 
     uint64_t getChunkAddr(uint64_t logicalAddr,
                 const BtrfsKey* key, const ChunkData* chunkData);
+    
+    std::ostream &operator<<(std::ostream& os, const DirItemType& type);
 }
 
 #endif

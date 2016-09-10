@@ -19,13 +19,26 @@ make
 ```
 
 ###Input File:
-Raw image of a btrfs partition, or a partition using btrfs.
+Raw image of a btrfs partition, or a partition device file using btrfs.
+
+###Usage:
+```
+btrfs [-o imgoffset] image 
+```
+
+
+-o imgoffset: Offset into image file (in sectors)
 
 ###Current capability:
 1. Navigates to selected nodes in B-tree and prints information.
 2. List all files in default filesystem tree.
 3. Explor files and subdirectories in default root directory.
 4. Switch to a subvolume or snapshot and exploere files within.
+
+###Tools
+There will be some stand alone programs in the Tools folder.
+Most of them are simulations to tools in The Sleuth's Kit.
+Give them a try.
 
 ###Note:
 Reference of Btrfs structure can be found in [btrfs Wiki](https://btrfs.wiki.kernel.org/index.php/Main_Page).

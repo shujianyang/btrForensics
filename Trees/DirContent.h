@@ -23,8 +23,9 @@ namespace btrForensics{
         std::string name; //!< Name of this directory.
         std::vector<DirItem*> children; //!< Entries of this directory.
 
-        DirContent(InodeItem* inodeItem, InodeRef* inodeRef,
+        DirContent(const InodeItem* inodeItem, const InodeRef* inodeRef,
                 std::vector<const BtrfsItem*> &dirItems);
+        ~DirContent() = default; //!< Destructor.
 
         friend std::ostream &operator<<(std::ostream&, const DirContent&);
     };

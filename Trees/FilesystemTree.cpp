@@ -10,7 +10,7 @@
 #include <functional>
 #include <vector>
 #include "FilesystemTree.h"
-#include "Tools/Functions.h"
+#include "Examiners/Functions.h"
 
 using namespace std;
 //using namespace std::placeholders;
@@ -27,11 +27,11 @@ namespace btrForensics {
             :examiner(treeExaminer)
     {
         const BtrfsItem* foundItem;
-        RootItem* rootItm;
+        const RootItem* rootItm;
         if(examiner->treeSearchById(rootNode, rootItemId,
                 [&foundItem](const LeafNode* leaf, uint64_t targetId)
                 { return searchForItem(leaf, targetId, ItemType::ROOT_ITEM, foundItem); })) {
-            rootItm = (RootItem*)foundItem;
+            rootItm = static_cast<const RootItem*>(foundItem);
         }
         else {
             cerr << "Error. Filesystem tree not found." << endl;
@@ -82,22 +82,59 @@ namespace btrForensics {
     }
 
 
+    //! List all directory items in a directory with given id.
+    //!
+    //! \param id Id of the target directory.
+    //! \param dirFlag Whether to list directories.
+    //! \param fileFlag Whether to list regular files.
+    //! \param recursive Whether list items recursively in subdirectories.
+    //! \param level Level used to determine number of "+"s, usually set as 0.
+    //! \param os Output stream where the infomation is printed.
+    //!
+    const void FilesystemTree::listDirItemsById(uint64_t id, bool dirFlag, bool fileFlag,
+        bool recursive, int level, std::ostream& os) const
+    {
+        DirContent* dir = getDirContent(id);
+        if(dir == nullptr) {
+            return;
+        }
+
+        for(auto child : dir->children) {
+            if(child->getTargetType() != ItemType::INODE_ITEM)
+                continue;
+            if((fileFlag && child->type == DirItemType::REGULAR_FILE) 
+                    || (dirFlag && child->type == DirItemType::DIRECTORY)) {
+                if(level!=0) os << string(level, '+') << " ";
+                os << child->type << '/' << child->type << " ";
+                ostringstream oss;
+                oss << dec << child->getTargetInode() << ':';
+                os << setfill(' ') << setw(9) << left << oss.str();
+                os << " " << child->getDirName() << endl;
+            }
+            if(recursive && child->type == DirItemType::DIRECTORY) {
+                uint64_t newId = child->targetKey.objId;
+                listDirItemsById(newId, dirFlag, fileFlag, recursive, level+1, os);
+            }
+        }
+    }
+
+
     //! Locate the directory with give inode number.
     //!
     //! \param id Inode number of directory.
     //!
-    DirContent* FilesystemTree::getDirConent(uint64_t id) const
+    DirContent* FilesystemTree::getDirContent(uint64_t id) const
     {
         const BtrfsItem* foundItem;
         if(examiner->treeSearchById(fileTreeRoot, id,
                 [&foundItem](const LeafNode* leaf, uint64_t targetId)
                 { return searchForItem(leaf, targetId, ItemType::INODE_ITEM, foundItem); })) {
-            InodeItem* rootInode = (InodeItem*)foundItem;
+            const InodeItem* rootInode = static_cast<const InodeItem*>(foundItem);
 
             examiner->treeSearchById(fileTreeRoot, id,
                 [&foundItem](const LeafNode* leaf, uint64_t targetId)
                 { return searchForItem(leaf, targetId, ItemType::INODE_REF, foundItem); });
-            InodeRef* rootRef = (InodeRef*)foundItem;
+            const InodeRef* rootRef = static_cast<const InodeRef*>(foundItem);
 
             vector<const BtrfsItem*> foundItems;
             examiner->treeSearchById(fileTreeRoot, id,
@@ -117,7 +154,7 @@ namespace btrForensics {
     //!
     const void FilesystemTree::explorFiles(std::ostream& os, istream& is) const
     {
-        DirContent* dir = getDirConent(rootDirId);
+        DirContent* dir = getDirContent(rootDirId);
         if(dir == nullptr) {
             os << "Root directory not found." << endl;
             return;
@@ -190,7 +227,7 @@ namespace btrForensics {
                 os << endl;
             }
 
-            DirContent* newDir = getDirConent(targetInode);
+            DirContent* newDir = getDirContent(targetInode);
             delete dir;
             dir = newDir;
 

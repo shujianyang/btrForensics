@@ -1,7 +1,9 @@
-//! \file btrfrsc.cpp
+//! \file fls.cpp
 //! \author Shujian Yang
 //!
-//! Main function.
+//! Main function of fls.
+//!
+//! Used to list files in a Btrfs image.
 
 #include <iostream>
 #include <fstream>
@@ -25,14 +27,28 @@ using namespace btrForensics;
 int main(int argc, char *argv[])
 {
     TSK_OFF_T imgOffset(0);
+    bool dirFlag(true);
+    bool fileFlag(true);
+    bool recursive(false);
     int option;
-    while((option = getopt(argc, argv, "o:")) != -1){
+    while((option = getopt(argc, argv, "DFro:")) != -1){
         switch(option){
             case 'o':
                 if( (imgOffset = tsk_parse_offset(optarg)) == -1){
                     tsk_error_print(stderr);
                     exit(1);
                 }
+                break;
+            case 'D':
+                dirFlag = true;
+                fileFlag = false;
+                break;
+            case 'F':
+                fileFlag = true;
+                dirFlag = false;
+                break;
+            case 'r':
+                recursive = true;
                 break;
             case '?':
             default:
@@ -67,56 +83,17 @@ int main(int argc, char *argv[])
 
     tsk_img_read(img, SuperBlock::ADDR_OF_SPR_BLK, diskArr, SuperBlock::SIZE_OF_SPR_BLK);
     SuperBlock supblk(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
-
-    cout << supblk << endl;
-
-    cout << "Magic: " << supblk.printMagic() << endl;
-
-    cout << supblk.printSpace() << endl;
-    cout << endl;
-
-    cout << "Label: " << supblk.printLabel() << endl;
-    cout << "\n" << endl;
     delete [] diskArr;
 
     TreeExaminer examiner(img, TSK_LIT_ENDIAN, &supblk);
 
-    string answer;
-    
-    while(true) {
-        cout << "MAIN MENU -- What do you want to do?" << endl;
-        cout << "[1] Navigate to selected node and print information." << endl;
-        cout << "[2] List all files in default filesystem tree." << endl;
-        cout << "[3] Explor files and subdirectories in default root directory." << endl;
-        cout << "[4] Switch to a subvolume or snapshot and exploere files within." << endl;
-        cout << "[q] Quit." << endl;
-        cout << "Enter your choice > ";
-        cin >> answer;
-        cout << endl;
-
-        if(answer == "q") break;
-        cout << std::string(60, '=') << "\n";
-        cout << endl;
-        if(answer == "1"){
-            examiner.navigateNodes(cout, cin);
-        }
-        else if(answer == "2") {
-            cout << "Listing directory items...\n" << endl;
-            examiner.fsTree->listDirItems(cout);
-        }
-        else if(answer == "3") {
-            examiner.fsTree->explorFiles(cout, cin);
-        }
-        else if(answer == "4") {
-            examiner.switchFsTrees(cout, cin);
-        }
-        else
-            cout << "Invalid option. Please choose again." << endl;
-
-        cout << endl;
+    uint64_t targetId(examiner.fsTree->rootDirId);
+    if(argc -1 > optind) {
+        stringstream ss;
+        ss << argv[optind+1];
+        ss >> targetId;
     }
 
-    cout << endl;
-
+    examiner.fsTree->listDirItemsById(targetId, dirFlag, fileFlag, recursive, 0, cout);
 }
 

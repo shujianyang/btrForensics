@@ -11,8 +11,8 @@ using namespace std;
 
 namespace btrForensics {
     //! Constructor of DirContent.
-    DirContent::DirContent(InodeItem* inodeItem,
-            InodeRef* inodeRef, std::vector<const BtrfsItem*> &dirItems)
+    DirContent::DirContent(const InodeItem* inodeItem,
+            const InodeRef* inodeRef, std::vector<const BtrfsItem*> &dirItems)
         :name(inodeRef->getDirName()), inode(inodeItem), ref(inodeRef)
     {
         for(auto item : dirItems){

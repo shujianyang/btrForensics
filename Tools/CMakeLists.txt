@@ -1,6 +1,8 @@
 include_directories(${PROJECT_SOURCE_DIR})
 
-aux_source_directory(. TOOLS_SRCS)
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/Tools)
 
-add_library(Tools ${TOOLS_SRCS})
+add_executable(fls fls.cpp)
+target_link_libraries(fls Examiners Trees)
+target_link_libraries(fls Trees Examiners Basics Utility tsk)
 

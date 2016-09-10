@@ -31,8 +31,10 @@ namespace btrForensics {
         ~FilesystemTree();
 
         const void listDirItems(std::ostream& os) const;
+        const void listDirItemsById(uint64_t id, bool dirFlag, bool fileFlag,
+            bool recursive, int level, std::ostream& os) const;
 
-        DirContent* getDirConent(uint64_t id) const;
+        DirContent* getDirContent(uint64_t id) const;
 
         const void explorFiles(std::ostream& os, std::istream& is) const;
     };

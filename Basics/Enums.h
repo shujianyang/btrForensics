@@ -6,6 +6,8 @@
 #ifndef ENUMS_H
 #define ENUMS_H
 
+#include <iostream>
+
 namespace btrForensics {
     //! Type of an item.
     enum  class ItemType : uint8_t {

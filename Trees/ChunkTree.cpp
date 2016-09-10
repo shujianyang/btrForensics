@@ -5,7 +5,7 @@
 
 #include <iostream>
 #include "ChunkTree.h"
-#include "Tools/Functions.h"
+#include "Examiners/Functions.h"
 
 namespace btrForensics {
     //! Constructor of tree analyzer.
