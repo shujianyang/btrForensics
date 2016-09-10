@@ -102,7 +102,9 @@ int main(int argc, char *argv[])
         }
         else if(answer == "2") {
             cout << "Listing directory items...\n" << endl;
-            examiner.fsTree->listDirItems(cout);
+            uint64_t targetId(examiner.fsTree->rootDirId);
+            examiner.fsTree->listDirItemsById(targetId, true, true, true, 0, cout);
+            cout << endl;
         }
         else if(answer == "3") {
             examiner.fsTree->explorFiles(cout, cin);

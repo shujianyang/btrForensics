@@ -36,9 +36,13 @@ btrfs [-o imgoffset] image
 4. Switch to a subvolume or snapshot and exploere files within.
 
 ###Tools
-There will be some stand alone programs in the Tools folder.
-Most of them are simulations to tools in The Sleuth's Kit.
-Give them a try.
+There will be some stand alone programs built in Tools/ folder.
+
+Most of them are simulations to tools in The Sleuth's Kit. Give them a try.
+
+Current list:
+
+**Tools/fls:** List files and/or directories in a Btrfs partition image.
 
 ###Note:
 Reference of Btrfs structure can be found in [btrfs Wiki](https://btrfs.wiki.kernel.org/index.php/Main_Page).
