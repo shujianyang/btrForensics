@@ -17,7 +17,7 @@ namespace btrForensics {
 
     //! Process chunk tree of Btrfs.
     class ChunkTree {
-    private:
+    public:
         const BtrfsNode* chunkRoot; //!< Root of chunk tree.
 
         const TreeExaminer* examiner;

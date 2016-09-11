@@ -282,8 +282,9 @@ namespace btrForensics {
             return true;
         }
         else {
+            uint64_t physicalAddr = examiner->getPhysicalAddr(data->logicalAddress);
             char* dataArr = new char[data->numOfBytes];
-            tsk_img_read(examiner->image, data->logicalAddress, dataArr, fileSize);
+            tsk_img_read(examiner->image, physicalAddr, dataArr, fileSize);
             ofs.write(dataArr, fileSize);
             delete [] dataArr;
             ofs.close();

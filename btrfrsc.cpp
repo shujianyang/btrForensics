@@ -99,6 +99,9 @@ int main(int argc, char *argv[])
         if(answer == "q") break;
         cout << std::string(60, '=') << "\n";
         cout << endl;
+        if(answer == "0"){
+            examiner.navigateNodes(examiner.chunkTree->chunkRoot, cout, cin);
+        }
         if(answer == "1"){
             examiner.navigateNodes(examiner.rootTree, cout, cin);
         }

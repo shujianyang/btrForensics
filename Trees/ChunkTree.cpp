@@ -50,9 +50,9 @@ namespace btrForensics {
     {
         uint64_t physicalAddr(0);
         //std::cout << chunkRoot->info() << std::endl;
-        examiner->treeSearchById(chunkRoot, logicalAddr,
-                [&physicalAddr](const LeafNode* leaf, uint64_t targetLogAddr)
-                { return getPhyAddr(leaf, targetLogAddr, physicalAddr); });
+        examiner->treeSearch(chunkRoot,
+                [logicalAddr, &physicalAddr](const LeafNode* leaf)
+                { return getPhyAddr(leaf, logicalAddr, physicalAddr); });
         
         return physicalAddr;
     }

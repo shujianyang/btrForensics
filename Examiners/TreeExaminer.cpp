@@ -369,9 +369,15 @@ namespace btrForensics {
             const InternalNode *internal = static_cast<const InternalNode*>(node);
             const BtrfsNode *newNode;
 
-            for(auto ptr : internal->keyPointers) {
+            const auto &vecPtr = internal->keyPointers;
+            for(int i=0; i<vecPtr.size();++i) {
+                auto ptr = vecPtr[i];
                 if(ptr->key.objId > targetId)
                     return false;
+                if(ptr->key.objId<targetId && i!=vecPtr.size()-1
+                        && vecPtr[i+1]->key.objId<targetId)
+                    continue;
+
                 if(ptr->childNode != nullptr) {
                     newNode = ptr->childNode;
                 }
