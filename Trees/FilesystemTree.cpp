@@ -240,4 +240,35 @@ namespace btrForensics {
             os << *dir;
         }
     }
+
+    
+    const bool FilesystemTree::readFile(uint64_t id, std::ostream& os) const
+    {
+        const BtrfsItem* foundItem;
+        if(!examiner->treeSearchById(fileTreeRoot, id,
+                [&foundItem](const LeafNode* leaf, uint64_t targetId)
+                { return searchForItem(leaf, targetId, ItemType::EXTENT_DATA, foundItem); }))
+            return false;
+            
+        const ExtentData* data = static_cast<const ExtentData*>(foundItem);
+        if(data->compression + data->encryption + data->otherEncoding != 0)
+            return false;
+
+        if(data->type == 0) { //Is inline file.
+            char* dataArr = new char[data->decodedSize];
+            tsk_img_read(examiner->image, data->dataAddress, dataArr, data->decodedSize);
+            os.write(dataArr, data->decodedSize);
+            delete [] dataArr;
+            return true;
+        }
+        else {
+            char* dataArr = new char[data->numOfBytes];
+            tsk_img_read(examiner->image, data->logicalAddress, dataArr, data->numOfBytes);
+            os.write(dataArr, data->numOfBytes);
+            delete [] dataArr;
+            return true;
+        }
+
+        return false;
+    }
 }

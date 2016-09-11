@@ -99,9 +99,9 @@ namespace btrForensics {
     //! \param os Output stream where the infomation is printed.
     //! \param is Input stream telling which node is the one to be read.
     //!
-    const void TreeExaminer::navigateNodes(ostream& os, istream& is) const
+    const void TreeExaminer::navigateNodes(const BtrfsNode* root, ostream& os, istream& is) const
     {
-        const BtrfsNode *node = rootTree;
+        const BtrfsNode *node = root;
         const BtrfsHeader *header;
         while(true) {
             header = node->nodeHeader;

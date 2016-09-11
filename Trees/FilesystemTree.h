@@ -37,6 +37,8 @@ namespace btrForensics {
         DirContent* getDirContent(uint64_t id) const;
 
         const void explorFiles(std::ostream& os, std::istream& is) const;
+        
+        const bool readFile(uint64_t id, std::ostream& os) const;
     };
 }
 

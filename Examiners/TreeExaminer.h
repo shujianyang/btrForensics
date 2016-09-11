@@ -31,7 +31,7 @@ namespace btrForensics {
 
         uint64_t getPhysicalAddr(uint64_t logicalAddr) const;
 
-        const void navigateNodes(std::ostream& os, std::istream& is) const;
+        const void navigateNodes(const BtrfsNode* root, std::ostream& os, std::istream& is) const;
         const void switchFsTrees(std::ostream& os, std::istream& is);
 
         void treeTraverse(const BtrfsNode* node,

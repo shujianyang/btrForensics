@@ -55,6 +55,12 @@ namespace btrForensics{
                 case ItemType::CHUNK_ITEM:
                     newItem = new ChunkItem(itemHead, TSK_LIT_ENDIAN, (uint8_t*)itmArr);
                     break;
+                case ItemType::EXTENT_DATA:
+                    newItem = new ExtentData(itemHead, TSK_LIT_ENDIAN, (uint8_t*)itmArr, dataOffset);
+                    break;
+                case ItemType::BLOCK_GROUP_ITEM:
+                    newItem = new BlockGroupItem(itemHead, TSK_LIT_ENDIAN, (uint8_t*)itmArr);
+                    break;
                 default:
                     newItem = new UnknownItem(itemHead);
             }

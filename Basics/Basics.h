@@ -17,7 +17,9 @@
 #include "DevData.h"
 #include "DirItem.h"
 
+#include "ExtentData.h"
 #include "ChunkItem.h"
+#include "BlockGroupItem.h"
 
 #include "UnknownItem.h"
 
