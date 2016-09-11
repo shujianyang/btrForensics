@@ -7,6 +7,7 @@
 #define FILE_TREE_H
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <string>
 #include <functional>
@@ -38,7 +39,7 @@ namespace btrForensics {
 
         const void explorFiles(std::ostream& os, std::istream& is) const;
         
-        const bool readFile(uint64_t id, std::ostream& os) const;
+        const bool readFile(uint64_t id) const;
     };
 }
 

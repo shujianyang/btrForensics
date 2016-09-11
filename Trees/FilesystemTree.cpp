@@ -242,30 +242,51 @@ namespace btrForensics {
     }
 
     
-    const bool FilesystemTree::readFile(uint64_t id, std::ostream& os) const
+    const bool FilesystemTree::readFile(uint64_t id) const
     {
         const BtrfsItem* foundItem;
         if(!examiner->treeSearchById(fileTreeRoot, id,
                 [&foundItem](const LeafNode* leaf, uint64_t targetId)
-                { return searchForItem(leaf, targetId, ItemType::EXTENT_DATA, foundItem); }))
+                { return searchForItem(leaf, targetId, ItemType::INODE_ITEM, foundItem); }))
+            return false;
+        const InodeItem* inode = static_cast<const InodeItem*>(foundItem);
+        uint64_t fileSize = inode->getSize();
+            
+        if(!examiner->treeSearchById(fileTreeRoot, id,
+                [&foundItem](const LeafNode* leaf, uint64_t targetId)
+                { return searchForItem(leaf, targetId, ItemType::INODE_REF, foundItem); }))
+            return false;
+        const InodeRef* inodeRef = static_cast<const InodeRef*>(foundItem);
+        string fileName = inodeRef->getDirName();
+            
+
+        vector<const BtrfsItem*> foundExtents;
+        examiner->treeSearchById(fileTreeRoot, id,
+                [&foundExtents](const LeafNode* leaf, uint64_t targetId)
+                { return filterItems(leaf, targetId, ItemType::EXTENT_DATA, foundExtents); });
+        if(foundExtents.size() != 1)
             return false;
             
-        const ExtentData* data = static_cast<const ExtentData*>(foundItem);
+        const ExtentData* data = static_cast<const ExtentData*>(foundExtents[0]);
         if(data->compression + data->encryption + data->otherEncoding != 0)
             return false;
 
+        ofstream ofs(fileName, ofstream::binary);
+        if(!ofs) return false;
         if(data->type == 0) { //Is inline file.
-            char* dataArr = new char[data->decodedSize];
-            tsk_img_read(examiner->image, data->dataAddress, dataArr, data->decodedSize);
-            os.write(dataArr, data->decodedSize);
+            char* dataArr = new char[fileSize];
+            tsk_img_read(examiner->image, data->dataAddress, dataArr, fileSize);
+            ofs.write(dataArr, fileSize);
             delete [] dataArr;
+            ofs.close();
             return true;
         }
         else {
             char* dataArr = new char[data->numOfBytes];
-            tsk_img_read(examiner->image, data->logicalAddress, dataArr, data->numOfBytes);
-            os.write(dataArr, data->numOfBytes);
+            tsk_img_read(examiner->image, data->logicalAddress, dataArr, fileSize);
+            ofs.write(dataArr, fileSize);
             delete [] dataArr;
+            ofs.close();
             return true;
         }
 

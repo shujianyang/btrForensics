@@ -39,6 +39,9 @@ namespace btrForensics{
         InodeData(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
         ~InodeData() = default; //!< Destructor
 
+        //! Get size of the file.
+        uint64_t getSize() const { return stSize; }
+
         std::string dataInfo() const ;
         
         static const int SIZE_OF_INODE_DATA= 0xa0; //!< Size of an inode in bytes.

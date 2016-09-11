@@ -90,6 +90,7 @@ int main(int argc, char *argv[])
         cout << "[3] List all files in default filesystem tree." << endl;
         cout << "[4] Explor files and subdirectories in default root directory." << endl;
         cout << "[5] Switch to a subvolume or snapshot and exploere files within." << endl;
+        cout << "[6] Read a file from image and save to current directory." << endl;
         cout << "[q] Quit." << endl;
         cout << "Enter your choice > ";
         cin >> answer;
@@ -117,10 +118,27 @@ int main(int argc, char *argv[])
             examiner.switchFsTrees(cout, cin);
         }
         else if(answer == "6") {
-            ofstream out;
-            out.open("test.pdf", ofstream::binary);
-            examiner.fsTree->readFile(820, out);
-            out.close();
+            cout << "Please enter the inode number of file." << endl;
+            cout << "(Enter 'q' to quit.)" << endl;
+            string input;
+            uint64_t targetId;
+            bool success(false);
+            while(true) {
+                cin >> input;
+                if(input == "q") break;
+                if(stringstream(input) >> targetId) {
+                    success = examiner.fsTree->readFile(targetId);
+                    break;
+                }
+                else {
+                    cin.clear();
+                    cout << "Invalid input. Please try again.\n" << endl;
+                }
+            }
+            if(success)
+                cout << "File written." << endl;
+            else
+                cout << "File not found." << endl;
         }
         else
             cout << "Invalid option. Please choose again." << endl;

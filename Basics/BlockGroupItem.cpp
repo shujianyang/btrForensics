@@ -36,6 +36,7 @@ namespace btrForensics{
         std::ostringstream oss;
         oss << std::dec;
         oss << "Used amount: " << usedAmount << '\n';
+        oss << "Flags: " << flags << '\n';
         return oss.str();
     }
 }

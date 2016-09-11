@@ -19,6 +19,7 @@
 
 #include "ExtentData.h"
 #include "ChunkItem.h"
+#include "ExtentItem.h"
 #include "BlockGroupItem.h"
 
 #include "UnknownItem.h"
