@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
     
     while(true) {
         cout << "MAIN MENU -- What do you want to do?" << endl;
-        cout << "[1] Browse nodes and print information." << endl;
+        cout << "[1] Browse nodes derived from root tree and print information." << endl;
         cout << "[2] Browse nodes in filesystem tree and print information." << endl;
         cout << "[3] List all files in default filesystem tree." << endl;
         cout << "[4] Explor files and subdirectories in default root directory." << endl;
@@ -139,9 +139,9 @@ int main(int argc, char *argv[])
                 }
             }
             if(success)
-                cout << "File written." << endl;
+                cout << "Success: File written to current directory." << endl;
             else
-                cout << "File not found." << endl;
+                cout << "Error: File not found." << endl;
         }
         else
             cout << "Invalid option. Please choose again." << endl;

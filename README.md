@@ -30,10 +30,12 @@ btrfs [-o imgoffset] image
 -o imgoffset: Offset into image file (in sectors)
 
 ###Current capability:
-1. Navigates to selected nodes in B-tree and prints information.
-2. List all files in default filesystem tree.
-3. Explor files and subdirectories in default root directory.
-4. Switch to a subvolume or snapshot and exploere files within.
+1. Browse nodes derived from root tree and print information.
+2. Browse nodes in filesystem tree and print information.
+3. List all files in default filesystem tree.
+4. Explor files and subdirectories in default root directory.
+5. Switch to a subvolume or snapshot and exploere files within.
+6. Read a file from image and save to current directory.
 
 ###Tools
 There will be some stand alone programs built in Tools/ folder.

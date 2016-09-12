@@ -7,6 +7,13 @@
 #include "ExtentData.h"
 
 namespace btrForensics {
+    //! Constructor of extent data.
+    //!
+    //! \param head Item head points to this data.
+    //! \param endian The endianess of the array.
+    //! \param arr Byte array storing extent data.
+    //! \param address Physical address of current Btrfs item data part.
+    //!
     ExtentData::ExtentData(ItemHead* head, TSK_ENDIAN_ENUM endian, uint8_t arr[], uint64_t address)
         :BtrfsItem(head)
     {

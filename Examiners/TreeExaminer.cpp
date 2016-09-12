@@ -96,6 +96,7 @@ namespace btrForensics {
 
     //! Navigate to selected node and print information.
     //!
+    //! \param root Starting root node.
     //! \param os Output stream where the infomation is printed.
     //! \param is Input stream telling which node is the one to be read.
     //!

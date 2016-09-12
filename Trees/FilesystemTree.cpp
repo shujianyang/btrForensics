@@ -242,6 +242,11 @@ namespace btrForensics {
     }
 
     
+    //! Read file content with given inode and save to current directory.
+    //!
+    //! \param id Inode number of the file to read.
+    //! \return True if file is all successfully written.
+    //!
     const bool FilesystemTree::readFile(uint64_t id) const
     {
         const BtrfsItem* foundItem;
@@ -264,33 +269,45 @@ namespace btrForensics {
         examiner->treeSearchById(fileTreeRoot, id,
                 [&foundExtents](const LeafNode* leaf, uint64_t targetId)
                 { return filterItems(leaf, targetId, ItemType::EXTENT_DATA, foundExtents); });
-        if(foundExtents.size() != 1)
+        if(foundExtents.size() < 1)
             return false;
             
-        const ExtentData* data = static_cast<const ExtentData*>(foundExtents[0]);
-        if(data->compression + data->encryption + data->otherEncoding != 0)
-            return false;
+        uint64_t unreadSize = fileSize;
+        for(auto extent : foundExtents) {
+            const ExtentData* data = static_cast<const ExtentData*>(extent);
+            if(data->compression + data->encryption + data->otherEncoding != 0)
+                return false;
 
-        ofstream ofs(fileName, ofstream::binary);
-        if(!ofs) return false;
-        if(data->type == 0) { //Is inline file.
-            char* dataArr = new char[fileSize];
-            tsk_img_read(examiner->image, data->dataAddress, dataArr, fileSize);
-            ofs.write(dataArr, fileSize);
-            delete [] dataArr;
-            ofs.close();
-            return true;
+            ofstream ofs(fileName, ofstream::app | ofstream::binary);
+            if(!ofs) return false;
+            if(data->type == 0) { //Is inline file.
+                char* dataArr = new char[fileSize];
+                tsk_img_read(examiner->image, data->dataAddress, dataArr, fileSize);
+                ofs.write(dataArr, fileSize);
+                delete [] dataArr;
+                ofs.close();
+                return true;
+            }
+            else {
+                uint64_t physicalAddr = examiner->getPhysicalAddr(data->logicalAddress)
+                                        + data->extentOffset;
+                char* dataArr;
+                if(unreadSize > data->numOfBytes) {
+                    dataArr = new char[data->numOfBytes];
+                    tsk_img_read(examiner->image, physicalAddr, dataArr, data->numOfBytes);
+                    ofs.write(dataArr, data->numOfBytes);
+                    unreadSize -= data->numOfBytes;
+                    delete [] dataArr;
+                }
+                else {
+                    dataArr = new char[unreadSize];
+                    tsk_img_read(examiner->image, physicalAddr, dataArr, unreadSize);
+                    ofs.write(dataArr, unreadSize);
+                    delete [] dataArr;
+                }
+                ofs.close();
+            }
         }
-        else {
-            uint64_t physicalAddr = examiner->getPhysicalAddr(data->logicalAddress);
-            char* dataArr = new char[data->numOfBytes];
-            tsk_img_read(examiner->image, physicalAddr, dataArr, fileSize);
-            ofs.write(dataArr, fileSize);
-            delete [] dataArr;
-            ofs.close();
-            return true;
-        }
-
-        return false;
+        return true;
     }
 }

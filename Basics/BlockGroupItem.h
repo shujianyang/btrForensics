@@ -14,7 +14,7 @@
 namespace btrForensics {
     //! Block group item.
     class BlockGroupItem : public BtrfsItem {
-    public:
+    private:
         uint64_t usedAmount;
         uint64_t chunkTreeId;
         uint64_t flags;

@@ -14,7 +14,7 @@
 namespace btrForensics {
     //! Extent item.
     class ExtentItem : public BtrfsItem {
-    public:
+    private:
         uint64_t refCount;
         uint64_t generation;
         uint64_t flags;
