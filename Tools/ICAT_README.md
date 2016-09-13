@@ -8,7 +8,7 @@ Raw image of a btrfs partition, or a partition device file using btrfs.
 
 ###Usage:
 ```
-icat [-o imgoffset] image [inode]
+icat [-o imgoffset] image inode
 ```
 
 -o imgoffset: Offset into image file (in sectors)
