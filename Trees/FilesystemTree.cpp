@@ -34,8 +34,9 @@ namespace btrForensics {
             rootItm = static_cast<const RootItem*>(foundItem);
         }
         else {
-            cerr << "Error. Filesystem tree not found." << endl;
-            exit(1);
+            ostringstream oss;
+            oss << "Filesystem tree pointed by root item " << rootItemId << " is not found.";
+            throw FsDamagedException(oss.str());
         }
 
         uint64_t offset = rootItm->getBlockNumber();
@@ -303,10 +304,14 @@ namespace btrForensics {
                     dataArr = new char[unreadSize];
                     tsk_img_read(examiner->image, physicalAddr, dataArr, unreadSize);
                     ofs.write(dataArr, unreadSize);
+                    unreadSize = 0;
                     delete [] dataArr;
                 }
                 ofs.close();
             }
+        }
+        if(unreadSize != 0) {
+            throw FsDamagedException("File extents missing. Written file is incomplete.");
         }
         return true;
     }

@@ -37,6 +37,8 @@ namespace btrForensics{
         for(int i=0; i<0x08; i++, arIndex++){
             magic[i] = arr[arIndex];
         }
+        if(std::string(magic, 8) != "_BHRfS_M")
+            throw FsDamagedException("Superblock not found. Possibly not a Btrfs partition.");
 
         generation = read64Bit(endian, arr + arIndex);
         arIndex += 0x08;

@@ -1,6 +1,7 @@
 #ifndef BASICS_H
 #define BASICS_H
 
+#include "Exceptions.h"
 #include "Enums.h"
 #include "BtrfsKey.h"
 #include "BtrfsHeader.h"

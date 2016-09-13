@@ -148,9 +148,9 @@ namespace btrForensics{
         uint64_t chunkLogical = key->offset; //Key offset stores logical address.
         uint64_t chunkPhysical = chunkData->getOffset(); //Data offset stores physical address.
 
-        //Input logical address should be smaller than chunk logial address.
+        //Input logical address should be larger than chunk logial address.
         if(logicalAddr < chunkLogical)
-            return 0;
+            throw FsDamagedException("Superblock chunk item error. Unable to map logical address to physical address.");
         
         physicalAddr = logicalAddr - chunkLogical + chunkPhysical;
         return physicalAddr;

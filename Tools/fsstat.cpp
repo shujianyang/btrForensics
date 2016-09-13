@@ -61,23 +61,22 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    char *diskArr = new char[SuperBlock::SIZE_OF_SPR_BLK]();
-    if(diskArr == 0){
-        cerr << "Fail to allocate superblock space." << endl;
-        exit(1);
-    }
+    try {
+        char *diskArr = new char[SuperBlock::SIZE_OF_SPR_BLK]();
+        tsk_img_read(img, SuperBlock::ADDR_OF_SPR_BLK, diskArr, SuperBlock::SIZE_OF_SPR_BLK);
+        SuperBlock supblk(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
+        delete [] diskArr;
 
-    tsk_img_read(img, SuperBlock::ADDR_OF_SPR_BLK, diskArr, SuperBlock::SIZE_OF_SPR_BLK);
-    SuperBlock supblk(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
-    delete [] diskArr;
-
-    if(supblk.printMagic() == "_BHRfS_M") {
         cout << supblk << endl;
         cout << supblk.printSpace() << endl;
         cout << endl;
         cout << "Label: " << supblk.printLabel() << endl;
+    } catch(std::bad_alloc& ba) {
+        cerr << "Error when allocating objects.\n" << ba.what() << endl;
+    } catch(FsDamagedException& fsEx) {
+        cerr << "Error: Btrfs filesystem damaged.\n" << fsEx.what() << endl;
+    } catch(exception& e) {
+        cerr << e.what() << endl;
     }
-    else
-        cout << "Error: Superblock not found." << endl;
 }
 

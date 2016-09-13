@@ -7,6 +7,8 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
+#include <exception>
+#include <stdexcept>
 #include <string>
 #include <map>
 #include <memory>
@@ -65,91 +67,97 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    tsk_img_read(img, SuperBlock::ADDR_OF_SPR_BLK, diskArr, SuperBlock::SIZE_OF_SPR_BLK);
-    SuperBlock supblk(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
+    try {
+        tsk_img_read(img, SuperBlock::ADDR_OF_SPR_BLK, diskArr, SuperBlock::SIZE_OF_SPR_BLK);
+        SuperBlock supblk(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
 
-    cout << supblk << endl;
+        cout << supblk << endl;
 
-    cout << "Magic: " << supblk.printMagic() << endl;
+        cout << "Magic: " << supblk.printMagic() << endl;
 
-    cout << supblk.printSpace() << endl;
-    cout << endl;
-
-    cout << "Label: " << supblk.printLabel() << endl;
-    cout << "\n" << endl;
-    delete [] diskArr;
-
-    TreeExaminer examiner(img, TSK_LIT_ENDIAN, &supblk);
-
-    string answer;
-    
-    while(true) {
-        cout << "MAIN MENU -- What do you want to do?" << endl;
-        cout << "[1] Browse nodes derived from root tree and print information." << endl;
-        cout << "[2] Browse nodes in filesystem tree and print information." << endl;
-        cout << "[3] List all files in default filesystem tree." << endl;
-        cout << "[4] Explor files and subdirectories in default root directory." << endl;
-        cout << "[5] Switch to a subvolume or snapshot and exploere files within." << endl;
-        cout << "[6] Read a file from image and save to current directory." << endl;
-        cout << "[q] Quit." << endl;
-        cout << "Enter your choice > ";
-        cin >> answer;
+        cout << supblk.printSpace() << endl;
         cout << endl;
 
-        if(answer == "q") break;
-        cout << std::string(60, '=') << "\n";
-        cout << endl;
-        if(answer == "0"){
-            examiner.navigateNodes(examiner.chunkTree->chunkRoot, cout, cin);
-        }
-        if(answer == "1"){
-            examiner.navigateNodes(examiner.rootTree, cout, cin);
-        }
-        else if(answer == "2"){
-            examiner.navigateNodes(examiner.fsTreeDefault->fileTreeRoot, cout, cin);
-        }
-        else if(answer == "3") {
-            cout << "Listing directory items...\n" << endl;
-            uint64_t targetId(examiner.fsTree->rootDirId);
-            examiner.fsTree->listDirItemsById(targetId, true, true, true, 0, cout);
+        cout << "Label: " << supblk.printLabel() << endl;
+        cout << "\n" << endl;
+        delete [] diskArr;
+
+        TreeExaminer examiner(img, TSK_LIT_ENDIAN, &supblk);
+
+        string answer;
+        
+        while(true) {
+            cout << "MAIN MENU -- What do you want to do?" << endl;
+            cout << "[1] Browse nodes derived from root tree and print information." << endl;
+            cout << "[2] Browse nodes in filesystem tree and print information." << endl;
+            cout << "[3] List all files in default filesystem tree." << endl;
+            cout << "[4] Explor files and subdirectories in default root directory." << endl;
+            cout << "[5] Switch to a subvolume or snapshot and exploere files within." << endl;
+            cout << "[6] Read a file from image and save to current directory." << endl;
+            cout << "[q] Quit." << endl;
+            cout << "Enter your choice > ";
+            cin >> answer;
+            cout << endl;
+
+            if(answer == "q") break;
+            cout << std::string(60, '=') << "\n";
+            cout << endl;
+            if(answer == "0"){
+                examiner.navigateNodes(examiner.chunkTree->chunkRoot, cout, cin);
+            }
+            if(answer == "1"){
+                examiner.navigateNodes(examiner.rootTree, cout, cin);
+            }
+            else if(answer == "2"){
+                examiner.navigateNodes(examiner.fsTreeDefault->fileTreeRoot, cout, cin);
+            }
+            else if(answer == "3") {
+                cout << "Listing directory items...\n" << endl;
+                uint64_t targetId(examiner.fsTree->rootDirId);
+                examiner.fsTree->listDirItemsById(targetId, true, true, true, 0, cout);
+                cout << endl;
+            }
+            else if(answer == "4") {
+                examiner.fsTree->explorFiles(cout, cin);
+            }
+            else if(answer == "5") {
+                examiner.switchFsTrees(cout, cin);
+            }
+            else if(answer == "6") {
+                cout << "Please enter the inode number of file." << endl;
+                cout << "(Enter 'q' to quit.)" << endl;
+                string input;
+                uint64_t targetId;
+                bool success(false);
+                while(true) {
+                    cin >> input;
+                    if(input == "q") break;
+                    if(stringstream(input) >> targetId) {
+                        success = examiner.fsTree->readFile(targetId);
+                        break;
+                    }
+                    else {
+                        cin.clear();
+                        cout << "Invalid input. Please try again.\n" << endl;
+                    }
+                }
+                if(success)
+                    cout << "Success: File written to current directory." << endl;
+                else
+                    cout << "Error: File not found." << endl;
+            }
+            else
+                cout << "Invalid option. Please choose again." << endl;
+
             cout << endl;
         }
-        else if(answer == "4") {
-            examiner.fsTree->explorFiles(cout, cin);
-        }
-        else if(answer == "5") {
-            examiner.switchFsTrees(cout, cin);
-        }
-        else if(answer == "6") {
-            cout << "Please enter the inode number of file." << endl;
-            cout << "(Enter 'q' to quit.)" << endl;
-            string input;
-            uint64_t targetId;
-            bool success(false);
-            while(true) {
-                cin >> input;
-                if(input == "q") break;
-                if(stringstream(input) >> targetId) {
-                    success = examiner.fsTree->readFile(targetId);
-                    break;
-                }
-                else {
-                    cin.clear();
-                    cout << "Invalid input. Please try again.\n" << endl;
-                }
-            }
-            if(success)
-                cout << "Success: File written to current directory." << endl;
-            else
-                cout << "Error: File not found." << endl;
-        }
-        else
-            cout << "Invalid option. Please choose again." << endl;
-
-        cout << endl;
+    } catch(std::bad_alloc& ba) {
+        cerr << "Error when allocating objects.\n" << ba.what() << endl;
+    } catch(FsDamagedException& fsEx) {
+        cerr << "Error: Btrfs filesystem damaged.\n" << fsEx.what() << endl;
+    } catch(exception& e) {
+        cerr << e.what() << endl;
     }
-
-    cout << endl;
 
 }
 

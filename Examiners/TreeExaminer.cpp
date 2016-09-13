@@ -59,10 +59,8 @@ namespace btrForensics {
             const DirItem* dir = static_cast<const DirItem*>(foundItem);
             defaultId = dir->targetKey.objId; //This is id of root item to filesystem tree.
         }
-        else {
-            cerr << "Error. Default filesystem tree not found." << endl;
-            exit(1);
-        }
+        else 
+            throw FsDamagedException("Default directory dir item not found.");
 
         fsTree = new FilesystemTree(rootTree, defaultId, this);
         fsTreeDefault = fsTree;
