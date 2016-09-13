@@ -195,7 +195,7 @@ namespace btrForensics{
     //! Overloaded stream operator.
     std::ostream &operator<<(std::ostream &os, SuperBlock &supb)
     {
-        os << supb.fsUUID.encode()
+        os << "File system UUID: " << supb.fsUUID.encode()
             << std::uppercase << std::hex;
         os << "\nRoot tree root address: 0x";
         os.fill('0');

@@ -310,4 +310,39 @@ namespace btrForensics {
         }
         return true;
     }
+
+
+    //! Print infomation about target inode.
+    //!
+    //! \param id Id of the target inode.
+    //! \param os Output stream where the infomation is printed.
+    //! \return True if inode is found.
+    //! 
+    const bool FilesystemTree::showInodeInfo(uint64_t id, std::ostream& os) const
+    {
+        const BtrfsItem* foundItem;
+        if(!examiner->treeSearchById(fileTreeRoot, id,
+                [&foundItem](const LeafNode* leaf, uint64_t targetId)
+                { return searchForItem(leaf, targetId, ItemType::INODE_ITEM, foundItem); }))
+            return false;
+        const InodeItem* inode = static_cast<const InodeItem*>(foundItem);
+        uint64_t size = inode->getSize();
+            
+        if(!examiner->treeSearchById(fileTreeRoot, id,
+                [&foundItem](const LeafNode* leaf, uint64_t targetId)
+                { return searchForItem(leaf, targetId, ItemType::INODE_REF, foundItem); }))
+            return false;
+        const InodeRef* inodeRef = static_cast<const InodeRef*>(foundItem);
+        string name = inodeRef->getDirName();
+
+        os << dec;
+        os << "Inode number: " << id << endl;
+        os << "Size: " << size << endl;
+        os << "Name: " << name << endl;
+
+        os << "\nDirectory Entry Times(local);" << endl;
+        os << inode->printTime() << endl;
+        
+        return true;
+    }
 }

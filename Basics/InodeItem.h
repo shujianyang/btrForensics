@@ -22,6 +22,8 @@ namespace btrForensics{
         InodeItem(ItemHead* head, TSK_ENDIAN_ENUM endian, uint8_t arr[]);
         ~InodeItem() = default; //!< Destructor
 
+        std::string printTime() const;
+
         //! Get size of the file.
         uint64_t getSize() const { return data.getSize(); }
 

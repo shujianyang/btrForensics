@@ -1,6 +1,9 @@
 # Executable
 btrfrsc
+fsstat
 fls
+istat
+icat
 
 # Object files
 *.o

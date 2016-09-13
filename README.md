@@ -44,7 +44,10 @@ Most of them are simulations to tools in The Sleuth's Kit. Give them a try.
 
 Current list:
 
+**Tools/fsstat:** Print information about the file system.
 **Tools/fls:** List files and/or directories in a Btrfs partition image.
+**Tools/istat:** Print information about an inode.
+**Tools/icat:** Output the contents of file with provided inode number in Btrfs.
 
 ###Note:
 Reference of Btrfs structure can be found in [btrfs Wiki](https://btrfs.wiki.kernel.org/index.php/Main_Page).
