@@ -27,14 +27,20 @@ using namespace btrForensics;
 int main(int argc, char *argv[])
 {
     TSK_OFF_T imgOffset(0);
+    uint64_t rootFsId(0);
     int option;
-    while((option = getopt(argc, argv, "o:")) != -1){
+    while((option = getopt(argc, argv, "o:s:")) != -1){
+        stringstream ss;
         switch(option){
             case 'o':
                 if( (imgOffset = tsk_parse_offset(optarg)) == -1){
                     tsk_error_print(stderr);
                     exit(1);
                 }
+                break;
+            case 's':
+                ss << optarg;
+                ss >> rootFsId;
                 break;
             case '?':
             default:
@@ -71,15 +77,19 @@ int main(int argc, char *argv[])
         SuperBlock supblk(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
         delete [] diskArr;
 
-        TreeExaminer examiner(img, TSK_LIT_ENDIAN, &supblk);
+        TreeExaminer* examiner;
+        if(rootFsId == 0)
+            examiner = new TreeExaminer(img, TSK_LIT_ENDIAN, &supblk);
+        else
+            examiner = new TreeExaminer(img, TSK_LIT_ENDIAN, &supblk, rootFsId);
 
-        uint64_t targetId(examiner.fsTree->rootDirId);
+        uint64_t targetId(examiner->fsTree->rootDirId);
         stringstream ss;
         ss << argv[optind+1];
         ss >> targetId;
 
         bool success;
-        success = examiner.fsTree->showInodeInfo(targetId, cout);
+        success = examiner->fsTree->showInodeInfo(targetId, cout);
 
         if(!success)
             cout << "Error: Inode not found." << endl;

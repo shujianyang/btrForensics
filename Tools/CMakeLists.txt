@@ -18,3 +18,6 @@ add_executable(istat istat.cpp)
 target_link_libraries(istat Examiners Trees)
 target_link_libraries(istat Trees Examiners Basics Utility tsk)
 
+add_executable(subls subls.cpp)
+target_link_libraries(subls Examiners Trees)
+target_link_libraries(subls Trees Examiners Basics Utility tsk)

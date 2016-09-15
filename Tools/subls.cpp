@@ -1,9 +1,9 @@
-//! \file fls.cpp
+//! \file subls.cpp
 //! \author Shujian Yang
 //!
-//! Main function of fls.
+//! Main function of subls.
 //!
-//! Used to list files in a Btrfs image.
+//! List subvolumes and snapshots in a Btrfs image.
 
 #include <iostream>
 #include <fstream>
@@ -27,34 +27,14 @@ using namespace btrForensics;
 int main(int argc, char *argv[])
 {
     TSK_OFF_T imgOffset(0);
-    bool dirFlag(true);
-    bool fileFlag(true);
-    bool recursive(false);
-    uint64_t rootFsId(0);
     int option;
-    while((option = getopt(argc, argv, "DFro:s:")) != -1){
-        stringstream ss;
+    while((option = getopt(argc, argv, "o:")) != -1){
         switch(option){
             case 'o':
                 if( (imgOffset = tsk_parse_offset(optarg)) == -1){
                     tsk_error_print(stderr);
                     exit(1);
                 }
-                break;
-            case 's':
-                ss << optarg;
-                ss >> rootFsId;
-                break;
-            case 'D':
-                dirFlag = true;
-                fileFlag = false;
-                break;
-            case 'F':
-                fileFlag = true;
-                dirFlag = false;
-                break;
-            case 'r':
-                recursive = true;
                 break;
             case '?':
             default:
@@ -87,20 +67,23 @@ int main(int argc, char *argv[])
         SuperBlock supblk(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
         delete [] diskArr;
 
-        TreeExaminer* examiner;
-        if(rootFsId == 0)
-            examiner = new TreeExaminer(img, TSK_LIT_ENDIAN, &supblk);
-        else
-            examiner = new TreeExaminer(img, TSK_LIT_ENDIAN, &supblk, rootFsId);
+        TreeExaminer examiner(img, TSK_LIT_ENDIAN, &supblk);
 
-        uint64_t targetId(examiner->fsTree->rootDirId);
-        if(argc -1 > optind) {
-            stringstream ss;
-            ss << argv[optind+1];
-            ss >> targetId;
+        vector<const BtrfsItem*> foundRootRefs;
+        examiner.treeTraverse(examiner.rootTree, [&foundRootRefs](const LeafNode* leaf)
+                { return filterItems(leaf, ItemType::ROOT_BACKREF, foundRootRefs); });
+
+        if(foundRootRefs.size() == 0) {
+            cout << "\nNo subvolumes or snapshots are found.\n" << endl;
+            return 0;
         }
 
-        examiner->fsTree->listDirItemsById(targetId, dirFlag, fileFlag, recursive, 0, cout);
+        cout << "The following subvolumes or snapshots are found:" << endl;
+        for(auto item : foundRootRefs) {
+            const RootRef* ref = static_cast<const RootRef*>(item);
+            cout << dec << setfill(' ') << setw(7);
+            cout << ref->getId() << "   " << ref->getDirName() << '\n';
+        }
     } catch(std::bad_alloc& ba) {
         cerr << "Error when allocating objects.\n" << ba.what() << endl;
     } catch(FsDamagedException& fsEx) {

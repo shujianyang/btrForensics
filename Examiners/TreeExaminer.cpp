@@ -6,6 +6,7 @@
 #include <map>
 #include <sstream>
 #include <iomanip>
+#include <stdexcept>
 #include <functional>
 #include "TreeExaminer.h"
 #include "Functions.h"
@@ -24,46 +25,39 @@ namespace btrForensics {
             const SuperBlock* superBlk)
         :image(img), endian(end)
     {
-        //Chunk tree is needed at the very beginning
-        //to convert logical address to physical address.
-        chunkTree = new ChunkTree(superBlk, this);
+        initializeRootTree(superBlk);
 
-        uint64_t rootTreelogAddr = superBlk->getRootLogAddr();
-
-        //Pyhsical address of root of Root Tree obtained here.
-        uint64_t rootTreePhyAddr = chunkTree->getPhysicalAddr(rootTreelogAddr);
-
-        char* diskArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
-        tsk_img_read(image, rootTreePhyAddr, diskArr, BtrfsHeader::SIZE_OF_HEADER);
-        BtrfsHeader* rootHeader = new BtrfsHeader(endian, (uint8_t*)diskArr);
-        delete [] diskArr;
-
-        uint64_t itemListStart = rootTreePhyAddr + BtrfsHeader::SIZE_OF_HEADER;
-        if(rootHeader->isLeafNode())
-            rootTree = new LeafNode(image, rootHeader, endian, itemListStart);
-        else
-            rootTree = new InternalNode(image, rootHeader, endian, itemListStart);
-
-
-        //Technically, the default volume id should be found in offset 0x80 in superblock.
-        //Currently, it is set as 6 by default.
-        uint64_t defaultVolId(6);
-
-        bool foundFSTree(false);
-
-        uint64_t defaultId(0);
-        const BtrfsItem* foundItem;
-        if(treeSearchById(rootTree, defaultVolId,
-                [&foundItem](const LeafNode* leaf, uint64_t targetId)
-                { return searchForItem(leaf, targetId, ItemType::DIR_ITEM, foundItem); })) {
-            const DirItem* dir = static_cast<const DirItem*>(foundItem);
-            defaultId = dir->targetKey.objId; //This is id of root item to filesystem tree.
-        }
-        else 
-            throw FsDamagedException("Default directory dir item not found.");
+        uint64_t defaultId = getDefaultFsId();
 
         fsTree = new FilesystemTree(rootTree, defaultId, this);
         fsTreeDefault = fsTree;
+    }
+
+
+    //! Constructor of tree analyzer, use subvolume instead of default filesystem root.
+    //!
+    //! \param img Image file.
+    //! \param end The endianess of the array.
+    //! \param superBlk Pointer to btrfs super block.
+    //! \param fsRootId Id of root of Filesystem Tree.
+    //!
+    TreeExaminer::TreeExaminer(TSK_IMG_INFO *img, TSK_ENDIAN_ENUM end,
+            const SuperBlock* superBlk, uint64_t fsRootId)
+        :image(img), endian(end)
+    {
+        initializeRootTree(superBlk);
+
+        const BtrfsItem* foundItem;
+        if(treeSearchById(rootTree, fsRootId,
+                [&foundItem](const LeafNode* leaf, uint64_t targetId)
+                { return searchForItem(leaf, targetId, ItemType::ROOT_BACKREF, foundItem); })) {
+            //const RootRef* dir = static_cast<const RootRef*>(foundItem);
+            fsTree = new FilesystemTree(rootTree, fsRootId, this);
+            fsTreeDefault = fsTree;
+        }
+        else
+            throw runtime_error("The argument of -s option is not a valid subvolume id.");
+
     }
 
 
@@ -89,6 +83,53 @@ namespace btrForensics {
     uint64_t TreeExaminer::getPhysicalAddr(uint64_t logicalAddr) const
     {
         return chunkTree->getPhysicalAddr(logicalAddr);
+    }
+
+
+    //! Initialize root of Root Tree.
+    void TreeExaminer::initializeRootTree(const SuperBlock* superBlk)
+    {
+        //Chunk tree is needed at the very beginning
+        //to convert logical address to physical address.
+        chunkTree = new ChunkTree(superBlk, this);
+
+        uint64_t rootTreelogAddr = superBlk->getRootLogAddr();
+
+        //Pyhsical address of root of Root Tree obtained here.
+        uint64_t rootTreePhyAddr = chunkTree->getPhysicalAddr(rootTreelogAddr);
+
+        char* diskArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
+        tsk_img_read(image, rootTreePhyAddr, diskArr, BtrfsHeader::SIZE_OF_HEADER);
+        BtrfsHeader* rootHeader = new BtrfsHeader(endian, (uint8_t*)diskArr);
+        delete [] diskArr;
+
+        uint64_t itemListStart = rootTreePhyAddr + BtrfsHeader::SIZE_OF_HEADER;
+        if(rootHeader->isLeafNode())
+            rootTree = new LeafNode(image, rootHeader, endian, itemListStart);
+        else
+            rootTree = new InternalNode(image, rootHeader, endian, itemListStart);
+    }
+
+
+    //! Obatin root item id of default volume (filesystem tree).
+    uint64_t TreeExaminer::getDefaultFsId() const
+    {
+        //Technically, the default volume id should be found in offset 0x80 in superblock.
+        //Currently, it is set as 6 by default.
+        uint64_t defaultDirId(6);
+
+        uint64_t defaultId(0);
+        const BtrfsItem* foundItem;
+        if(treeSearchById(rootTree, defaultDirId,
+                [&foundItem](const LeafNode* leaf, uint64_t targetId)
+                { return searchForItem(leaf, targetId, ItemType::DIR_ITEM, foundItem); })) {
+            const DirItem* dir = static_cast<const DirItem*>(foundItem);
+            defaultId = dir->targetKey.objId; //This is id of root item to filesystem tree.
+        }
+        else 
+            throw FsDamagedException("Default directory dir item not found.");
+
+        return defaultId;
     }
 
 
@@ -246,10 +287,10 @@ namespace btrForensics {
         os << "\n" << std::string(60, '=') << "\n";
         os << endl;
 
-        fsTree->explorFiles(os, is);
+        //fsTree->explorFiles(os, is);
 
-        delete fsTree;
-        fsTree = fsTreeDefault;
+        //delete fsTree;
+        //fsTree = fsTreeDefault;
     }
 
 

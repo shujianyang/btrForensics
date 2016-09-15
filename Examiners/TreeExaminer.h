@@ -27,9 +27,12 @@ namespace btrForensics {
 
     public:
         TreeExaminer(TSK_IMG_INFO*, TSK_ENDIAN_ENUM, const SuperBlock*);
+        TreeExaminer(TSK_IMG_INFO*, TSK_ENDIAN_ENUM, const SuperBlock*, uint64_t fsRootId);
         ~TreeExaminer();
 
         uint64_t getPhysicalAddr(uint64_t logicalAddr) const;
+        void initializeRootTree(const SuperBlock* superBlk);
+        uint64_t getDefaultFsId() const;
 
         const void navigateNodes(const BtrfsNode* root, std::ostream& os, std::istream& is) const;
         const void switchFsTrees(std::ostream& os, std::istream& is);

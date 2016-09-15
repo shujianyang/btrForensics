@@ -4,6 +4,7 @@ fsstat
 fls
 istat
 icat
+subls
 
 # Object files
 *.o

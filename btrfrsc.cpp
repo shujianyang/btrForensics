@@ -122,6 +122,9 @@ int main(int argc, char *argv[])
             }
             else if(answer == "5") {
                 examiner.switchFsTrees(cout, cin);
+                examiner.fsTree->explorFiles(cout, cin);
+                delete examiner.fsTree;
+                examiner.fsTree = examiner.fsTreeDefault;
             }
             else if(answer == "6") {
                 cout << "Please enter the inode number of file." << endl;

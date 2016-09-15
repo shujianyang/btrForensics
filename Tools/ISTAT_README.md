@@ -8,10 +8,12 @@ Raw image of a btrfs partition, or a partition device file using btrfs.
 
 ###Usage:
 ```
-istat [-o imgoffset] image inode
+istat [-o imgoffset] [-s subvolumeid] image inode
 ```
 
 -o imgoffset: Offset into image file (in sectors)
+
+-s subvolumeid: The id of subvolume or snapshot. List can be found by using subls tool.
 
 ###Note:
 Unable to distinguish files and directories yet.

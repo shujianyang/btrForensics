@@ -8,12 +8,14 @@ Raw image of a btrfs partition, or a partition device file using btrfs.
 
 ###Usage:
 ```
-fls [-rDF] [-o imgoffset] image [inode]
+fls [-rDF] [-o imgoffset] [-s subvolumeid] image [inode]
 ```
 
 If [inode] is not given, the root directory is used.
 
 -o imgoffset: Offset into image file (in sectors)
+
+-s subvolumeid: The id of subvolume or snapshot. List can be found by using subls tool.
 
 -r: Recurse on directory entries
 
