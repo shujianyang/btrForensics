@@ -23,9 +23,8 @@ Raw image of a btrfs partition, or a partition device file using btrfs.
 
 ###Usage:
 ```
-btrfs [-o imgoffset] image 
+btrfrsc [-o imgoffset] image 
 ```
-
 
 -o imgoffset: Offset into image file (in sectors)
 
@@ -48,6 +47,7 @@ Current list:
 **Tools/fls:** List files and/or directories in a Btrfs partition image.  
 **Tools/istat:** Print information about an inode.  
 **Tools/icat:** Output the contents of file with provided inode number in Btrfs.  
+**Tools/subls:** List subvolumes and snapshots in a Btrfs image.
 
 ###Note:
 Reference of Btrfs structure can be found in [btrfs Wiki](https://btrfs.wiki.kernel.org/index.php/Main_Page).

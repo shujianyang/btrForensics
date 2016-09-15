@@ -6,7 +6,7 @@ Raw image of a btrfs partition, or a partition device file using btrfs.
 
 ###Usage:
 ```
-fsstat [-o imgoffset] image
+subls [-o imgoffset] image
 ```
 
 -o imgoffset: Offset into image file (in sectors)
