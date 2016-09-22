@@ -29,7 +29,7 @@ namespace btrForensics{
         //! Overloaded stream operator.
         friend std::ostream &operator<<(std::ostream &os, const BtrfsItem &item)
         {
-            os << "[Head]\n";
+            os << "[Item]\n";
             os << *item.itemHead << "\n[Data]\n" << item.dataInfo();
             os << "\n" << std::endl;
             return os;

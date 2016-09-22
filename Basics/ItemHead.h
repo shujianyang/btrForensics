@@ -22,8 +22,10 @@ namespace btrForensics{
 
         //Total bytes: 0x19
 
+        uint64_t itemPhyAddr; //!< Physical address of item head.
+        uint64_t dataPhyAddr; //!< Physical address of item data.
     public:
-        ItemHead(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
+        ItemHead(TSK_ENDIAN_ENUM endian, uint8_t arr[], uint64_t headerEnd, uint64_t offset);
         ~ItemHead() = default; //!< Destructor
 
         //! Return offset of data linked to this item,

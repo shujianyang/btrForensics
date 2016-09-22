@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
             cout << "[2] Browse nodes in filesystem tree and print information." << endl;
             cout << "[3] List all files in default filesystem tree." << endl;
             cout << "[4] Explor files and subdirectories in default root directory." << endl;
-            cout << "[5] Switch to a subvolume or snapshot and exploere files within." << endl;
+            cout << "[5] Switch to a subvolume or snapshot and explore files within." << endl;
             cout << "[6] Read a file from image and save to current directory." << endl;
             cout << "[q] Quit." << endl;
             cout << "Enter your choice > ";

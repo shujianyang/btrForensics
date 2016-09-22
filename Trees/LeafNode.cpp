@@ -27,7 +27,8 @@ namespace btrForensics{
             tsk_img_read(img, startOffset + itemOffset,
                     diskArr, ItemHead::SIZE_OF_ITEM_HEAD);
 
-            ItemHead *itemHead = new ItemHead(endian, (uint8_t*)diskArr);
+            ItemHead *itemHead = new ItemHead(endian, (uint8_t*)diskArr,
+                                        startOffset, itemOffset);
 
             BtrfsItem *newItem = nullptr;
             char *itmArr = new char[itemHead->getDataSize()]();
