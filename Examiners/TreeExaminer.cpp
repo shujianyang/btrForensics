@@ -245,8 +245,9 @@ namespace btrForensics {
     //!
     //! \param os Output stream where the infomation is printed.
     //! \param is Input stream telling which node is the one to be read.
+    //! \return True if switched.
     //!
-    const void TreeExaminer::switchFsTrees(ostream& os, istream& is)
+    const bool TreeExaminer::switchFsTrees(ostream& os, istream& is)
     {
         vector<const BtrfsItem*> foundRootRefs;
         treeTraverse(rootTree, [&foundRootRefs](const LeafNode* leaf)
@@ -254,7 +255,7 @@ namespace btrForensics {
         
         if(foundRootRefs.size() == 0) {
             os << "\nNo subvolumes or snapshots are found.\n" << endl;
-            return;
+            return false;
         }
 
         uint64_t selectedId(0);
@@ -273,7 +274,7 @@ namespace btrForensics {
             os << "(Enter ''q' to quit.)" << endl;
             is >> input;
 
-            if(input == "q") return;
+            if(input == "q") return false;
             int inputIndex;
             stringstream(input) >> inputIndex;
             if(inputIndex > 0 && inputIndex <= foundRootRefs.size()) {
@@ -286,11 +287,7 @@ namespace btrForensics {
         fsTree = new FilesystemTree(rootTree, selectedId, this);
         os << "\n" << std::string(60, '=') << "\n";
         os << endl;
-
-        //fsTree->explorFiles(os, is);
-
-        //delete fsTree;
-        //fsTree = fsTreeDefault;
+        return true;
     }
 
 

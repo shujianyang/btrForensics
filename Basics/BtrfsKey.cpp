@@ -110,8 +110,9 @@ namespace btrForensics{
     //! Overloaded stream operator.
     std::ostream &operator<<(std::ostream &os, const BtrfsKey &key)
     {
-        os << "Key - Object id: " << std::dec << key.objId << '\n';
+        os << "Key - Object id: " << std::dec << key.objId;
         os << std::uppercase << std::hex;
+        os << " (0x" << key.objId << ")\n";
         os << "Key - Item type: " << key.getItemTypeStr() << '\n';
         os << "Key - Offset: 0x" << key.offset << '\n';
     }

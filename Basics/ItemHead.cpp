@@ -32,8 +32,8 @@ namespace btrForensics{
     //! Overloaded stream operator.
     std::ostream &operator<<(std::ostream &os, const ItemHead &itemHead)
     {
-        os << "Item physical address: " << itemHead.itemPhyAddr << '\n';
-        os << "Data physical address: " << itemHead.dataPhyAddr << "\n\n";
+        os << "Item physical address: 0x" << itemHead.itemPhyAddr << '\n';
+        os << "Data physical address: 0x" << itemHead.dataPhyAddr << "\n\n";
         os << itemHead.key << '\n';
 
         return os;

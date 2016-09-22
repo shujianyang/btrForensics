@@ -35,7 +35,7 @@ namespace btrForensics {
         uint64_t getDefaultFsId() const;
 
         const void navigateNodes(const BtrfsNode* root, std::ostream& os, std::istream& is) const;
-        const void switchFsTrees(std::ostream& os, std::istream& is);
+        const bool switchFsTrees(std::ostream& os, std::istream& is);
 
         void treeTraverse(const BtrfsNode* node,
             std::function<void(const LeafNode*)> readOnlyFunc) const;

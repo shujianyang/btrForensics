@@ -121,10 +121,11 @@ int main(int argc, char *argv[])
                 examiner.fsTree->explorFiles(cout, cin);
             }
             else if(answer == "5") {
-                examiner.switchFsTrees(cout, cin);
-                examiner.fsTree->explorFiles(cout, cin);
-                delete examiner.fsTree;
-                examiner.fsTree = examiner.fsTreeDefault;
+                if(examiner.switchFsTrees(cout, cin)) {
+                    examiner.fsTree->explorFiles(cout, cin);
+                    delete examiner.fsTree;
+                    examiner.fsTree = examiner.fsTreeDefault;
+                }
             }
             else if(answer == "6") {
                 cout << "Please enter the inode number of file." << endl;
@@ -147,7 +148,7 @@ int main(int argc, char *argv[])
                 if(success)
                     cout << "Success: File written to current directory." << endl;
                 else
-                    cout << "Error: File not found." << endl;
+                    cout << "Error: File not found or has no content." << endl;
             }
             else
                 cout << "Invalid option. Please choose again." << endl;

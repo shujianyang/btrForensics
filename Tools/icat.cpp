@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
         if(success)
             cout << "Success: File written to current directory." << endl;
         else
-            cout << "Error: File not found." << endl;
+            cout << "Error: File not found or has no content." << endl;
     } catch(std::bad_alloc& ba) {
         cerr << "Error when allocating objects.\n" << ba.what() << endl;
     } catch(FsDamagedException& fsEx) {
