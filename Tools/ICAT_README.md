@@ -1,12 +1,12 @@
-#icat
+# icat
 Output the contents of file with provided inode number in Btrfs.
 
 This is a simulation to The Sleuth Kit's icatat program.
 
-###Input File:
+### Input File:
 Raw image of a btrfs partition, or a partition device file using btrfs.
 
-###Usage:
+### Usage:
 ```
 icat [-o imgoffset] [-s subvolumeid] image inode
 ```
@@ -15,8 +15,8 @@ icat [-o imgoffset] [-s subvolumeid] image inode
 
 -s subvolumeid: The id of subvolume or snapshot. List can be found by using subls tool.
 
-###Note:
+### Note:
 Unlike icat in The Sleuth Kit, this program write file with original file name to directory.
 
-###License:
+### License:
 This software uses MIT License.

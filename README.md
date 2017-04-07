@@ -28,7 +28,7 @@ btrfrsc [-o imgoffset] image
 
 -o imgoffset: Offset into image file (in sectors)
 
-### Current capability:
+### Current Capabilities:
 1. Browse nodes derived from root tree and print information.
 2. Browse nodes in filesystem tree and print information.
 3. List all files in default filesystem tree.
@@ -39,7 +39,7 @@ btrfrsc [-o imgoffset] image
 ### Tools
 There will be some stand alone programs built in Tools/ folder.
 
-Most of them are simulations to tools in The Sleuth's Kit. Give them a try.
+Most of them simulates functions of tools in The Sleuth's Kit.
 
 Current list:
 

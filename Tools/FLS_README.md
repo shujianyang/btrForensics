@@ -1,12 +1,12 @@
-#fls
+# fls
 List files and/or directories in a Btrfs partition image.
 
 This is a simulation to The Sleuth Kit's fls program.
 
-###Input File:
+### Input File:
 Raw image of a btrfs partition, or a partition device file using btrfs.
 
-###Usage:
+### Usage:
 ```
 fls [-rDF] [-o imgoffset] [-s subvolumeid] image [inode]
 ```
@@ -23,8 +23,8 @@ If [inode] is not given, the root directory is used.
 
 -F: Display only files
 
-###Note:
+### Note:
 Unable to list deleted files yet.
 
-###License:
+### License:
 This software uses MIT License.

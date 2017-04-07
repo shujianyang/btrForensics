@@ -1,12 +1,12 @@
-#istat
+# istat
 Print information about an inode.
 
 This is a simulation to The Sleuth Kit's istat program.
 
-###Input File:
+### Input File:
 Raw image of a btrfs partition, or a partition device file using btrfs.
 
-###Usage:
+### Usage:
 ```
 istat [-o imgoffset] [-s subvolumeid] image inode
 ```
@@ -15,8 +15,8 @@ istat [-o imgoffset] [-s subvolumeid] image inode
 
 -s subvolumeid: The id of subvolume or snapshot. List can be found by using subls tool.
 
-###Note:
+### Note:
 Unable to distinguish files and directories yet.
 
-###License:
+### License:
 This software uses MIT License.
