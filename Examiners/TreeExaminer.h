@@ -23,11 +23,12 @@ namespace btrForensics {
         const BtrfsNode* rootTree; //!< Root node of the root tree.
 
         TSK_IMG_INFO* image; //!< Image file.
+        TSK_OFF_T imgOffset; //!< Offset to partition.
         TSK_ENDIAN_ENUM endian; //!< Endianness.
 
     public:
-        TreeExaminer(TSK_IMG_INFO*, TSK_ENDIAN_ENUM, const SuperBlock*);
-        TreeExaminer(TSK_IMG_INFO*, TSK_ENDIAN_ENUM, const SuperBlock*, uint64_t fsRootId);
+        TreeExaminer(TSK_IMG_INFO*, TSK_OFF_T, TSK_ENDIAN_ENUM, const SuperBlock*);
+        TreeExaminer(TSK_IMG_INFO*, TSK_OFF_T, TSK_ENDIAN_ENUM, const SuperBlock*, uint64_t fsRootId);
         ~TreeExaminer();
 
         uint64_t getPhysicalAddr(uint64_t logicalAddr) const;

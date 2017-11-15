@@ -44,7 +44,7 @@ namespace btrForensics {
         rootDirId = rootItm->getRootObjId();
 
         char *headerArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
-        tsk_img_read(examiner->image, physicalAddr, headerArr, BtrfsHeader::SIZE_OF_HEADER);
+        tsk_img_read(examiner->image, examiner->imgOffset + physicalAddr, headerArr, BtrfsHeader::SIZE_OF_HEADER);
         const BtrfsHeader *fileTreeHeader = 
             new BtrfsHeader(TSK_LIT_ENDIAN, (uint8_t*)headerArr);
         delete [] headerArr;
@@ -52,10 +52,12 @@ namespace btrForensics {
         uint64_t itemOffset = physicalAddr + BtrfsHeader::SIZE_OF_HEADER;
 
         if(fileTreeHeader->isLeafNode()){
-            fileTreeRoot = new LeafNode(examiner->image, fileTreeHeader, examiner->endian, itemOffset);
+            fileTreeRoot = new LeafNode(examiner->image, examiner->imgOffset, 
+                                fileTreeHeader, examiner->endian, itemOffset);
         }
         else {
-            fileTreeRoot = new InternalNode(examiner->image, fileTreeHeader, examiner->endian, itemOffset);
+            fileTreeRoot = new InternalNode(examiner->image, examiner->imgOffset, 
+                                fileTreeHeader, examiner->endian, itemOffset);
         }
     }
 
@@ -283,7 +285,7 @@ namespace btrForensics {
             if(!ofs) return false;
             if(data->type == 0) { //Is inline file.
                 char* dataArr = new char[fileSize];
-                tsk_img_read(examiner->image, data->dataAddress, dataArr, fileSize);
+                tsk_img_read(examiner->image, examiner->imgOffset + data->dataAddress, dataArr, fileSize);
                 ofs.write(dataArr, fileSize);
                 delete [] dataArr;
                 ofs.close();
@@ -295,14 +297,14 @@ namespace btrForensics {
                 char* dataArr;
                 if(unreadSize > data->numOfBytes) {
                     dataArr = new char[data->numOfBytes];
-                    tsk_img_read(examiner->image, physicalAddr, dataArr, data->numOfBytes);
+                    tsk_img_read(examiner->image, examiner->imgOffset + physicalAddr, dataArr, data->numOfBytes);
                     ofs.write(dataArr, data->numOfBytes);
                     unreadSize -= data->numOfBytes;
                     delete [] dataArr;
                 }
                 else {
                     dataArr = new char[unreadSize];
-                    tsk_img_read(examiner->image, physicalAddr, dataArr, unreadSize);
+                    tsk_img_read(examiner->image, examiner->imgOffset + physicalAddr, dataArr, unreadSize);
                     ofs.write(dataArr, unreadSize);
                     unreadSize = 0;
                     delete [] dataArr;

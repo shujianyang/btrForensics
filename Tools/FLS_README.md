@@ -13,7 +13,7 @@ fls [-rDF] [-o imgoffset] [-s subvolumeid] image [inode]
 
 If [inode] is not given, the root directory is used.
 
--o imgoffset: Offset into image file (in sectors)
+-o imgoffset: Offset to the beginning of the partition (in sectors).
 
 -s subvolumeid: The id of subvolume or snapshot. List can be found by using subls tool.
 

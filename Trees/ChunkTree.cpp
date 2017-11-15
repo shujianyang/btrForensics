@@ -19,7 +19,7 @@ namespace btrForensics {
         uint64_t chunkTreePhyAddr = superBlk->getChunkPhyAddr();
 
         char* diskArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
-        tsk_img_read(examiner->image, chunkTreePhyAddr, diskArr, BtrfsHeader::SIZE_OF_HEADER);
+        tsk_img_read(examiner->image, examiner->imgOffset + chunkTreePhyAddr, diskArr, BtrfsHeader::SIZE_OF_HEADER);
         BtrfsHeader *chunkHeader = new BtrfsHeader(examiner->endian, (uint8_t*)diskArr);
         delete [] diskArr;
 
@@ -27,9 +27,11 @@ namespace btrForensics {
 
         const BtrfsNode* chunkTree;
         if(chunkHeader->isLeafNode())
-            chunkRoot = new LeafNode(examiner->image, chunkHeader, examiner->endian, itemListStart);
+            chunkRoot = new LeafNode(examiner->image, examiner->imgOffset,
+                            chunkHeader, examiner->endian, itemListStart);
         else
-            chunkRoot = new InternalNode(examiner->image, chunkHeader, TSK_LIT_ENDIAN, itemListStart);
+            chunkRoot = new InternalNode(examiner->image, examiner->imgOffset,
+                            chunkHeader, TSK_LIT_ENDIAN, itemListStart);
     }
 
 

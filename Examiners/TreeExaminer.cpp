@@ -21,9 +21,9 @@ namespace btrForensics {
     //! \param end The endianess of the array.
     //! \param superBlk Pointer to btrfs super block.
     //!
-    TreeExaminer::TreeExaminer(TSK_IMG_INFO *img, TSK_ENDIAN_ENUM end,
-            const SuperBlock* superBlk)
-        :image(img), endian(end)
+    TreeExaminer::TreeExaminer(TSK_IMG_INFO *img, TSK_OFF_T offset, 
+            TSK_ENDIAN_ENUM end, const SuperBlock* superBlk)
+        :image(img), imgOffset(offset), endian(end)
     {
         initializeRootTree(superBlk);
 
@@ -41,9 +41,9 @@ namespace btrForensics {
     //! \param superBlk Pointer to btrfs super block.
     //! \param fsRootId Id of root of Filesystem Tree.
     //!
-    TreeExaminer::TreeExaminer(TSK_IMG_INFO *img, TSK_ENDIAN_ENUM end,
-            const SuperBlock* superBlk, uint64_t fsRootId)
-        :image(img), endian(end)
+    TreeExaminer::TreeExaminer(TSK_IMG_INFO *img, TSK_OFF_T offset, 
+            TSK_ENDIAN_ENUM end, const SuperBlock* superBlk, uint64_t fsRootId)
+        :image(img), imgOffset(offset), endian(end)
     {
         initializeRootTree(superBlk);
 
@@ -99,15 +99,15 @@ namespace btrForensics {
         uint64_t rootTreePhyAddr = chunkTree->getPhysicalAddr(rootTreelogAddr);
 
         char* diskArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
-        tsk_img_read(image, rootTreePhyAddr, diskArr, BtrfsHeader::SIZE_OF_HEADER);
+        tsk_img_read(image, imgOffset + rootTreePhyAddr, diskArr, BtrfsHeader::SIZE_OF_HEADER);
         BtrfsHeader* rootHeader = new BtrfsHeader(endian, (uint8_t*)diskArr);
         delete [] diskArr;
 
         uint64_t itemListStart = rootTreePhyAddr + BtrfsHeader::SIZE_OF_HEADER;
         if(rootHeader->isLeafNode())
-            rootTree = new LeafNode(image, rootHeader, endian, itemListStart);
+            rootTree = new LeafNode(image, imgOffset, rootHeader, endian, itemListStart);
         else
-            rootTree = new InternalNode(image, rootHeader, endian, itemListStart);
+            rootTree = new InternalNode(image, imgOffset, rootHeader, endian, itemListStart);
     }
 
 
@@ -222,17 +222,17 @@ namespace btrForensics {
             uint64_t physicalAddr = getPhysicalAddr(offset);
 
             char *headerArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
-            tsk_img_read(image, physicalAddr, headerArr, BtrfsHeader::SIZE_OF_HEADER);
+            tsk_img_read(image, imgOffset + physicalAddr, headerArr, BtrfsHeader::SIZE_OF_HEADER);
             header = new BtrfsHeader(TSK_LIT_ENDIAN, (uint8_t*)headerArr);
             delete [] headerArr;
 
             uint64_t itemOffset = physicalAddr + BtrfsHeader::SIZE_OF_HEADER;
 
             if(header->isLeafNode()){
-                node = new LeafNode(image, header, endian, itemOffset);
+                node = new LeafNode(image, imgOffset, header, endian, itemOffset);
             }
             else {
-                node = new InternalNode(image, header, endian, itemOffset);
+                node = new InternalNode(image, imgOffset, header, endian, itemOffset);
             }
 
             if(childPtr!=nullptr)
@@ -315,17 +315,17 @@ namespace btrForensics {
                 else {
                     uint64_t physicalAddr = getPhysicalAddr(ptr->getBlkNum());
                     char *headerArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
-                    tsk_img_read(image, physicalAddr, headerArr, BtrfsHeader::SIZE_OF_HEADER);
+                    tsk_img_read(image, imgOffset + physicalAddr, headerArr, BtrfsHeader::SIZE_OF_HEADER);
                     BtrfsHeader *header = new BtrfsHeader(TSK_LIT_ENDIAN, (uint8_t*)headerArr);
                     delete [] headerArr; 
 
                     uint64_t itemOffset = physicalAddr + BtrfsHeader::SIZE_OF_HEADER;
 
                     if(header->isLeafNode()){
-                        newNode = new LeafNode(image, header, endian, itemOffset);
+                        newNode = new LeafNode(image, imgOffset, header, endian, itemOffset);
                     }
                     else {
-                        newNode = new InternalNode(image, header, endian, itemOffset);
+                        newNode = new InternalNode(image, imgOffset, header, endian, itemOffset);
                     }
 
                     ptr->childNode = newNode;
@@ -363,17 +363,17 @@ namespace btrForensics {
                 else {
                     uint64_t physicalAddr = getPhysicalAddr(ptr->getBlkNum());
                     char *headerArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
-                    tsk_img_read(image, physicalAddr, headerArr, BtrfsHeader::SIZE_OF_HEADER);
+                    tsk_img_read(image, imgOffset + physicalAddr, headerArr, BtrfsHeader::SIZE_OF_HEADER);
                     BtrfsHeader *header = new BtrfsHeader(TSK_LIT_ENDIAN, (uint8_t*)headerArr);
                     delete [] headerArr; 
 
                     uint64_t itemOffset = physicalAddr + BtrfsHeader::SIZE_OF_HEADER;
                     
                     if(header->isLeafNode()){
-                        newNode = new LeafNode(image, header, endian, itemOffset);
+                        newNode = new LeafNode(image, imgOffset, header, endian, itemOffset);
                     }
                     else {
-                        newNode = new InternalNode(image, header, endian, itemOffset);
+                        newNode = new InternalNode(image, imgOffset, header, endian, itemOffset);
                     }
 
                     ptr->childNode = newNode;
@@ -421,17 +421,17 @@ namespace btrForensics {
                 else {
                     uint64_t physicalAddr = getPhysicalAddr(ptr->getBlkNum());
                     char *headerArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
-                    tsk_img_read(image, physicalAddr, headerArr, BtrfsHeader::SIZE_OF_HEADER);
+                    tsk_img_read(image, imgOffset + physicalAddr, headerArr, BtrfsHeader::SIZE_OF_HEADER);
                     BtrfsHeader *header = new BtrfsHeader(TSK_LIT_ENDIAN, (uint8_t*)headerArr);
                     delete [] headerArr; 
 
                     uint64_t itemOffset = physicalAddr + BtrfsHeader::SIZE_OF_HEADER;
                     
                     if(header->isLeafNode()){
-                        newNode = new LeafNode(image, header, endian, itemOffset);
+                        newNode = new LeafNode(image, imgOffset, header, endian, itemOffset);
                     }
                     else {
-                        newNode = new InternalNode(image, header, endian, itemOffset);
+                        newNode = new InternalNode(image, imgOffset, header, endian, itemOffset);
                     }
 
                     ptr->childNode = newNode;

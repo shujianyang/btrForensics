@@ -20,7 +20,7 @@ namespace btrForensics{
         vector<const BtrfsItem*> itemList; //!< Stores items and their data.
 
     public:
-        LeafNode(TSK_IMG_INFO*, const BtrfsHeader*, TSK_ENDIAN_ENUM, uint64_t);
+        LeafNode(TSK_IMG_INFO*, TSK_OFF_T, const BtrfsHeader*, TSK_ENDIAN_ENUM, uint64_t);
         ~LeafNode();
 
         const std::string info() const override;

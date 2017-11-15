@@ -11,7 +11,7 @@ Raw image of a btrfs partition, or a partition device file using btrfs.
 fsstat [-o imgoffset] image
 ```
 
--o imgoffset: Offset into image file (in sectors)
+-o imgoffset: Offset to the beginning of the partition (in sectors).
 
 ### License:
 This software uses MIT License.

@@ -14,7 +14,7 @@ namespace btrForensics{
     //! \param endian The endianess of the array.
     //! \param startOffset Offset of the node, right after header.
     //!
-    InternalNode::InternalNode(TSK_IMG_INFO *img, const BtrfsHeader *header, 
+    InternalNode::InternalNode(TSK_IMG_INFO *img, TSK_OFF_T imgOffset, const BtrfsHeader *header, 
             TSK_ENDIAN_ENUM endian, uint64_t startOffset)
         :BtrfsNode(header)
     {
@@ -24,7 +24,7 @@ namespace btrForensics{
 
         for(uint32_t i=0; i<itemNum; ++i){
             diskArr = new char[KeyPtr::SIZE_OF_KEY_PTR]();
-            tsk_img_read(img, startOffset + itemOffset,
+            tsk_img_read(img, imgOffset + startOffset + itemOffset,
                     diskArr, KeyPtr::SIZE_OF_KEY_PTR);
 
             keyPointers.push_back(new KeyPtr(endian, (uint8_t*)diskArr));
