@@ -44,7 +44,8 @@ namespace btrForensics {
         rootDirId = rootItm->getRootObjId();
 
         char *headerArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
-        tsk_img_read(examiner->image, examiner->imgOffset + physicalAddr, headerArr, BtrfsHeader::SIZE_OF_HEADER);
+        tsk_img_read(examiner->image, examiner->imgOffset + physicalAddr,
+                        headerArr, BtrfsHeader::SIZE_OF_HEADER);
         const BtrfsHeader *fileTreeHeader = 
             new BtrfsHeader(TSK_LIT_ENDIAN, (uint8_t*)headerArr);
         delete [] headerArr;

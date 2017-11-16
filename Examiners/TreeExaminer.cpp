@@ -18,6 +18,7 @@ namespace btrForensics {
     //! Constructor of tree analyzer.
     //!
     //! \param img Image file.
+    //! \param offset Offset to partition.
     //! \param end The endianess of the array.
     //! \param superBlk Pointer to btrfs super block.
     //!
@@ -37,6 +38,7 @@ namespace btrForensics {
     //! Constructor of tree analyzer, use subvolume instead of default filesystem root.
     //!
     //! \param img Image file.
+    //! \param offset Offset to partition.
     //! \param end The endianess of the array.
     //! \param superBlk Pointer to btrfs super block.
     //! \param fsRootId Id of root of Filesystem Tree.

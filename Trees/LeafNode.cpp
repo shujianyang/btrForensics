@@ -10,6 +10,7 @@ namespace btrForensics{
     //! Constructor of btrfs leaf node.
     //!
     //! \param img Image file.
+    //! \param imgOffset Offset to the partition.
     //! \param header Pointer to header of a node.
     //! \param endian The endianess of the array.
     //! \param startOffset Offset of the node, right after header.

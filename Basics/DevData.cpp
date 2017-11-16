@@ -3,6 +3,7 @@
 //!
 //! Dev item infomation.
 
+#include <sstream>
 #include "DevData.h"
 #include "Utility/ReadInt.h"
 
@@ -50,5 +51,15 @@ namespace btrForensics{
 
       seekSpeed = arr[arIndex++];
       bandWidth = arr[arIndex++];
+  }
+
+  //! Return infomation about the item data as string
+  std::string DevData::dataInfo() const
+  {
+      std::ostringstream oss;
+      oss << "Device ID: " << deviceId << '\n';
+      oss << "Device UUID: " << devUUID.encode() << '\n';
+      oss << "File System UUID: " << fsUUID.encode() << '\n';
+      return oss.str();
   }
 }
