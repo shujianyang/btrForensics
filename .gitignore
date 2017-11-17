@@ -45,6 +45,7 @@ docs/*
 
 # Input files
 files/*
+test
 
 # CMake build files
 build/*

@@ -66,6 +66,9 @@ namespace btrForensics{
                 case ItemType::EXTENT_ITEM:
                     newItem = new ExtentItem(itemHead, TSK_LIT_ENDIAN, (uint8_t*)itmArr);
                     break;
+                case ItemType::DEV_ITEM:
+                    newItem = new DevItem(itemHead, TSK_LIT_ENDIAN, (uint8_t*)itmArr);
+                    break;
                 default:
                     newItem = new UnknownItem(itemHead);
             }

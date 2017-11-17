@@ -90,11 +90,12 @@ int main(int argc, char *argv[])
         while(true) {
             cout << "MAIN MENU -- What do you want to do?" << endl;
             cout << "[1] Browse nodes derived from root tree and print information." << endl;
-            cout << "[2] Browse nodes in filesystem tree and print information." << endl;
-            cout << "[3] List all files in default filesystem tree." << endl;
-            cout << "[4] Explor files and subdirectories in default root directory." << endl;
-            cout << "[5] Switch to a subvolume or snapshot and explore files within." << endl;
-            cout << "[6] Read a file from image and save to current directory." << endl;
+            cout << "[2] Browse nodes in chunk tree and print information." << endl;
+            cout << "[3] Browse nodes in filesystem tree and print information." << endl;
+            cout << "[4] List all files in default filesystem tree." << endl;
+            cout << "[5] Explor files and subdirectories in default root directory." << endl;
+            cout << "[6] Switch to a subvolume or snapshot and explore files within." << endl;
+            cout << "[7] Read a file from image and save to current directory." << endl;
             cout << "[q] Quit." << endl;
             cout << "Enter your choice > ";
             cin >> answer;
@@ -103,32 +104,32 @@ int main(int argc, char *argv[])
             if(answer == "q") break;
             cout << std::string(60, '=') << "\n";
             cout << endl;
-            if(answer == "0"){
-                examiner.navigateNodes(examiner.chunkTree->chunkRoot, cout, cin);
-            }
             if(answer == "1"){
                 examiner.navigateNodes(examiner.rootTree, cout, cin);
             }
             else if(answer == "2"){
+                examiner.navigateNodes(examiner.chunkTree->chunkRoot, cout, cin);
+            }
+            else if(answer == "3"){
                 examiner.navigateNodes(examiner.fsTreeDefault->fileTreeRoot, cout, cin);
             }
-            else if(answer == "3") {
+            else if(answer == "4") {
                 cout << "Listing directory items...\n" << endl;
                 uint64_t targetId(examiner.fsTree->rootDirId);
                 examiner.fsTree->listDirItemsById(targetId, true, true, true, 0, cout);
                 cout << endl;
             }
-            else if(answer == "4") {
+            else if(answer == "5") {
                 examiner.fsTree->explorFiles(cout, cin);
             }
-            else if(answer == "5") {
+            else if(answer == "6") {
                 if(examiner.switchFsTrees(cout, cin)) {
                     examiner.fsTree->explorFiles(cout, cin);
                     delete examiner.fsTree;
                     examiner.fsTree = examiner.fsTreeDefault;
                 }
             }
-            else if(answer == "6") {
+            else if(answer == "7") {
                 cout << "Please enter the inode number of file." << endl;
                 cout << "(Enter 'q' to quit.)" << endl;
                 string input;

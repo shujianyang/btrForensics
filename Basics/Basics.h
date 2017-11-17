@@ -15,7 +15,7 @@
 #include "RootRef.h"
 
 #include "InodeRef.h"
-#include "DevData.h"
+#include "DevItem.h"
 #include "DirItem.h"
 
 #include "ExtentData.h"
