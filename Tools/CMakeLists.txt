@@ -21,3 +21,8 @@ target_link_libraries(istat Trees Examiners Basics Utility tsk)
 add_executable(subls subls.cpp)
 target_link_libraries(subls Examiners Trees)
 target_link_libraries(subls Trees Examiners Basics Utility tsk)
+
+add_executable(devls devls.cpp)
+target_link_libraries(devls Examiners Trees)
+target_link_libraries(devls Trees Examiners Basics Utility tsk)
+

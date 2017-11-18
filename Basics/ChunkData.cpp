@@ -52,6 +52,7 @@ namespace btrForensics{
     {
         std::ostringstream oss;
         oss << "Number of stripes: " << numStripe << '\n';
+        oss << "Device ID: " << deviceId << '\n';
         oss << "Offset: 0x" << std::uppercase << std::hex  << offset << '\n';
         return oss.str();
     }
