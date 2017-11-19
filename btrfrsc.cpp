@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
         cout << "\n" << endl;
         delete [] diskArr;
 
-        TreeExaminer examiner(img,offsetByte, TSK_LIT_ENDIAN, &supblk);
+        /*TreeExaminer examiner(img,offsetByte, TSK_LIT_ENDIAN, &supblk);
 
         string answer;
         
@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
                 cout << "Invalid option. Please choose again." << endl;
 
             cout << endl;
-        }
+        }*/
     } catch(std::bad_alloc& ba) {
         cerr << "Error when allocating objects.\n" << ba.what() << endl;
     } catch(FsDamagedException& fsEx) {
@@ -165,5 +165,6 @@ int main(int argc, char *argv[])
         cerr << e.what() << endl;
     }
 
+    return 0;
 }
 

@@ -8,8 +8,12 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 #include <tsk/libtsk.h>
 #include "Utility/Utility.h"
+#include "Stripe.h"
+
+using std::vector;
 
 namespace btrForensics{
     //! Chunk item data.
@@ -28,9 +32,8 @@ namespace btrForensics{
         uint16_t numStripe;
         uint16_t subStripe;
 
-        uint64_t deviceId;
-        uint64_t offset;
-        UUID deviceUUID;
+        vector<Stripe*> btrStripes; //0x30
+
     public:
         ChunkData(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
         ~ChunkData() = default; //!< Destructor
@@ -38,11 +41,12 @@ namespace btrForensics{
         std::string dataInfo() const ;
 
         //! Get offset
-        uint64_t getOffset() const { return offset; }
+        //uint64_t getOffset() const { return offset; }
         
-        static const int SIZE_OF_CHUNK_DATA= 0x50; //!< Size of chunk item data in bytes.
+        //static const int SIZE_OF_CHUNK_DATA= 0x30; //!< Size of chunk item data in bytes.
     };
 }
 
 #endif
+
 

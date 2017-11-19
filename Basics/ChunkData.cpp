@@ -15,7 +15,6 @@ namespace btrForensics{
     //! \param arr Byte array storing inode data.
     //!
     ChunkData::ChunkData(TSK_ENDIAN_ENUM endian, uint8_t arr[])
-        :deviceUUID(endian, arr + 0x40)
     {
         int arIndex(0);
 
@@ -41,19 +40,24 @@ namespace btrForensics{
         subStripe = read16Bit(endian, arr + arIndex);
         arIndex += 0x02;
 
-        deviceId = read64Bit(endian, arr + arIndex);
-        arIndex += 0x08;
-        offset = read64Bit(endian, arr + arIndex);
-        arIndex += 0x08;
+        for(uint16_t i=0; i<numStripe; ++i){
+            btrStripes.push_back(new Stripe(endian, arr + arIndex));
+            arIndex += Stripe::SIZE_OF_STRIPE;
+        }
     }
 
     //! Return infomation about the item data as string.
     std::string ChunkData::dataInfo() const
     {
         std::ostringstream oss;
-        oss << "Number of stripes: " << numStripe << '\n';
-        oss << "Device ID: " << deviceId << '\n';
-        oss << "Offset: 0x" << std::uppercase << std::hex  << offset << '\n';
+        oss << "----------------------------------------------" << '\n';
+        oss << "Number of stripes: " << numStripe << "\n\n";
+        for(auto stripe : btrStripes) {
+            oss << "Device ID: " << stripe->deviceId << '\n';
+            oss << "Offset: 0x" << std::uppercase << std::hex  << stripe->offset << '\n';
+            oss << "Device UUID: " << stripe->devUUID.encode() << '\n';
+        }
+        oss << "----------------------------------------------" << '\n';
         return oss.str();
     }
 

@@ -20,6 +20,7 @@
 
 #include "ExtentData.h"
 #include "ChunkItem.h"
+#include "Stripe.h"
 #include "ExtentItem.h"
 #include "BlockGroupItem.h"
 

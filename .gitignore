@@ -5,6 +5,7 @@ fls
 istat
 icat
 subls
+devls
 
 # Object files
 *.o

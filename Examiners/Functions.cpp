@@ -99,7 +99,7 @@ namespace btrForensics{
     //!
     //! \return Return true when the address is acquired.
     //!
-    bool getPhyAddr(const LeafNode* leaf, uint64_t targetLogAddr,
+    /*bool getPhyAddr(const LeafNode* leaf, uint64_t targetLogAddr,
            uint64_t& targetPhyAddr)
     {
         const BtrfsItem* target(nullptr);
@@ -129,7 +129,7 @@ namespace btrForensics{
             getChunkAddr(targetLogAddr, &chunk->itemHead->key, &chunk->data);
         
         return true;
-    }
+    }*/
 
 
     //! Caculate the physical address by comparing givel logical address
@@ -141,7 +141,7 @@ namespace btrForensics{
     //!
     //! \return Mapped physical address. 0 if not valid.
     //!
-    uint64_t getChunkAddr(uint64_t logicalAddr,
+    /*uint64_t getChunkAddr(uint64_t logicalAddr,
             const BtrfsKey* key, const ChunkData* chunkData)
     {
         uint64_t physicalAddr;
@@ -154,7 +154,7 @@ namespace btrForensics{
         
         physicalAddr = logicalAddr - chunkLogical + chunkPhysical;
         return physicalAddr;
-    }
+    }*/
 
 
     //! Overloaded stream operator.

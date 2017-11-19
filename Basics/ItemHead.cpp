@@ -33,7 +33,8 @@ namespace btrForensics{
     std::ostream &operator<<(std::ostream &os, const ItemHead &itemHead)
     {
         os << "Item physical address: 0x" << itemHead.itemPhyAddr << '\n';
-        os << "Data physical address: 0x" << itemHead.dataPhyAddr << "\n\n";
+        os << "Data physical address: 0x" << itemHead.dataPhyAddr << "\n";
+        os << "Data size: 0x" << itemHead.dataSize << "\n\n";
         os << itemHead.key << '\n';
 
         return os;

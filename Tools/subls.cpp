@@ -26,7 +26,7 @@ using namespace btrForensics;
 
 int main(int argc, char *argv[])
 {
-    TSK_OFF_T offsetSector(0);
+    /*TSK_OFF_T offsetSector(0);
     int option;
     while((option = getopt(argc, argv, "o:")) != -1){
         switch(option){
@@ -91,6 +91,8 @@ int main(int argc, char *argv[])
         cerr << "Error: Btrfs filesystem damaged.\n" << fsEx.what() << endl;
     } catch(exception& e) {
         cerr << e.what() << endl;
-    }
+    }*/
+
+    return 0;
 }
 

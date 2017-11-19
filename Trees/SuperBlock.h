@@ -46,7 +46,7 @@ namespace btrForensics{
         uint32_t leafSize;
         uint32_t stripeSize;
 
-        uint32_t n; //0xa0
+        uint32_t sysChunkArrSize; //0xa0
         uint64_t chunkRootGeneration;
         uint64_t compatFlags;
         uint64_t compatRoFlags;

@@ -79,7 +79,7 @@ namespace btrForensics{
         stripeSize = read32Bit(endian, arr + arIndex);
         arIndex += 0x04;
 
-        n = read32Bit(endian, arr + arIndex);
+        sysChunkArrSize = read32Bit(endian, arr + arIndex);
         arIndex += 0x04;
 
         chunkRootGeneration = read64Bit(endian, arr + arIndex);
@@ -115,7 +115,8 @@ namespace btrForensics{
     //!
     const uint64_t SuperBlock::getChunkPhyAddr() const
     {
-        return getChunkAddr(chunkTrRootAddr, &chunkKey, &chunkData);
+        return 0;
+        //return getChunkAddr(chunkTrRootAddr, &chunkKey, &chunkData);
     }
 
 
@@ -204,8 +205,8 @@ namespace btrForensics{
         os << supb.devItemData.dataInfo() << '\n';
 
         os << std::uppercase << std::hex;
-        os << "Root tree root address: 0x";
         os.fill('0');
+        os << "Root tree root address: 0x";
         os.width(16);
         os << supb.rootTrRootAddr;
         os << "\nChunk tree root address: 0x";
@@ -218,9 +219,13 @@ namespace btrForensics{
         os << '\n' << "Unit size:" << '\n';
         os << "Sector\tNode\tLeaf\tStripe" << '\n';
         os << supb.sectorSize << "\t" << supb.nodeSize << "\t" << 
-            supb.leafSize << "\t" << supb.stripeSize;
-        os << std::endl;
+            supb.leafSize << "\t" << supb.stripeSize << "\n\n";
 
+        os << "System chunk array size: " << supb.sysChunkArrSize << '\n';
+        os << "Chunk item data:" << "\n";
+        os << supb.chunkData.dataInfo() <<'\n';
+
+        os << std::endl;
         return os;
     }
 

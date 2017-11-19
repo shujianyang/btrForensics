@@ -28,10 +28,11 @@ namespace btrForensics {
     {
         initializeRootTree(superBlk);
 
-        uint64_t defaultId = getDefaultFsId();
+        /*uint64_t defaultId = getDefaultFsId();
 
         fsTree = new FilesystemTree(rootTree, defaultId, this);
         fsTreeDefault = fsTree;
+        */
     }
 
 
@@ -95,7 +96,7 @@ namespace btrForensics {
         //to convert logical address to physical address.
         chunkTree = new ChunkTree(superBlk, this);
 
-        uint64_t rootTreelogAddr = superBlk->getRootLogAddr();
+        /*uint64_t rootTreelogAddr = superBlk->getRootLogAddr();
 
         //Pyhsical address of root of Root Tree obtained here.
         uint64_t rootTreePhyAddr = chunkTree->getPhysicalAddr(rootTreelogAddr);
@@ -110,6 +111,7 @@ namespace btrForensics {
             rootTree = new LeafNode(image, imgOffset, rootHeader, endian, itemListStart);
         else
             rootTree = new InternalNode(image, imgOffset, rootHeader, endian, itemListStart);
+            */
     }
 
 

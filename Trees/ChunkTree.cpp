@@ -52,10 +52,10 @@ namespace btrForensics {
     {
         uint64_t physicalAddr(0);
         //std::cout << chunkRoot->info() << std::endl;
-        examiner->treeSearch(chunkRoot,
+        /*examiner->treeSearch(chunkRoot,
                 [logicalAddr, &physicalAddr](const LeafNode* leaf)
                 { return getPhyAddr(leaf, logicalAddr, physicalAddr); });
-        
+        */
         return physicalAddr;
     }
 }
