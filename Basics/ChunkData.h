@@ -36,7 +36,7 @@ namespace btrForensics{
 
     public:
         ChunkData(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
-        ~ChunkData() = default; //!< Destructor
+        ~ChunkData();
 
         std::string dataInfo() const ;
 

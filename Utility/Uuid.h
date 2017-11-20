@@ -30,12 +30,13 @@ public:
         SHA_NAMESPACE,  //!< Name-based version using SHA-1
         UNKNOWN
     };
+    static constexpr int DATA_4_SIZE = 8; //!< Size of data 4 array.
 
 private:
     uint32_t data_1;
     uint16_t data_2;
     uint16_t data_3;
-    uint8_t data_4[8];
+    uint8_t data_4[DATA_4_SIZE];
     Variant uuidVar;
     Version uuidVer;
     
@@ -43,8 +44,10 @@ private:
     const int getVersion() const;
 
 public:
+    UUID();
     UUID(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
     UUID(TSK_ENDIAN_ENUM endian, gpt_entry &entry);
+    UUID(UUID &origin);
     ~UUID() = default; //!< Destructor
 
     const bool isUnused() const;
@@ -54,6 +57,11 @@ public:
     const std::string guidType() const;
     const std::string variantInfo() const;
     const std::string versionInfo() const;
+
+    friend bool operator==(const UUID &lhs, const UUID &rhs);
+    friend bool operator!=(const UUID &lhs, const UUID &rhs);
+
+    UUID& operator=(const UUID& rhs);
 
     static const int BYTES_OF_UUID = 16; //!< UUID byte length when stored in machine,
     static const int LENGTH_OF_UUID_STRING = 36; //!< String length used to represent a UUID.

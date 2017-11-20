@@ -6,6 +6,7 @@
 
 #include "Trees/Trees.h"
 
+#include "DeviceRecord.h"
 #include "TreeExaminer.h"
 #include "Functions.h"
 

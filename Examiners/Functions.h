@@ -3,8 +3,8 @@
 //!
 //! Assistant functions defined here.
 
- #ifndef FUNCTIONS_H
- #define FUNCTIONS_H
+#ifndef FUNCTIONS_H
+#define FUNCTIONS_H
 
 #include <iostream>
 #include <vector>
@@ -24,7 +24,7 @@ namespace btrForensics{
 
     //uint64_t getChunkAddr(uint64_t logicalAddr,
     //            const BtrfsKey* key, const ChunkData* chunkData);
-    
+
     std::ostream &operator<<(std::ostream& os, const DirItemType& type);
 }
 

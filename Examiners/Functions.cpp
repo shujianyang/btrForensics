@@ -4,6 +4,7 @@
 //! Implementations of functions declared in Functions.h.
 
 #include <algorithm>
+#include <sstream>
 #include "Functions.h"
 
 namespace btrForensics{
@@ -155,6 +156,30 @@ namespace btrForensics{
         physicalAddr = logicalAddr - chunkLogical + chunkPhysical;
         return physicalAddr;
     }*/
+
+
+    std::string humanSize(uint64_t bytes)
+    {
+        std::string totalSfx;
+
+        if(bytes >> 10 == 0){
+            totalSfx = "B";
+        }
+        else if((bytes >>= 10) >> 10 == 0){
+            totalSfx = "KB";
+        }
+        else if((bytes >>= 10) >> 10 == 0){
+            totalSfx = "MB";
+        }
+        else {
+            bytes >>= 10;
+            totalSfx = "GB";
+        }
+
+        std::ostringstream oss;
+        oss << bytes << totalSfx;
+        return oss.str();
+    }
 
 
     //! Overloaded stream operator.

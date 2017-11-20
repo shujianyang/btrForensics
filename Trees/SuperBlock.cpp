@@ -140,44 +140,10 @@ namespace btrForensics{
     //! Get info about partition space usage.
     const std::string SuperBlock::printSpace() const
     {
-        uint64_t total = totalBytes;
-        std::string totalSfx;
-
-        if(total >> 10 == 0){
-            totalSfx = "B";
-        }
-        else if((total >>= 10) >> 10 == 0){
-            totalSfx = "KB";
-        }
-        else if((total >>= 10) >> 10 == 0){
-            totalSfx = "MB";
-        }
-        else{
-            total >>= 10;
-            totalSfx = "GB";
-        }
-
-        uint64_t used = bytesUsed;
-        std::string usedSfx;
-
-        if(used >> 10 == 0){
-            usedSfx = "B";
-        }
-        else if((used >>= 10) >> 10 == 0){
-            usedSfx = "KB";
-        }
-        else if((used >>= 10) >> 10 == 0){
-            usedSfx = "MB";
-        }
-        else{
-            used >>= 10;
-            usedSfx = "GB";
-        }
-
         std::ostringstream oss;
-        oss << "Total size: " << total << totalSfx;
+        oss << "Total size: " << humanSize(totalBytes);
         oss << '\n';
-        oss << "Used size: " << used << usedSfx;
+        oss << "Used size: " << humanSize(bytesUsed);
 
         return oss.str();
     }

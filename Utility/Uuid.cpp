@@ -9,6 +9,18 @@
 #include "Utility/ReadInt.h"
 
 
+//! Default constructor of UUID
+UUID::UUID()
+{
+    data_1 = 0;
+    data_2 = 0;
+    data_3 = 0;
+
+    for(int i=0; i<DATA_4_SIZE; i++)
+        data_4[i] = 0;
+}
+
+
 //! Constructor of UUID
 //!
 //! \param endian The endianess of the array.
@@ -20,8 +32,8 @@ UUID::UUID(TSK_ENDIAN_ENUM endian, uint8_t arr[])
     data_2 = read16Bit(endian, arr + 4);
     data_3 = read16Bit(endian, arr + 6);
 
-    for(int i=0; i<8; i++){
-        data_4[i] = *(arr + 8 + i);
+    for(int i=0; i<DATA_4_SIZE; i++){
+        data_4[i] = *(arr + DATA_4_SIZE + i);
     }
 }
 
@@ -37,8 +49,8 @@ UUID::UUID(TSK_ENDIAN_ENUM endian, gpt_entry &entry)
     data_2 = read16Bit(endian, entry.type_guid + 4);
     data_3 = read16Bit(endian, entry.type_guid + 6);
 
-    for(int i=0; i<8; i++){
-        data_4[i] = *(entry.type_guid + 8 + i);
+    for(int i=0; i<DATA_4_SIZE; i++){
+        data_4[i] = *(entry.type_guid + DATA_4_SIZE + i);
     }
 
     std::bitset<8> d4(data_4[0]);
@@ -48,6 +60,19 @@ UUID::UUID(TSK_ENDIAN_ENUM endian, gpt_entry &entry)
         uuidVar = STANDARD;
     if(d4.test(7) && d4.test(6) && !d4.test(5))
         uuidVar = MS_COM;
+}
+
+
+//! Copy constructor of UUID
+UUID::UUID(UUID &origin)
+{
+    data_1 = origin.data_1;
+    data_2 = origin.data_2;
+    data_3 = origin.data_3;
+
+    for(int i=0; i<DATA_4_SIZE; i++){
+        data_4[i] = origin.data_4[i];
+    }
 }
 
 
@@ -111,7 +136,7 @@ const bool UUID::match(uint32_t d1, uint16_t d2, uint16_t d3, uint64_t d4) const
         
     uint64_t p4 = (uint64_t)data_4[0];
     int i;
-    for(i=1; i<8; ++i){
+    for(i=1; i<DATA_4_SIZE; ++i){
         p4 = p4 << 8;
         p4 += (uint64_t)data_4[i];
     }
@@ -433,5 +458,41 @@ const std::string UUID::versionInfo() const
     }
 
     return version;
+}
+
+
+//! Overloaded equality operator
+bool operator==(const UUID &lhs, const UUID &rhs)
+{
+    if(lhs.data_1 != rhs.data_1 || lhs.data_2 != rhs.data_2
+            || lhs.data_3 != rhs.data_3)
+        return false;
+
+    for(int i=0; i<UUID::DATA_4_SIZE; i++)
+        if(lhs.data_4[i] != rhs.data_4[i])
+            return false;
+
+    return true;
+}
+
+
+//! Overloaded copy assignment operator
+UUID& UUID::operator=(const UUID& rhs)
+{
+    data_1 = rhs.data_1;
+    data_2 = rhs.data_2;
+    data_3 = rhs.data_3;
+
+    for(int i=0; i<DATA_4_SIZE; i++)
+        data_4[i] = rhs.data_4[i];
+
+    return *this;
+}
+
+
+//! Overloaded equality operator
+bool operator!=(const UUID &lhs, const UUID &rhs)
+{
+    return !(lhs == rhs);
 }
 

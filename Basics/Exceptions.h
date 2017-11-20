@@ -10,9 +10,17 @@
 #include <string>
 
 namespace btrForensics {
+
     class FsDamagedException : public std::runtime_error {
     public:
         explicit FsDamagedException(const std::string& str)
+                    :std::runtime_error(str) {}
+    };
+
+
+    class FsUuidNotMatchException : public std::runtime_error {
+    public:
+        explicit FsUuidNotMatchException(const std::string& str)
                     :std::runtime_error(str) {}
     };
 }

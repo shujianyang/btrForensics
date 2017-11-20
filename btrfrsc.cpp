@@ -35,6 +35,7 @@ int main(int argc, char *argv[])
                     tsk_error_print(stderr);
                     exit(1);
                 }
+                cout << offsetSector << endl;
                 break;
             case '?':
             default:
@@ -62,14 +63,14 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    char *diskArr = new char[SuperBlock::SIZE_OF_SPR_BLK]();
+    char *diskArr = new char[SuperBlock::SUPBLK_SIZE]();
     if(diskArr == 0){
         cerr << "Fail to allocate superblock space." << endl;
         exit(1);
     }
 
     try {
-        tsk_img_read(img, offsetByte + SuperBlock::ADDR_OF_SPR_BLK, diskArr, SuperBlock::SIZE_OF_SPR_BLK);
+        /*tsk_img_read(img, offsetByte + SuperBlock::SUPBLK_ADDR, diskArr, SuperBlock::SUPBLK_SIZE);
         SuperBlock supblk(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
 
         cout << supblk << endl;
@@ -83,7 +84,7 @@ int main(int argc, char *argv[])
         cout << "\n" << endl;
         delete [] diskArr;
 
-        /*TreeExaminer examiner(img,offsetByte, TSK_LIT_ENDIAN, &supblk);
+        TreeExaminer examiner(img,offsetByte, TSK_LIT_ENDIAN, &supblk);
 
         string answer;
         

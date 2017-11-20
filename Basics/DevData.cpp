@@ -59,6 +59,9 @@ namespace btrForensics{
       std::ostringstream oss;
       oss << "Device ID: " << deviceId << '\n';
       oss << "Device UUID: " << devUUID.encode() << '\n';
+      oss << std::dec;
+      oss << "Total bytes: " << humanSize(bytes) << '\n';
+      oss << "Bytes used: " << humanSize(bytesUsed) << '\n';
       oss << "File System UUID: " << fsUUID.encode() << '\n';
       return oss.str();
   }

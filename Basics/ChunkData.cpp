@@ -46,11 +46,21 @@ namespace btrForensics{
         }
     }
 
+
+    //! Destructor
+    ChunkData::~ChunkData()
+    {
+        for(auto stripe : btrStripes) {
+            delete stripe;
+        }
+    }
+
     //! Return infomation about the item data as string.
     std::string ChunkData::dataInfo() const
     {
         std::ostringstream oss;
         oss << "----------------------------------------------" << '\n';
+        oss << "Chunk size: " << std::dec << chunkSize << '\n';
         oss << "Number of stripes: " << numStripe << "\n\n";
         for(auto stripe : btrStripes) {
             oss << "Device ID: " << stripe->deviceId << '\n';

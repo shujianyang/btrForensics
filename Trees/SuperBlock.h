@@ -15,7 +15,7 @@
 namespace btrForensics{
     //! Store super block info.
     class SuperBlock{
-    private:
+    public:
         static constexpr int DEV_ITEM_SIZE = 0x62;
         static constexpr int LABEL_SIZE = 0x100;
 
@@ -74,8 +74,8 @@ namespace btrForensics{
         const std::string printSpace() const;
         const std::string printLabel() const;
 
-        static const int ADDR_OF_SPR_BLK = 0x10000;  //!< Address of superblock on disk.
-        static const int SIZE_OF_SPR_BLK = 0xb2b;  //!< Size of superblock on disk.
+        static const int SUPBLK_ADDR = 0x10000;  //!< Address of superblock on disk.
+        static const int SUPBLK_SIZE = 0xb2b;  //!< Size of superblock on disk.
 
         friend std::ostream &operator<<(std::ostream &os, SuperBlock &supb);
     };

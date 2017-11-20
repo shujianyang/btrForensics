@@ -5,6 +5,7 @@
  * File containing useful functions.
  */
 
+#include <sstream>
 #include "ReadInt.h"
 
 
@@ -85,5 +86,29 @@ const uint64_t read64Bit(TSK_ENDIAN_ENUM endian, const uint8_t *arr)
     }
 
     return num;
+}
+
+
+std::string humanSize(uint64_t bytes)
+{
+    std::string totalSfx;
+
+    if(bytes >> 10 == 0){
+        totalSfx = "B";
+    }
+    else if((bytes >>= 10) >> 10 == 0){
+        totalSfx = "KB";
+    }
+    else if((bytes >>= 10) >> 10 == 0){
+        totalSfx = "MB";
+    }
+    else {
+        bytes >>= 10;
+        totalSfx = "GB";
+    }
+
+    std::ostringstream oss;
+    oss << bytes << totalSfx;
+    return oss.str();
 }
 
