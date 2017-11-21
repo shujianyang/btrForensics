@@ -6,6 +6,7 @@
 #ifndef DEVICE_RECORD_H
 #define DEVICE_RECORD_H
 
+#include <string>
 #include "Utility/Uuid.h"
 
 namespace btrForensics {
@@ -18,6 +19,8 @@ namespace btrForensics {
         UUID devUUID;
 
     public:
+        std::string devInfo() const;
+
         DeviceRecord(uint64_t, uint64_t, UUID);
         ~DeviceRecord() = default; //!< Destructor
     };

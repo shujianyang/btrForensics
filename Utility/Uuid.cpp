@@ -64,7 +64,7 @@ UUID::UUID(TSK_ENDIAN_ENUM endian, gpt_entry &entry)
 
 
 //! Copy constructor of UUID
-UUID::UUID(UUID &origin)
+UUID::UUID(const UUID &origin)
 {
     data_1 = origin.data_1;
     data_2 = origin.data_2;

@@ -47,7 +47,7 @@ public:
     UUID();
     UUID(TSK_ENDIAN_ENUM endian, uint8_t arr[]);
     UUID(TSK_ENDIAN_ENUM endian, gpt_entry &entry);
-    UUID(UUID &origin);
+    UUID(const UUID &origin);
     ~UUID() = default; //!< Destructor
 
     const bool isUnused() const;

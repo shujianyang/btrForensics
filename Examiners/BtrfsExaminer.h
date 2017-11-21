@@ -6,6 +6,7 @@
 #ifndef BTRFS_EXAMINER_H
 #define BTRFS_EXAMINER_H
 
+#include <map>
 #include <vector>
 #include "DeviceRecord.h"
 #include "Basics/Basics.h"
@@ -17,11 +18,12 @@ namespace btrForensics {
     class BtrfsExaminer {
     public:
         UUID fsUUID;
-        std::vector<SuperBlock*> supblkVec;
+        std::map<uint64_t, DeviceRecord*> deviceTable;
+        //std::vector<SuperBlock*> supblkVec;
 
     public:
-        BtrfsExaminer(uint64_t, uint64_t, UUID);
-        ~DeviceRocord() = default; //!< Destructor
+        BtrfsExaminer(TSK_IMG_INFO *img, vector<TSK_OFF_T> partOffsets);
+        ~BtrfsExaminer() = default; //!< Destructor
     };
 }
 

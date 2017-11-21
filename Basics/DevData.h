@@ -12,7 +12,7 @@
 namespace btrForensics{
     //! Device item data.
     class DevData {
-    private:
+    public:
         uint64_t deviceId; //0x0
         uint64_t bytes;
         uint64_t bytesUsed;

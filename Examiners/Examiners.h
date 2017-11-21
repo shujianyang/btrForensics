@@ -9,5 +9,6 @@
 #include "DeviceRecord.h"
 #include "TreeExaminer.h"
 #include "Functions.h"
+#include "BtrfsExaminer.h"
 
 #endif

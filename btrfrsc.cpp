@@ -10,7 +10,7 @@
 #include <exception>
 #include <stdexcept>
 #include <string>
-#include <map>
+#include <vector>
 #include <memory>
 #include <unistd.h>
 #include <tsk/libtsk.h>
@@ -28,14 +28,18 @@ int main(int argc, char *argv[])
 {
     TSK_OFF_T offsetSector(0);
     int option;
+    string offsetArgs;
+    vector<TSK_OFF_T> devOffsets;
+
     while((option = getopt(argc, argv, "o:")) != -1){
         switch(option){
             case 'o':
+                offsetArgs = optarg;
                 if( (offsetSector = tsk_parse_offset(optarg)) == -1){
                     tsk_error_print(stderr);
                     exit(1);
                 }
-                cout << offsetSector << endl;
+                devOffsets.push_back(offsetSector);
                 break;
             case '?':
             default:
@@ -47,6 +51,9 @@ int main(int argc, char *argv[])
         cerr << "Please provide the image name" << endl;
         exit(1);
     }
+    
+    if(devOffsets.size() == 0)
+        devOffsets.push_back(0);
 
     string img_name(argv[optind]);
     
@@ -57,19 +64,24 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    TSK_OFF_T offsetByte(offsetSector * img->sector_size);
-    if( offsetByte >= img->size){
-        cerr << "Offset is too large." << endl;
-        exit(1);
+    for(auto &offSec : devOffsets) {
+        TSK_OFF_T offsetByte(offSec * img->sector_size);
+        if( offsetByte >= img->size){
+            cerr << "Offset is too large." << endl;
+            exit(1);
+        }
+        offSec = offsetByte;
     }
 
-    char *diskArr = new char[SuperBlock::SUPBLK_SIZE]();
+    /*char *diskArr = new char[SuperBlock::SUPBLK_SIZE]();
     if(diskArr == 0){
         cerr << "Fail to allocate superblock space." << endl;
         exit(1);
-    }
+    }*/
 
     try {
+        BtrfsExaminer btr(img, devOffsets);
+
         /*tsk_img_read(img, offsetByte + SuperBlock::SUPBLK_ADDR, diskArr, SuperBlock::SUPBLK_SIZE);
         SuperBlock supblk(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
 
