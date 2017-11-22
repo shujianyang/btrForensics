@@ -73,30 +73,24 @@ int main(int argc, char *argv[])
         offSec = offsetByte;
     }
 
-    /*char *diskArr = new char[SuperBlock::SUPBLK_SIZE]();
-    if(diskArr == 0){
-        cerr << "Fail to allocate superblock space." << endl;
-        exit(1);
-    }*/
-
     try {
         BtrfsExaminer btr(img, devOffsets);
 
-        /*tsk_img_read(img, offsetByte + SuperBlock::SUPBLK_ADDR, diskArr, SuperBlock::SUPBLK_SIZE);
-        SuperBlock supblk(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
+        /*SuperBlock *supblk = btr.primarySupblk;
 
-        cout << supblk << endl;
+        cout << *supblk << endl;
 
-        cout << "Magic: " << supblk.printMagic() << endl;
+        cout << "Magic: " << supblk->printMagic() << endl;
 
-        cout << supblk.printSpace() << endl;
+        cout << supblk->printSpace() << endl;
         cout << endl;
 
-        cout << "Label: " << supblk.printLabel() << endl;
+        cout << "Label: " << supblk->printLabel() << endl;
         cout << "\n" << endl;
-        delete [] diskArr;
 
-        TreeExaminer examiner(img,offsetByte, TSK_LIT_ENDIAN, &supblk);
+        TSK_OFF_T offsetByte = (btr.deviceTable)[1]->deviceOffset;
+        cout << "offsetByte: " << offsetByte << endl;
+        TreeExaminer examiner(img,offsetByte, TSK_LIT_ENDIAN, supblk);
 
         string answer;
         

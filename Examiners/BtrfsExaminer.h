@@ -17,13 +17,29 @@ namespace btrForensics {
     //! Manage devices registered for a btrfs filesystem.
     class BtrfsExaminer {
     public:
+        TSK_IMG_INFO *image; 
+        TSK_ENDIAN_ENUM endian; //!< Endianness.
+
         UUID fsUUID;
+        SuperBlock* primarySupblk;
         std::map<uint64_t, DeviceRecord*> deviceTable;
-        //std::vector<SuperBlock*> supblkVec;
+
+
+        ChunkTree* chunkTree; //!< The chunk tree.
 
     public:
-        BtrfsExaminer(TSK_IMG_INFO *img, vector<TSK_OFF_T> partOffsets);
-        ~BtrfsExaminer() = default; //!< Destructor
+        BtrfsExaminer(TSK_IMG_INFO, TSK_ENDIAN_ENUM, vector<TSK_OFF_T>);
+        ~BtrfsExaminer();
+
+        uint64_t getDevOffset(const uint64_t devId);
+
+        std::vector<uint64_t> getAddrFromChunk(uint64_t logicalAddr,
+                const BtrfsKey* key, const ChunkData* chunkData);
+
+        char* readData(const uint64_t logicalAddr, const uint64_t size);
+
+
+        void initializeChunkTree();
     };
 }
 

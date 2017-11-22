@@ -13,9 +13,10 @@ namespace btrForensics {
     //! \param superBlk Pointer to btrfs super block.
     //! \param treeExaminer Pointer to a tree examiner.
     //!
-    ChunkTree::ChunkTree(const SuperBlock* superBlk, const TreeExaminer* treeExaminer)
+    ChunkTree::ChunkTree(BtrfsExaminer *btrfs)
             :examiner(treeExaminer)
     {
+        SuperBlock *supBlk = btrfs->primarySupblk;
         uint64_t chunkTreePhyAddr = superBlk->getChunkPhyAddr();
 
         char* diskArr = new char[BtrfsHeader::SIZE_OF_HEADER]();

@@ -18,7 +18,7 @@ using std::vector;
 namespace btrForensics{
     //! Chunk item data.
     class ChunkData {
-    private:
+    public:
         uint64_t chunkSize;
         uint64_t objId;
 

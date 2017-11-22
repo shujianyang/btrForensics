@@ -18,9 +18,9 @@ namespace btrForensics {
     };
 
 
-    class FsUuidNotMatchException : public std::runtime_error {
+    class FsDeviceException : public std::runtime_error {
     public:
-        explicit FsUuidNotMatchException(const std::string& str)
+        explicit FsDeviceException(const std::string& str)
                     :std::runtime_error(str) {}
     };
 }
