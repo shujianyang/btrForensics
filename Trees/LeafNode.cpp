@@ -10,12 +10,11 @@ namespace btrForensics{
     //! Constructor of btrfs leaf node.
     //!
     //! \param img Image file.
-    //! \param imgOffset Offset to the partition.
     //! \param header Pointer to header of a node.
     //! \param endian The endianess of the array.
     //! \param startOffset Offset of the node, right after header.
     //!
-    LeafNode::LeafNode(TSK_IMG_INFO *img, TSK_OFF_T imgOffset, const BtrfsHeader *header, 
+    LeafNode::LeafNode(TSK_IMG_INFO *img, const BtrfsHeader *header, 
             TSK_ENDIAN_ENUM endian, uint64_t startOffset)
         :BtrfsNode(header)
     {
@@ -25,7 +24,7 @@ namespace btrForensics{
 
         for(uint32_t i=0; i<itemNum; ++i){
             diskArr = new char[ItemHead::SIZE_OF_ITEM_HEAD]();
-            tsk_img_read(img, imgOffset + startOffset + itemOffset,
+            tsk_img_read(img, startOffset + itemOffset,
                     diskArr, ItemHead::SIZE_OF_ITEM_HEAD);
 
             ItemHead *itemHead = new ItemHead(endian, (uint8_t*)diskArr,
@@ -34,7 +33,7 @@ namespace btrForensics{
             BtrfsItem *newItem = nullptr;
             char *itmArr = new char[itemHead->getDataSize()]();
             uint64_t dataOffset = startOffset + itemHead->getDataOffset();
-            tsk_img_read(img, imgOffset + dataOffset, itmArr, itemHead->getDataSize());
+            tsk_img_read(img, dataOffset, itmArr, itemHead->getDataSize());
 
             switch(itemHead->key.itemType){
                 case ItemType::INODE_ITEM:

@@ -48,6 +48,12 @@ namespace btrForensics {
             throw FsDeviceException("Input incomplete: device(s) missing.");
         
         primarySupblk = deviceTable[1]->superBlk;
+
+        initializeChunkTree();
+
+        cout << *primarySupblk << endl;
+
+        cout << chunkTree->chunkRoot->info() << endl;
     }
 
 
@@ -105,10 +111,11 @@ namespace btrForensics {
             //Data offset stores relative physical address.
             uint64_t chunkPhysical = deviceOffset + stripe->offset; 
         
-            cout << "++++++++++++++++++" << endl;
-            cout << "Logical address: " << logicalAddr << endl;
-            cout << "Chunk logical: " << chunkLogical << endl;
-            cout << "++++++++++++++++++" << endl;
+            //cout << "++++++++++++++++++" << endl;
+            //cout << "Logical address: " << logicalAddr << endl;
+            //cout << "Chunk logical: " << chunkLogical << endl;
+            //cout << "Chunk physical: " << chunkPhysical << endl;
+            //cout << "++++++++++++++++++" << endl;
 
             physicalAddrs.push_back(logicalAddr - chunkLogical + chunkPhysical);
         }
@@ -117,23 +124,54 @@ namespace btrForensics {
     }
 
 
+    uint64_t BtrfsExaminer::getTempAddrFromChunk(uint64_t logicalAddr,
+            const BtrfsKey* key, const ChunkData* chunkData)
+    {
+        return getAddrFromChunk(logicalAddr, key, chunkData)[0];
+    }
+
+
     //! Read data from image based on given logical address.
     //!
+    //! \param data Array with data read from image
     //! \param logicalAddr Logical address of data.
+    //! \param key Btrfs chunk item key.
+    //! \param chunkData Btrfs chunk item data.
     //! \param size Size of data.
     //!
-    //! \return Array containing data.
+    //! \return Starting physcial address of data in the image.
     //! 
-    char* BtrfsExaminer::readData(const uint64_t logicalAddr, const uint64_t size)
+    uint64_t BtrfsExaminer::readData(char *data, const uint64_t logicalAddr,
+            const BtrfsKey* key, const ChunkData* chunkData, const uint64_t size)
     {
-        char *data = new char[size]();
+        vector<uint64_t> physicalAddrs = getAddrFromChunk(logicalAddr, key, chunkData);
 
-        return data;
+        uint64_t readSize(0);
+        uint64_t length = chunkData->stripeLength;
+        for(const auto &addr: physicalAddrs) {
+            //cout << "------------------" << endl;
+            //cout << "Physical addr: " << hex << addr << endl;
+            //cout << "Total size: " << hex << size << endl;
+            //cout << "Read size: " << hex << readSize << endl;
+            //cout << "Stripe length: " << hex << length << endl;
+            //cout << "------------------" << endl;
+            if(size - readSize <= length) {
+                tsk_img_read(image, addr, data + readSize, size);
+                break;
+            }
+            else {
+                tsk_img_read(image, addr, data + readSize, length);
+                readSize += length;
+            }
+        }
+
+        return physicalAddrs[0];
     }
 
 
     void BtrfsExaminer::initializeChunkTree()
     {
+        chunkTree = new ChunkTree(this);
     }
 
 }

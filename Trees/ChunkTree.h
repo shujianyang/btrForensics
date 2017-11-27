@@ -10,23 +10,23 @@
 #include <string>
 #include <tsk/libtsk.h>
 #include "Basics/Basics.h"
-#include "SuperBlock.h"
 
 namespace btrForensics {
-    class TreeExaminer;
+    class BtrfsExaminer;
 
     //! Process chunk tree of Btrfs.
     class ChunkTree {
     public:
         const BtrfsNode* chunkRoot; //!< Root of chunk tree.
     private:
-        const TreeExaminer* examiner;
+        BtrfsExaminer* btrfs;
+        //const TreeExaminer* examiner;
 
     public:
-        ChunkTree(const SuperBlock* superBlk, const TreeExaminer* treeExaminer);
+        ChunkTree(BtrfsExaminer *examiner);
         ~ChunkTree();
         
-        uint64_t getPhysicalAddr(uint64_t logicalAddr);
+        //int64_t agetPhysicalAddr(uint64_t logicalAddr);
     };
 
 }

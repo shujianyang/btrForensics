@@ -28,7 +28,7 @@ namespace btrForensics {
         ChunkTree* chunkTree; //!< The chunk tree.
 
     public:
-        BtrfsExaminer(TSK_IMG_INFO, TSK_ENDIAN_ENUM, vector<TSK_OFF_T>);
+        BtrfsExaminer(TSK_IMG_INFO*, TSK_ENDIAN_ENUM, vector<TSK_OFF_T>);
         ~BtrfsExaminer();
 
         uint64_t getDevOffset(const uint64_t devId);
@@ -36,7 +36,11 @@ namespace btrForensics {
         std::vector<uint64_t> getAddrFromChunk(uint64_t logicalAddr,
                 const BtrfsKey* key, const ChunkData* chunkData);
 
-        char* readData(const uint64_t logicalAddr, const uint64_t size);
+        uint64_t getTempAddrFromChunk(uint64_t logicalAddr,
+                const BtrfsKey* key, const ChunkData* chunkData);
+
+        uint64_t readData(char *data, const uint64_t logicalAddr, const BtrfsKey* key,
+               const ChunkData* chunkData, const uint64_t size);
 
 
         void initializeChunkTree();

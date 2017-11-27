@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
     }
 
     try {
-        BtrfsExaminer btr(img, devOffsets);
+        BtrfsExaminer btr(img, TSK_LIT_ENDIAN, devOffsets);
 
         /*SuperBlock *supblk = btr.primarySupblk;
 
