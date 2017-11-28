@@ -174,5 +174,119 @@ namespace btrForensics {
         chunkTree = new ChunkTree(this);
     }
 
+
+    //! Initialize root of Root Tree.
+    void BtrfsExaminer::initializeRootTree()
+    {
+        uint64_t rootTreeLogAddr = primarySupblk->getRootLogAddr();
+
+        //Pyhsical address of root of Root Tree obtained here.
+        /*uint64_t rootTreePhyAddr = chunkTree->getPhysicalAddr(rootTreelogAddr);
+
+        char* diskArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
+        tsk_img_read(image, imgOffset + rootTreePhyAddr, diskArr, BtrfsHeader::SIZE_OF_HEADER);
+        BtrfsHeader* rootHeader = new BtrfsHeader(endian, (uint8_t*)diskArr);
+        delete [] diskArr;
+
+        uint64_t itemListStart = rootTreePhyAddr + BtrfsHeader::SIZE_OF_HEADER;
+        if(rootHeader->isLeafNode())
+            rootTree = new LeafNode(image, imgOffset, rootHeader, endian, itemListStart);
+        else
+            rootTree = new InternalNode(image, imgOffset, rootHeader, endian, itemListStart);
+            */
+    }
+
+
+    //! Get the physical address by comparing givel logical address with chunk items in a leaf node.
+    //!
+    //! \param leaf Pointer to the leaf node.
+    //! \param targetLogAddr Logical address to convert.
+    //! \param targetPhyAddr Converted physical address.
+    //!
+    //! \return Return true when the address is acquired.
+    //!
+    bool BtrfsExaminer::getPhyAddrFromChunkTree(const LeafNode* leaf, uint64_t targetLogAddr,
+           uint64_t& targetPhyAddr)
+    {
+        const BtrfsItem* target(nullptr);
+
+        for(auto item : leaf->itemList) {
+            //The item must be a chunk item.
+            if(item->getItemType() != ItemType::CHUNK_ITEM)
+                continue;
+            //Chunk logical address should be just smaller than or equal to
+            //target logical address.
+            //In other words, find the chunk with logcial address that is the
+            //largest one but smaller or equal to target logical address.
+            if(item->itemHead->key.offset <= targetLogAddr)
+                target = item;
+            else
+                break;
+        }
+
+        //Matched chunk may not be found.
+        //Then physical address equals to logical address?(Not 100% sure.)
+        if(target == nullptr)
+            targetPhyAddr = targetLogAddr;
+
+        const ChunkItem* chunk = static_cast<const ChunkItem*>(target);
+        //Read the chunk to calculate actual physical address.
+        targetPhyAddr = 
+            getTempAddrFromChunk(targetLogAddr, &chunk->itemHead->key, &chunk->data);
+        
+        return true;
+    }
+
+
+    //! Recursively traverse child nodes and search if it is a leaf node.
+    //!
+    //! \param node Node being processed.
+    //! \param searchFunc A function type which accepts a LeafNode* 
+    //!        parameter and returns true if certain object is found.
+    //! \return True if target is found in leaf node.
+    //!
+    bool BtrfsExaminer::treeSearch(const BtrfsNode *node,
+            function<bool(const LeafNode*)> searchFunc)
+    {
+        if(node->nodeHeader->isLeafNode()){
+            const LeafNode *leaf = static_cast<const LeafNode*>(node);
+            return searchFunc(leaf);
+        }
+        else {
+            const InternalNode *internal = static_cast<const InternalNode*>(node);
+            const BtrfsNode *newNode;
+
+            for(auto ptr : internal->keyPointers) {
+                if(ptr->childNode != nullptr) {
+                    newNode = ptr->childNode;
+                }
+                else {
+                    const SuperBlock *supBlk = primarySupblk;
+                    char *headerArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
+                    uint64_t physicalAddr = readData(headerArr, ptr->getBlkNum(),
+                        &(supBlk->chunkKey), &(supBlk->chunkData),
+                        BtrfsHeader::SIZE_OF_HEADER);
+
+                    BtrfsHeader *header = new BtrfsHeader(TSK_LIT_ENDIAN, (uint8_t*)headerArr);
+                    delete [] headerArr; 
+
+                    uint64_t itemOffset = physicalAddr + BtrfsHeader::SIZE_OF_HEADER;
+                    
+                    if(header->isLeafNode()){
+                        newNode = new LeafNode(image, header, endian, itemOffset);
+                    }
+                    else {
+                        newNode = new InternalNode(image, header, endian, itemOffset);
+                    }
+
+                    ptr->childNode = newNode;
+                }
+
+                if(newNode != nullptr && treeSearch(newNode, searchFunc))
+                    return true;
+            }
+            return false;
+        }
+    }
 }
 

@@ -51,15 +51,15 @@ namespace btrForensics {
     //! \param logicalAddr 64-bit logial address.
     //! \return 64-bit physical address.
     //!
-    /*uint64_t ChunkTree::getPhysicalAddr(uint64_t logicalAddr)
+    uint64_t ChunkTree::getPhysicalAddr(uint64_t logicalAddr)
     {
         uint64_t physicalAddr(0);
         //std::cout << chunkRoot->info() << std::endl;
-        examiner->treeSearch(chunkRoot,
-                [logicalAddr, &physicalAddr](const LeafNode* leaf)
-                { return getPhyAddr(leaf, logicalAddr, physicalAddr); });
+        btrfs->treeSearch(chunkRoot,
+                [this, logicalAddr, &physicalAddr](const LeafNode* leaf)
+                { return this->btrfs->getPhyAddrFromChunkTree(leaf, logicalAddr, physicalAddr); });
         
         return physicalAddr;
-    }*/
+    }
 }
 

@@ -26,7 +26,7 @@ namespace btrForensics {
         ChunkTree(BtrfsExaminer *examiner);
         ~ChunkTree();
         
-        //int64_t agetPhysicalAddr(uint64_t logicalAddr);
+        uint64_t getPhysicalAddr(uint64_t logicalAddr);
     };
 
 }

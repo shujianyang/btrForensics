@@ -8,6 +8,7 @@
 
 #include <map>
 #include <vector>
+#include <functional>
 #include "DeviceRecord.h"
 #include "Basics/Basics.h"
 #include "Trees/Trees.h"
@@ -26,6 +27,7 @@ namespace btrForensics {
 
 
         ChunkTree* chunkTree; //!< The chunk tree.
+        const BtrfsNode* rootTree; //!< Root node of the root tree.
 
     public:
         BtrfsExaminer(TSK_IMG_INFO*, TSK_ENDIAN_ENUM, vector<TSK_OFF_T>);
@@ -35,15 +37,26 @@ namespace btrForensics {
 
         std::vector<uint64_t> getAddrFromChunk(uint64_t logicalAddr,
                 const BtrfsKey* key, const ChunkData* chunkData);
-
         uint64_t getTempAddrFromChunk(uint64_t logicalAddr,
                 const BtrfsKey* key, const ChunkData* chunkData);
-
         uint64_t readData(char *data, const uint64_t logicalAddr, const BtrfsKey* key,
                const ChunkData* chunkData, const uint64_t size);
 
 
         void initializeChunkTree();
+        void initializeRootTree();
+
+        bool getPhyAddrFromChunkTree(const LeafNode* leaf, uint64_t targetLogAddr, uint64_t& targetPhyAddr);
+        const void navigateNodes(const BtrfsNode* root, std::ostream& os, std::istream& is) const;
+
+        //void treeTraverse(const BtrfsNode* node,
+        //    std::function<void(const LeafNode*)> readOnlyFunc) const;
+
+        bool treeSearch(const BtrfsNode* node,
+            std::function<bool(const LeafNode*)> searchFunc);
+
+        //bool treeSearchById(const BtrfsNode* node, uint64_t targetId,
+        //    std::function<bool(const LeafNode*, uint64_t)> searchFunc) const;
     };
 }
 
