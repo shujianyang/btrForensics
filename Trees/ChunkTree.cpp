@@ -5,24 +5,24 @@
 
 #include <iostream>
 #include "ChunkTree.h"
-#include "Examiners/Functions.h"
+#include "Pool/Functions.h"
 
 namespace btrForensics {
     //! Constructor of tree analyzer.
     //!
-    //! \param examiner Pointer to a Btrfs examiner.
+    //! \param pool Pointer to a Btrfs pool.
     //!
-    ChunkTree::ChunkTree(BtrfsExaminer *examiner)
-            :btrfs(examiner)
+    ChunkTree::ChunkTree(BtrfsPool *pool)
+            :btrPool(pool)
     {
-        const SuperBlock *supBlk = btrfs->primarySupblk;
+        const SuperBlock *supBlk = btrPool->primarySupblk;
 
         char *diskArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
-        std::cout << std::hex << supBlk->chunkTrRootAddr << std::endl;
-        uint64_t chunkTreePhyAddr = btrfs->readData(diskArr, supBlk->chunkTrRootAddr,
+        //std::cout << std::hex << supBlk->chunkTrRootAddr << std::endl;
+        uint64_t chunkTreePhyAddr = btrPool->readData(diskArr, supBlk->chunkTrRootAddr,
                 &(supBlk->chunkKey), &(supBlk->chunkData), BtrfsHeader::SIZE_OF_HEADER);
 
-        BtrfsHeader *chunkHeader = new BtrfsHeader(examiner->endian, (uint8_t*)diskArr);
+        BtrfsHeader *chunkHeader = new BtrfsHeader(pool->endian, (uint8_t*)diskArr);
         delete [] diskArr;
 
         //std::cout << *chunkHeader << std::endl;
@@ -30,10 +30,10 @@ namespace btrForensics {
 
         const BtrfsNode* chunkTree;
         if(chunkHeader->isLeafNode())
-            chunkRoot = new LeafNode(examiner->image, chunkHeader,
-                                examiner->endian, itemListStart);
+            chunkRoot = new LeafNode(pool->image, chunkHeader,
+                                pool->endian, itemListStart);
         else
-            chunkRoot = new InternalNode(examiner->image, chunkHeader,
+            chunkRoot = new InternalNode(pool->image, chunkHeader,
                                 TSK_LIT_ENDIAN, itemListStart);
     }
 
@@ -55,9 +55,9 @@ namespace btrForensics {
     {
         uint64_t physicalAddr(0);
         //std::cout << chunkRoot->info() << std::endl;
-        btrfs->treeSearch(chunkRoot,
+        btrPool->treeSearch(chunkRoot,
                 [this, logicalAddr, &physicalAddr](const LeafNode* leaf)
-                { return this->btrfs->getPhyAddrFromChunkTree(leaf, logicalAddr, physicalAddr); });
+                { return this->btrPool->getPhyAddrFromChunkTree(leaf, logicalAddr, physicalAddr); });
         
         return physicalAddr;
     }

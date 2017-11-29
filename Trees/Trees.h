@@ -11,7 +11,7 @@
 #include "DirContent.h"
 
 #include "ChunkTree.h"
-//#include "FilesystemTree.h"
+#include "FilesystemTree.h"
 
 #endif
 

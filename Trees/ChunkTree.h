@@ -12,18 +12,17 @@
 #include "Basics/Basics.h"
 
 namespace btrForensics {
-    class BtrfsExaminer;
+    class BtrfsPool;
 
     //! Process chunk tree of Btrfs.
     class ChunkTree {
     public:
         const BtrfsNode* chunkRoot; //!< Root of chunk tree.
     private:
-        BtrfsExaminer* btrfs;
-        //const TreeExaminer* examiner;
+        BtrfsPool* btrPool;
 
     public:
-        ChunkTree(BtrfsExaminer *examiner);
+        ChunkTree(BtrfsPool *pool);
         ~ChunkTree();
         
         uint64_t getPhysicalAddr(uint64_t logicalAddr);

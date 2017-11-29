@@ -11,12 +11,12 @@ include_directories(${PROJECT_SOURCE_DIR})
 add_subdirectory(Basics)
 add_subdirectory(Utility)
 add_subdirectory(Trees)
-add_subdirectory(Examiners)
+add_subdirectory(Pool)
 add_subdirectory(Tools)
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR})
 
 add_executable(btrfrsc btrfrsc.cpp)
 
-target_link_libraries(btrfrsc Examiners Trees)
-target_link_libraries(btrfrsc Trees Examiners Basics Utility tsk)
+target_link_libraries(btrfrsc Pool Trees)
+target_link_libraries(btrfrsc Trees Pool Basics Utility tsk)

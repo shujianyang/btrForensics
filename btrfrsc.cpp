@@ -17,7 +17,7 @@
 #include <unistd.h>
 #include "Basics/Basics.h"
 #include "Trees/Trees.h"
-#include "Examiners/Examiners.h"
+#include "Pool/Pool.h"
 #include "Utility/Utility.h"
 
 using namespace std;
@@ -74,11 +74,9 @@ int main(int argc, char *argv[])
     }
 
     try {
-        BtrfsExaminer btr(img, TSK_LIT_ENDIAN, devOffsets);
+        BtrfsPool btr(img, TSK_LIT_ENDIAN, devOffsets);
 
-        /*SuperBlock *supblk = btr.primarySupblk;
-
-        cout << *supblk << endl;
+        SuperBlock *supblk = btr.primarySupblk;
 
         cout << "Magic: " << supblk->printMagic() << endl;
 
@@ -87,10 +85,6 @@ int main(int argc, char *argv[])
 
         cout << "Label: " << supblk->printLabel() << endl;
         cout << "\n" << endl;
-
-        TSK_OFF_T offsetByte = (btr.deviceTable)[1]->deviceOffset;
-        cout << "offsetByte: " << offsetByte << endl;
-        TreeExaminer examiner(img,offsetByte, TSK_LIT_ENDIAN, supblk);
 
         string answer;
         
@@ -112,21 +106,21 @@ int main(int argc, char *argv[])
             cout << std::string(60, '=') << "\n";
             cout << endl;
             if(answer == "1"){
-                examiner.navigateNodes(examiner.rootTree, cout, cin);
+                btr.navigateNodes(btr.rootTree, cout, cin);
             }
             else if(answer == "2"){
-                examiner.navigateNodes(examiner.chunkTree->chunkRoot, cout, cin);
+                btr.navigateNodes(btr.chunkTree->chunkRoot, cout, cin);
             }
             else if(answer == "3"){
-                examiner.navigateNodes(examiner.fsTreeDefault->fileTreeRoot, cout, cin);
+                btr.navigateNodes(btr.fsTreeDefault->fileTreeRoot, cout, cin);
             }
             else if(answer == "4") {
                 cout << "Listing directory items...\n" << endl;
-                uint64_t targetId(examiner.fsTree->rootDirId);
-                examiner.fsTree->listDirItemsById(targetId, true, true, true, 0, cout);
+                uint64_t targetId(btr.fsTree->rootDirId);
+                btr.fsTree->listDirItemsById(targetId, true, true, true, 0, cout);
                 cout << endl;
             }
-            else if(answer == "5") {
+            /*else if(answer == "5") {
                 examiner.fsTree->explorFiles(cout, cin);
             }
             else if(answer == "6") {
@@ -158,12 +152,12 @@ int main(int argc, char *argv[])
                     cout << "Success: File written to current directory." << endl;
                 else
                     cout << "Error: File not found or has no content." << endl;
-            }
+            }*/
             else
                 cout << "Invalid option. Please choose again." << endl;
 
             cout << endl;
-        }*/
+        }
     } catch(std::bad_alloc& ba) {
         cerr << "Error when allocating objects.\n" << ba.what() << endl;
     } catch(FsDamagedException& fsEx) {
