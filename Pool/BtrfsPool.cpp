@@ -377,6 +377,56 @@ namespace btrForensics {
     }
 
 
+    //! Switch to a subvolume or snapshot and exploere files within.
+    //!
+    //! \param os Output stream where the infomation is printed.
+    //! \param is Input stream telling which node is the one to be read.
+    //! \return True if switched.
+    //!
+    const bool BtrfsPool::switchFsTrees(ostream& os, istream& is)
+    {
+        vector<const BtrfsItem*> foundRootRefs;
+        treeTraverse(rootTree, [&foundRootRefs](const LeafNode* leaf)
+                { return filterItems(leaf, ItemType::ROOT_BACKREF, foundRootRefs); });
+        
+        if(foundRootRefs.size() == 0) {
+            os << "\nNo subvolumes or snapshots are found.\n" << endl;
+            return false;
+        }
+
+        uint64_t selectedId(0);
+        while(true) {
+            os << "The following subvolumes or snapshots are found:" << endl;
+            int index(0);
+            for(auto item : foundRootRefs) {
+                const RootRef* ref = static_cast<const RootRef*>(item);
+                os << "[" << dec << setfill(' ') << setw(2) << ++index << "] "
+                    << setw(7) << ref->getId() << "   " << ref->getDirName() << '\n';
+            }
+            os << endl;
+
+            string input;
+            os << "To visit a subvolume or snapshot, please enter its index in the list:\n";
+            os << "(Enter ''q' to quit.)" << endl;
+            is >> input;
+
+            if(input == "q") return false;
+            int inputIndex;
+            stringstream(input) >> inputIndex;
+            if(inputIndex > 0 && inputIndex <= foundRootRefs.size()) {
+                selectedId = foundRootRefs[inputIndex-1]->getId();
+                break;
+            }
+            os << "Wrong index, please enter a correct one.\n\n\n" << endl;
+        }
+        
+        fsTree = new FilesystemTree(rootTree, selectedId, this);
+        os << "\n" << std::string(60, '=') << "\n";
+        os << endl;
+        return true;
+    }
+
+
     //! Recursively traverse child nodes and process it if it is a leaf node.
     //!
     //! \param node Node being processed.

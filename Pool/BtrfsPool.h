@@ -51,6 +51,7 @@ namespace btrForensics {
 
         bool getPhyAddrFromChunkTree(const LeafNode* leaf, uint64_t targetLogAddr, uint64_t& targetPhyAddr);
         void navigateNodes(const BtrfsNode* root, std::ostream& os, std::istream& is) const;
+        const bool switchFsTrees(std::ostream& os, std::istream& is);
 
         void treeTraverse(const BtrfsNode* node,
             std::function<void(const LeafNode*)> readOnlyFunc);

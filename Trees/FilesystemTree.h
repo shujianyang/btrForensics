@@ -37,10 +37,10 @@ namespace btrForensics {
 
         DirContent* getDirContent(uint64_t id);
 
-        /*const void explorFiles(std::ostream& os, std::istream& is) const;
+        const void explorFiles(std::ostream& os, std::istream& is);
         
-        const bool readFile(uint64_t id) const;
-        const bool showInodeInfo(uint64_t id, std::ostream& os) const;*/
+        const bool readFile(uint64_t id);
+        const bool showInodeInfo(uint64_t id, std::ostream& os);
     };
 }
 

@@ -157,7 +157,7 @@ namespace btrForensics {
     //! \param os Output stream where the infomation is printed.
     //! \param is Input stream telling which directory is the one to be read.
     //!
-    /*const void FilesystemTree::explorFiles(std::ostream& os, istream& is) const
+    const void FilesystemTree::explorFiles(std::ostream& os, istream& is)
     {
         DirContent* dir = getDirContent(rootDirId);
         if(dir == nullptr) {
@@ -252,7 +252,7 @@ namespace btrForensics {
     //! \param id Inode number of the file to read.
     //! \return True if file is all successfully written.
     //!
-    const bool FilesystemTree::readFile(uint64_t id) const
+    const bool FilesystemTree::readFile(uint64_t id)
     {
         const BtrfsItem* foundItem;
         if(!btrPool->treeSearchById(fileTreeRoot, id,
@@ -287,26 +287,31 @@ namespace btrForensics {
             if(!ofs) return false;
             if(data->type == 0) { //Is inline file.
                 char* dataArr = new char[fileSize];
-                tsk_img_read(btrPool->image, btrPool->imgOffset + data->dataAddress, dataArr, fileSize);
+                tsk_img_read(btrPool->image, data->dataAddress, dataArr, fileSize);
                 ofs.write(dataArr, fileSize);
                 delete [] dataArr;
                 ofs.close();
                 return true;
             }
             else {
-                uint64_t physicalAddr = btrPool->getPhysicalAddr(data->logicalAddress)
-                                        + data->extentOffset;
+                //uint64_t physicalAddr = btrPool->getPhysicalAddr(data->logicalAddress)
+                //                        + data->extentOffset;
+                const SuperBlock *supBlk = btrPool->primarySupblk;
                 char* dataArr;
                 if(unreadSize > data->numOfBytes) {
-                    dataArr = new char[data->numOfBytes];
-                    tsk_img_read(btrPool->image, btrPool->imgOffset + physicalAddr, dataArr, data->numOfBytes);
+                    dataArr = new char[data->numOfBytes]();
+                    btrPool->readData(dataArr, data->logicalAddress, 
+                            &(supBlk->chunkKey), &(supBlk->chunkData), data->numOfBytes);
+                    //tsk_img_read(btrPool->image, physicalAddr, dataArr, data->numOfBytes);
                     ofs.write(dataArr, data->numOfBytes);
                     unreadSize -= data->numOfBytes;
                     delete [] dataArr;
                 }
                 else {
-                    dataArr = new char[unreadSize];
-                    tsk_img_read(btrPool->image, btrPool->imgOffset + physicalAddr, dataArr, unreadSize);
+                    dataArr = new char[unreadSize]();
+                    btrPool->readData(dataArr, data->logicalAddress, 
+                            &(supBlk->chunkKey), &(supBlk->chunkData), unreadSize);
+                    //tsk_img_read(btrPool->image, physicalAddr, dataArr, unreadSize);
                     ofs.write(dataArr, unreadSize);
                     unreadSize = 0;
                     delete [] dataArr;
@@ -327,7 +332,7 @@ namespace btrForensics {
     //! \param os Output stream where the infomation is printed.
     //! \return True if inode is found.
     //! 
-    const bool FilesystemTree::showInodeInfo(uint64_t id, std::ostream& os) const
+    const bool FilesystemTree::showInodeInfo(uint64_t id, std::ostream& os)
     {
         const BtrfsItem* foundItem;
         if(!btrPool->treeSearchById(fileTreeRoot, id,
@@ -353,6 +358,6 @@ namespace btrForensics {
         os << inode->printTime() << endl;
         
         return true;
-    }*/
+    }
 }
 

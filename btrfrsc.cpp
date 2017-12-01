@@ -120,14 +120,14 @@ int main(int argc, char *argv[])
                 btr.fsTree->listDirItemsById(targetId, true, true, true, 0, cout);
                 cout << endl;
             }
-            /*else if(answer == "5") {
-                examiner.fsTree->explorFiles(cout, cin);
+            else if(answer == "5") {
+                btr.fsTree->explorFiles(cout, cin);
             }
             else if(answer == "6") {
-                if(examiner.switchFsTrees(cout, cin)) {
-                    examiner.fsTree->explorFiles(cout, cin);
-                    delete examiner.fsTree;
-                    examiner.fsTree = examiner.fsTreeDefault;
+                if(btr.switchFsTrees(cout, cin)) {
+                    btr.fsTree->explorFiles(cout, cin);
+                    delete btr.fsTree;
+                    btr.fsTree = btr.fsTreeDefault;
                 }
             }
             else if(answer == "7") {
@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
                     cin >> input;
                     if(input == "q") break;
                     if(stringstream(input) >> targetId) {
-                        success = examiner.fsTree->readFile(targetId);
+                        success = btr.fsTree->readFile(targetId);
                         break;
                     }
                     else {
@@ -152,7 +152,7 @@ int main(int argc, char *argv[])
                     cout << "Success: File written to current directory." << endl;
                 else
                     cout << "Error: File not found or has no content." << endl;
-            }*/
+            }
             else
                 cout << "Invalid option. Please choose again." << endl;
 
