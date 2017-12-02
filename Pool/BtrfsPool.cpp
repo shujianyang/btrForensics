@@ -85,9 +85,9 @@ namespace btrForensics {
     //!
     //! \return Device offset in bytes.
     //!
-    uint64_t BtrfsPool::getDevOffset(const uint64_t devId)
+    uint64_t BtrfsPool::getDevOffset(const uint64_t devId) const
     {
-        return deviceTable[devId]->deviceOffset;
+        return deviceTable.at(devId)->deviceOffset;
     }
 
 
@@ -100,7 +100,7 @@ namespace btrForensics {
     //! \return Mapped physical address. 0 if not valid.
     //!
     vector<uint64_t> BtrfsPool::getAddrFromChunk(uint64_t logicalAddr,
-            const BtrfsKey* key, const ChunkData* chunkData)
+            const BtrfsKey* key, const ChunkData* chunkData) const
     {
         vector<uint64_t> physicalAddrs;
         uint64_t chunkLogical = key->offset; //Key offset stores logical address.
@@ -135,7 +135,7 @@ namespace btrForensics {
 
 
     uint64_t BtrfsPool::getTempAddrFromChunk(uint64_t logicalAddr,
-            const BtrfsKey* key, const ChunkData* chunkData)
+            const BtrfsKey* key, const ChunkData* chunkData) const
     {
         return getAddrFromChunk(logicalAddr, key, chunkData)[0];
     }
@@ -152,7 +152,7 @@ namespace btrForensics {
     //! \return Starting physcial address of data in the image.
     //! 
     uint64_t BtrfsPool::readData(char *data, const uint64_t logicalAddr,
-            const BtrfsKey* key, const ChunkData* chunkData, const uint64_t size)
+            const BtrfsKey* key, const ChunkData* chunkData, const uint64_t size) const
     {
         vector<uint64_t> physicalAddrs = getAddrFromChunk(logicalAddr, key, chunkData);
 
@@ -242,7 +242,7 @@ namespace btrForensics {
     //! \return Return true when the address is acquired.
     //!
     bool BtrfsPool::getPhyAddrFromChunkTree(const LeafNode* leaf, uint64_t targetLogAddr,
-           uint64_t& targetPhyAddr)
+           uint64_t& targetPhyAddr) const
     {
         const BtrfsItem* target(nullptr);
 
@@ -434,7 +434,7 @@ namespace btrForensics {
     //!        and a vector<uint64_t>& parameters and returns void.
     //!
     void BtrfsPool::treeTraverse(const BtrfsNode *node,
-            function<void(const LeafNode*)> readOnlyFunc)
+            function<void(const LeafNode*)> readOnlyFunc) const
     {
         if(node->nodeHeader->isLeafNode()){
             const LeafNode* leaf = static_cast<const LeafNode*>(node);
@@ -485,7 +485,7 @@ namespace btrForensics {
     //! \return True if target is found in leaf node.
     //!
     bool BtrfsPool::treeSearch(const BtrfsNode *node,
-            function<bool(const LeafNode*)> searchFunc)
+            function<bool(const LeafNode*)> searchFunc) const
     {
         if(node->nodeHeader->isLeafNode()){
             const LeafNode *leaf = static_cast<const LeafNode*>(node);
@@ -538,7 +538,7 @@ namespace btrForensics {
     //! \return True if target is found in leaf node.
     //!
     bool BtrfsPool::treeSearchById(const BtrfsNode *node, uint64_t targetId,
-            function<bool(const LeafNode*, uint64_t)> searchFunc)
+            function<bool(const LeafNode*, uint64_t)> searchFunc) const
     {
         if(node->nodeHeader->isLeafNode()){
             const LeafNode *leaf = static_cast<const LeafNode*>(node);

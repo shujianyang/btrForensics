@@ -35,32 +35,33 @@ namespace btrForensics {
         BtrfsPool(TSK_IMG_INFO*, TSK_ENDIAN_ENUM, vector<TSK_OFF_T>);
         ~BtrfsPool();
 
-        uint64_t getDevOffset(const uint64_t devId);
+        uint64_t getDevOffset(const uint64_t devId) const;
 
         std::vector<uint64_t> getAddrFromChunk(uint64_t logicalAddr,
-                const BtrfsKey* key, const ChunkData* chunkData);
+                const BtrfsKey* key, const ChunkData* chunkData) const;
         uint64_t getTempAddrFromChunk(uint64_t logicalAddr,
-                const BtrfsKey* key, const ChunkData* chunkData);
+                const BtrfsKey* key, const ChunkData* chunkData) const;
         uint64_t readData(char *data, const uint64_t logicalAddr, const BtrfsKey* key,
-               const ChunkData* chunkData, const uint64_t size);
+               const ChunkData* chunkData, const uint64_t size) const;
 
 
         void initializeChunkTree();
         void initializeRootTree();
         uint64_t getDefaultFsId();
 
-        bool getPhyAddrFromChunkTree(const LeafNode* leaf, uint64_t targetLogAddr, uint64_t& targetPhyAddr);
+        bool getPhyAddrFromChunkTree(const LeafNode* leaf,
+                uint64_t targetLogAddr, uint64_t& targetPhyAddr) const;
         void navigateNodes(const BtrfsNode* root, std::ostream& os, std::istream& is) const;
         const bool switchFsTrees(std::ostream& os, std::istream& is);
 
         void treeTraverse(const BtrfsNode* node,
-            std::function<void(const LeafNode*)> readOnlyFunc);
+            std::function<void(const LeafNode*)> readOnlyFunc) const;
 
         bool treeSearch(const BtrfsNode* node,
-            std::function<bool(const LeafNode*)> searchFunc);
+            std::function<bool(const LeafNode*)> searchFunc) const;
 
         bool treeSearchById(const BtrfsNode* node, uint64_t targetId,
-            std::function<bool(const LeafNode*, uint64_t)> searchFunc);
+            std::function<bool(const LeafNode*, uint64_t)> searchFunc) const;
     };
 }
 
