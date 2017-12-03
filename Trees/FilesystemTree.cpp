@@ -43,8 +43,7 @@ namespace btrForensics {
         const SuperBlock *supBlk = btrPool->primarySupblk;
 
         char *headerArr = new char[BtrfsHeader::SIZE_OF_HEADER]();
-        uint64_t physicalAddr = btrPool->readData(headerArr, offset, &(supBlk->chunkKey),
-                &(supBlk->chunkData), BtrfsHeader::SIZE_OF_HEADER);
+        uint64_t physicalAddr = btrPool->readData(headerArr, offset, BtrfsHeader::SIZE_OF_HEADER);
         rootDirId = rootItm->getRootObjId();
 
         const BtrfsHeader *fileTreeHeader = 
@@ -300,8 +299,7 @@ namespace btrForensics {
                 char* dataArr;
                 if(unreadSize > data->numOfBytes) {
                     dataArr = new char[data->numOfBytes]();
-                    btrPool->readData(dataArr, data->logicalAddress, 
-                            &(supBlk->chunkKey), &(supBlk->chunkData), data->numOfBytes);
+                    btrPool->readData(dataArr, data->logicalAddress, data->numOfBytes);
                     //tsk_img_read(btrPool->image, physicalAddr, dataArr, data->numOfBytes);
                     ofs.write(dataArr, data->numOfBytes);
                     unreadSize -= data->numOfBytes;
@@ -309,8 +307,7 @@ namespace btrForensics {
                 }
                 else {
                     dataArr = new char[unreadSize]();
-                    btrPool->readData(dataArr, data->logicalAddress, 
-                            &(supBlk->chunkKey), &(supBlk->chunkData), unreadSize);
+                    btrPool->readData(dataArr, data->logicalAddress, unreadSize);
                     //tsk_img_read(btrPool->image, physicalAddr, dataArr, unreadSize);
                     ofs.write(dataArr, unreadSize);
                     unreadSize = 0;

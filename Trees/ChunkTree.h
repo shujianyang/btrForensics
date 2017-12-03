@@ -13,6 +13,7 @@
 
 namespace btrForensics {
     class BtrfsPool;
+    class LeafNode;
 
     //! Process chunk tree of Btrfs.
     class ChunkTree {
@@ -25,7 +26,9 @@ namespace btrForensics {
         ChunkTree(BtrfsPool *pool);
         ~ChunkTree();
         
-        uint64_t getPhysicalAddr(uint64_t logicalAddr) const;
+        bool findChunkItem(const LeafNode* leaf, uint64_t targetLogAddr,
+                const ChunkItem* &foundChunk) const;
+        const ChunkItem* getChunkItem(uint64_t logicalAddr) const;
     };
 
 }
