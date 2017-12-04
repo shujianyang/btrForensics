@@ -7,6 +7,7 @@
 #define BTRFS_POOL_H
 
 #include <map>
+#include <string>
 #include <vector>
 #include <functional>
 #include "DeviceRecord.h"
@@ -32,14 +33,13 @@ namespace btrForensics {
         const BtrfsNode* rootTree; //!< Root node of the root tree.
 
     public:
-        BtrfsPool(TSK_IMG_INFO*, TSK_ENDIAN_ENUM, vector<TSK_OFF_T>);
+        BtrfsPool(TSK_IMG_INFO*, TSK_ENDIAN_ENUM, vector<TSK_OFF_T>, uint64_t = 0);
         ~BtrfsPool();
 
+        std::string devInfo() const;
         uint64_t getDevOffset(uint64_t devId) const;
 
         std::vector<uint64_t> getAddrFromChunk(uint64_t logicalAddr,
-                const BtrfsKey* key, const ChunkData* chunkData) const;
-        uint64_t getTempAddrFromChunk(uint64_t logicalAddr,
                 const BtrfsKey* key, const ChunkData* chunkData) const;
         uint64_t readChunkData(char *data, uint64_t logicalAddr,
                 const BtrfsKey* key, const ChunkData* chunkData, uint64_t size) const;
@@ -48,10 +48,11 @@ namespace btrForensics {
 
         void initializeChunkTree();
         void initializeRootTree();
+        void initializeFileTree(uint64_t);
         uint64_t getDefaultFsId();
 
         void navigateNodes(const BtrfsNode* root, std::ostream& os, std::istream& is) const;
-        const bool switchFsTrees(std::ostream& os, std::istream& is);
+        bool switchFsTrees(std::ostream& os, std::istream& is);
 
         void treeTraverse(const BtrfsNode* node,
             std::function<void(const LeafNode*)> readOnlyFunc) const;

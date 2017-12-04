@@ -2,12 +2,13 @@
  * \file
  * \author Shujian Yang
  *
- * File containing useful functions.
+ * File containing integer reading functions.
  */
 
 #include <sstream>
 #include "ReadInt.h"
 
+namespace btrForensics {
 
 /**
   * Read a 16-bit long number from byte array.
@@ -89,6 +90,12 @@ const uint64_t read64Bit(TSK_ENDIAN_ENUM endian, const uint8_t *arr)
 }
 
 
+//! Convert bytes into human-friendly string format.
+//!
+//! \param bytes Byte number to convert.
+//!
+//! \return String of size in B, KB, MB...
+//!
 std::string humanSize(uint64_t bytes)
 {
     std::string totalSfx;
@@ -110,5 +117,7 @@ std::string humanSize(uint64_t bytes)
     std::ostringstream oss;
     oss << bytes << totalSfx;
     return oss.str();
+}
+
 }
 

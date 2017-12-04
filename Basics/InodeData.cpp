@@ -72,7 +72,7 @@ namespace btrForensics{
     std::string InodeData::dataInfo() const
     {
         std::ostringstream oss;
-        oss << "Size: " << std::dec << stSize << " bytes\n";
+        oss << "Size: " << std::dec << humanSize(stSize) << "\n";
         oss << "Created time:  " << std::asctime(std::localtime(&createdTime));
         oss << "Access time:   " << std::asctime(std::localtime(&accessTime));
         oss << "Modified time: " << std::asctime(std::localtime(&modifiedTime));

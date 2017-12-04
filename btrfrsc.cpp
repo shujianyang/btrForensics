@@ -28,18 +28,20 @@ int main(int argc, char *argv[])
 {
     TSK_OFF_T offsetSector(0);
     int option;
-    string offsetArgs;
+    vector<string> offsetStr;
     vector<TSK_OFF_T> devOffsets;
 
     while((option = getopt(argc, argv, "o:")) != -1){
         switch(option){
             case 'o':
-                offsetArgs = optarg;
-                if( (offsetSector = tsk_parse_offset(optarg)) == -1){
-                    tsk_error_print(stderr);
-                    exit(1);
+                offsetStr = strSplit(optarg, ",");
+                for(auto str : offsetStr){
+                    if( (offsetSector = tsk_parse_offset(str.c_str())) == -1){
+                        tsk_error_print(stderr);
+                        exit(1);
+                    }
+                    devOffsets.push_back(offsetSector);
                 }
-                devOffsets.push_back(offsetSector);
                 break;
             case '?':
             default:
@@ -78,6 +80,7 @@ int main(int argc, char *argv[])
 
         SuperBlock *supblk = btr.primarySupblk;
 
+        cout << *supblk << endl;
         cout << "Magic: " << supblk->printMagic() << endl;
 
         cout << supblk->printSpace() << endl;

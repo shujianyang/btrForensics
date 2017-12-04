@@ -14,8 +14,15 @@ using namespace std;
 
 namespace btrForensics {
 
-    //! Constructor
-    BtrfsPool::BtrfsPool(TSK_IMG_INFO *img, TSK_ENDIAN_ENUM end, vector<TSK_OFF_T> devOffsets)
+    //! Constructor of Btrfs pool
+    //!
+    //! \param img Image file.
+    //! \param end The endianess of the array.
+    //! \param devOffsets Offsets of different devices
+    //! \param fsRootId Id of root of Filesystem Tree.
+    //!
+    BtrfsPool::BtrfsPool(TSK_IMG_INFO *img, TSK_ENDIAN_ENUM end,
+            vector<TSK_OFF_T> devOffsets, uint64_t fsRootId)
         :image(img), endian(end)
     {
         uint64_t devCount(0);
@@ -39,32 +46,14 @@ namespace btrForensics {
             devCount = supblk->numDevices;
         }
 
-        if(devOffsets.size() == devCount) {
-            cout << "All devices accepted. Device number: " << devCount << std::endl;
-            cout << "Pool UUID: " << fsUUID.encode() << endl;
-            cout << "-----------------------------------" << endl;
-
-            for(const auto dev : deviceTable) {
-                cout << (dev.second)->devInfo() << endl;
-            }
-        }
-        else
+        if(devOffsets.size() != devCount)
             throw FsDeviceException("Input incomplete: device(s) missing.");
         
         primarySupblk = deviceTable[1]->superBlk;
 
         initializeChunkTree();
         initializeRootTree();
-
-        uint64_t defaultId = getDefaultFsId();
-
-        fsTree = new FilesystemTree(rootTree, defaultId, this);
-        fsTreeDefault = fsTree;
-        
-
-        cout << *primarySupblk << endl;
-
-        //cout << rootTree->info() << endl;
+        initializeFileTree(fsRootId);
     }
 
 
@@ -80,6 +69,25 @@ namespace btrForensics {
     }
 
 
+    //! List devices of the pool
+    //!
+    //! \return String of device description
+    //!
+    string BtrfsPool::devInfo() const
+    {
+        ostringstream oss;
+        oss << "All devices accepted. Device number: " << deviceTable.size() << "\n";
+        oss << "Pool UUID: " << fsUUID.encode() << "\n";
+        oss << "-----------------------------------" << "\n";
+
+        for(const auto dev : deviceTable) {
+            oss << (dev.second)->devInfo() << "\n";
+        }
+        
+        return oss.str();
+    }
+
+
     //! Find device offset within the image in bytes
     //! 
     //! \param devId
@@ -92,7 +100,7 @@ namespace btrForensics {
     }
 
 
-    //! Caculate the physical address from a chunk item.
+    //! Get the physical addresses from a chunk item.
     //!
     //! \param logicalAddr Logical address to convert.
     //! \param key Key storing chunk logical address.
@@ -122,23 +130,10 @@ namespace btrForensics {
             //Data offset stores relative physical address.
             uint64_t chunkPhysical = deviceOffset + stripe->offset; 
         
-            //cout << "++++++++++++++++++" << endl;
-            //cout << "Logical address: " << logicalAddr << endl;
-            //cout << "Chunk logical: " << chunkLogical << endl;
-            //cout << "Chunk physical: " << chunkPhysical << endl;
-            //cout << "++++++++++++++++++" << endl;
-
             physicalAddrs.push_back(logicalAddr - chunkLogical + chunkPhysical);
         }
 
         return physicalAddrs;
-    }
-
-
-    uint64_t BtrfsPool::getTempAddrFromChunk(uint64_t logicalAddr,
-            const BtrfsKey* key, const ChunkData* chunkData) const
-    {
-        return getAddrFromChunk(logicalAddr, key, chunkData)[0];
     }
 
 
@@ -197,6 +192,7 @@ namespace btrForensics {
     }
 
 
+    //! Initialize the chunk tree of the pool
     void BtrfsPool::initializeChunkTree()
     {
         chunkTree = new ChunkTree(this);
@@ -222,6 +218,32 @@ namespace btrForensics {
     }
 
 
+    //! Initialize file system tree.
+    //!
+    //! \param id Subvolume id
+    //!
+    void BtrfsPool::initializeFileTree(uint64_t fsRootId)
+    {
+        if(fsRootId == 0){
+            uint64_t defaultId = getDefaultFsId();
+
+            fsTree = new FilesystemTree(rootTree, defaultId, this);
+            fsTreeDefault = fsTree;
+        }
+        else{
+            const BtrfsItem* foundItem;
+            if(treeSearchById(rootTree, fsRootId,
+                [&foundItem](const LeafNode* leaf, uint64_t targetId)
+                { return searchForItem(leaf, targetId, ItemType::ROOT_BACKREF, foundItem); })) {
+                fsTree = new FilesystemTree(rootTree, fsRootId, this);
+                fsTreeDefault = fsTree;
+            }
+            else
+                throw runtime_error("The argument of -s option is not a valid subvolume id.");
+        }
+    }
+
+
     //! Obatin root item id of default volume (filesystem tree).
     uint64_t BtrfsPool::getDefaultFsId()
     {
@@ -244,6 +266,12 @@ namespace btrForensics {
     }
 
 
+    //! Navigate to selected node and print information.
+    //!
+    //! \param root Starting root node.
+    //! \param os Output stream where the infomation is printed.
+    //! \param is Input stream telling which node is the one to be read.
+    //!
     void BtrfsPool::navigateNodes(const BtrfsNode* root,
             std::ostream& os, std::istream& is) const
     {
@@ -351,7 +379,7 @@ namespace btrForensics {
     //! \param is Input stream telling which node is the one to be read.
     //! \return True if switched.
     //!
-    const bool BtrfsPool::switchFsTrees(ostream& os, istream& is)
+    bool BtrfsPool::switchFsTrees(ostream& os, istream& is)
     {
         vector<const BtrfsItem*> foundRootRefs;
         treeTraverse(rootTree, [&foundRootRefs](const LeafNode* leaf)

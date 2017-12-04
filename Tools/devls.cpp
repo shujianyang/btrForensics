@@ -26,14 +26,21 @@ using namespace btrForensics;
 
 int main(int argc, char *argv[])
 {
-    /*TSK_OFF_T offsetSector(0);
+    TSK_OFF_T offsetSector(0);
     int option;
+    vector<string> offsetStr;
+    vector<TSK_OFF_T> devOffsets;
+
     while((option = getopt(argc, argv, "o:")) != -1){
         switch(option){
             case 'o':
-                if( (offsetSector = tsk_parse_offset(optarg)) == -1){
-                    tsk_error_print(stderr);
-                    exit(1);
+                offsetStr = strSplit(optarg, ",");
+                for(auto str : offsetStr){
+                    if( (offsetSector = tsk_parse_offset(str.c_str())) == -1){
+                        tsk_error_print(stderr);
+                        exit(1);
+                    }
+                    devOffsets.push_back(offsetSector);
                 }
                 break;
             case '?':
@@ -47,6 +54,9 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
+    if(devOffsets.size() == 0)
+        devOffsets.push_back(0);
+
     string img_name(argv[optind]);
     
     TSK_IMG_INFO *img = tsk_img_open(1, &argv[optind], TSK_IMG_TYPE_DETECT, 0);
@@ -56,41 +66,31 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    TSK_OFF_T offsetByte(offsetSector * img->sector_size);
-    if( offsetByte >= img->size){
-        cerr << "Offset is too large." << endl;
-        exit(1);
+    for(auto &offSec : devOffsets) {
+        TSK_OFF_T offsetByte(offSec * img->sector_size);
+        if( offsetByte >= img->size){
+            cerr << "Offset is too large." << endl;
+            exit(1);
+        }
+        offSec = offsetByte;
     }
 
     try {
-        char *diskArr = new char[SuperBlock::SIZE_OF_SPR_BLK]();
+        /*char *diskArr = new char[SuperBlock::SIZE_OF_SPR_BLK]();
         tsk_img_read(img, offsetByte + SuperBlock::ADDR_OF_SPR_BLK, diskArr, SuperBlock::SIZE_OF_SPR_BLK);
         SuperBlock supblk(TSK_LIT_ENDIAN, (uint8_t*)diskArr);
-        delete [] diskArr;
+        delete [] diskArr;*/
 
-        TreeExaminer examiner(img, offsetByte, TSK_LIT_ENDIAN, &supblk);
+        BtrfsPool btr(img, TSK_LIT_ENDIAN, devOffsets);
+        cout << btr.devInfo() << endl;
 
-        vector<const BtrfsItem*> foundDevItems;
-        examiner.treeTraverse((examiner.chunkTree)->chunkRoot, [&foundDevItems](const LeafNode* leaf)
-                { return filterItems(leaf, ItemType::DEV_ITEM, foundDevItems); });
-
-        if(foundDevItems.size() == 0) {
-            cout << "\nNo device is found.\n" << endl;
-            return 0;
-        }
-
-        cout << "The following devices are found:\n" << endl;
-        for(auto item : foundDevItems) {
-            const DevItem* dev = static_cast<const DevItem*>(item);
-            cout << dev->dataInfo() << endl;
-        }
     } catch(std::bad_alloc& ba) {
         cerr << "Error when allocating objects.\n" << ba.what() << endl;
     } catch(FsDamagedException& fsEx) {
         cerr << "Error: Btrfs filesystem damaged.\n" << fsEx.what() << endl;
     } catch(exception& e) {
         cerr << e.what() << endl;
-    }*/
+    }
 
     return 0;
 }

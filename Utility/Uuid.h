@@ -10,6 +10,8 @@
 #include <tsk/libtsk.h>
 #include <tsk/vs/tsk_gpt.h>
 
+namespace btrForensics {
+
 //! Universally Unique IDentifier (UUID).
 class UUID{
 public:
@@ -67,5 +69,6 @@ public:
     static const int LENGTH_OF_UUID_STRING = 36; //!< String length used to represent a UUID.
 };
 
+}
 
 #endif

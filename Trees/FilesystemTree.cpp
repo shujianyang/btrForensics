@@ -13,9 +13,9 @@
 #include "Pool/Functions.h"
 
 using namespace std;
-//using namespace std::placeholders;
 
 namespace btrForensics {
+
     //! Constructor of tree analyzer.
     //!
     //! \param rootNode Root node of the root tree to be analyzed.
@@ -249,6 +249,7 @@ namespace btrForensics {
     //! Read file content with given inode and save to current directory.
     //!
     //! \param id Inode number of the file to read.
+    //!
     //! \return True if file is all successfully written.
     //!
     const bool FilesystemTree::readFile(uint64_t id)
@@ -293,14 +294,10 @@ namespace btrForensics {
                 return true;
             }
             else {
-                //uint64_t physicalAddr = btrPool->getPhysicalAddr(data->logicalAddress)
-                //                        + data->extentOffset;
-                const SuperBlock *supBlk = btrPool->primarySupblk;
                 char* dataArr;
                 if(unreadSize > data->numOfBytes) {
                     dataArr = new char[data->numOfBytes]();
                     btrPool->readData(dataArr, data->logicalAddress, data->numOfBytes);
-                    //tsk_img_read(btrPool->image, physicalAddr, dataArr, data->numOfBytes);
                     ofs.write(dataArr, data->numOfBytes);
                     unreadSize -= data->numOfBytes;
                     delete [] dataArr;
@@ -308,7 +305,6 @@ namespace btrForensics {
                 else {
                     dataArr = new char[unreadSize]();
                     btrPool->readData(dataArr, data->logicalAddress, unreadSize);
-                    //tsk_img_read(btrPool->image, physicalAddr, dataArr, unreadSize);
                     ofs.write(dataArr, unreadSize);
                     unreadSize = 0;
                     delete [] dataArr;
@@ -327,6 +323,7 @@ namespace btrForensics {
     //!
     //! \param id Id of the target inode.
     //! \param os Output stream where the infomation is printed.
+    //!
     //! \return True if inode is found.
     //! 
     const bool FilesystemTree::showInodeInfo(uint64_t id, std::ostream& os)
@@ -348,7 +345,7 @@ namespace btrForensics {
 
         os << dec;
         os << "Inode number: " << id << endl;
-        os << "Size: " << size << endl;
+        os << "Size: " << humanSize(size) << endl;
         os << "Name: " << name << endl;
 
         os << "\nDirectory Entry Times(local);" << endl;
@@ -356,5 +353,6 @@ namespace btrForensics {
         
         return true;
     }
+
 }
 

@@ -8,6 +8,7 @@
 #include "Uuid.h"
 #include "Utility/ReadInt.h"
 
+namespace btrForensics {
 
 //! Default constructor of UUID
 UUID::UUID()
@@ -494,5 +495,7 @@ UUID& UUID::operator=(const UUID& rhs)
 bool operator!=(const UUID &lhs, const UUID &rhs)
 {
     return !(lhs == rhs);
+}
+
 }
 

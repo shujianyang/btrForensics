@@ -20,9 +20,6 @@ namespace btrForensics{
 
     void filterItems(const LeafNode*, ItemType, vector<const BtrfsItem*>&);
 
-    //uint64_t getChunkAddr(uint64_t logicalAddr,
-    //            const BtrfsKey* key, const ChunkData* chunkData);
-
     std::ostream &operator<<(std::ostream& os, const DirItemType& type);
 }
 

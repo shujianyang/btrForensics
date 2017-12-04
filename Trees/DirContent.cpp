@@ -33,8 +33,9 @@ namespace btrForensics {
             if(child->getTargetType() == ItemType::ROOT_ITEM)
                 continue;
 
-            os << "  \e(0\x74\x71\e(B" << dec;
-            os << setfill(' ') << setw(9) << child->getTargetInode();
+            //os << "  \e(0\x74\x71\e(B" << dec;
+            os << "  |" << dec;
+            os << setfill('-') << setw(8) << child->getTargetInode();
 
             if(child->type == DirItemType::DIRECTORY)
                 os << "  [" << child->getDirName() << "]\n";
