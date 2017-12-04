@@ -8,10 +8,11 @@ Raw image of a btrfs partition, or a partition device file using btrfs.
 
 ### Usage:
 ```
-icat [-o imgoffset] [-s subvolumeid] image inode
+icat [-o offset1,offset2,offset3...] [-s subvolumeid] image inode
 ```
 
--o imgoffset: Offset to the beginning of the partition (in sectors).
+-o offset: Offset to the beginning of the partition (in sectors).
+May have multiple values if the pool is made up by multiple partitions(devices).
 
 -s subvolumeid: The id of subvolume or snapshot. List can be found by using subls tool.
 

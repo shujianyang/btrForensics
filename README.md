@@ -23,10 +23,11 @@ Raw image which contains a btrfs partition, or a partition device file with btrf
 
 ### Usage:
 ```
-btrfrsc [-o imgoffset] image 
+btrfrsc [-o offset1,offset2,offset3...] image 
 ```
 
--o imgoffset: Offset to the beginning of the partition (in sectors).
+-o offset: Offset to the beginning of the partition (in sectors).
+May have multiple values if the pool is made up by multiple partitions(devices).
 
 ### Current Capabilities:
 1. Browse nodes derived from root tree and print information.
