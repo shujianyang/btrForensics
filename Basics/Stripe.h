@@ -9,7 +9,7 @@
 #include "Utility/Uuid.h"
 
 namespace btrForensics {
-    //Stripe information
+    //! Stripe information stored in chunk item.
     class Stripe {
     public:
         uint64_t deviceId; //0x0

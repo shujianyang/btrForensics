@@ -6,7 +6,6 @@
 #include <map>
 #include <sstream>
 #include <iomanip>
-#include <iostream>
 #include "BtrfsPool.h"
 #include "Functions.h"
 
@@ -35,7 +34,12 @@ BtrfsPool::BtrfsPool(TSK_IMG_INFO *img, TSK_ENDIAN_ENUM end,
             fsUUID = supblk->fsUUID;
         }
         else if(fsUUID != supblk->fsUUID) {
-            throw FsDeviceException("Found superblocks do not belong to the same pool.");
+            ostringstream oss;
+            oss << "Found superblocks do not belong to the same pool.\n";
+            oss << "The following different filesystem UUIDs were found:\n";
+            oss << supblk->fsUUID.encode() << '\n';
+            oss << fsUUID.encode() << '\n';
+            throw FsDeviceException(oss.str());
         }
 
         const DevData *dev = &(supblk->devItemData);
@@ -45,8 +49,14 @@ BtrfsPool::BtrfsPool(TSK_IMG_INFO *img, TSK_ENDIAN_ENUM end,
         devCount = supblk->numDevices;
     }
 
-    if(devOffsets.size() != devCount)
-        throw FsDeviceException("Input incomplete: device(s) missing.");
+    if(devOffsets.size() != devCount) {
+        ostringstream oss;
+        oss << "Input incomplete: device(s) missing.\n";
+        oss << std::dec;
+        oss << "Expected device number: " << devCount << '\n';
+        oss << "Input device number: " << devOffsets.size() << '\n'; 
+        throw FsDeviceException(oss.str());
+    }
     
     primarySupblk = deviceTable[1]->superBlk;
 
@@ -115,8 +125,8 @@ vector<uint64_t> BtrfsPool::getAddrFromChunk(uint64_t logicalAddr,
 
     //Input logical address should be larger than chunk logial address.
     if(logicalAddr < chunkLogical)
-        throw FsDamagedException("Superblock chunk item error.
-                Unable to map logical address to physical address.");
+        throw FsDamagedException("Superblock chunk item error."
+                "Unable to map logical address to physical address.");
 
     //There should be at least one stripe within the chunk data.
     if(chunkData->numStripe == 0)
@@ -139,7 +149,7 @@ vector<uint64_t> BtrfsPool::getAddrFromChunk(uint64_t logicalAddr,
 
 //! Read data from image based on given logical address and chunk.
 //!
-//! \param data Array with data read from image
+//! \param[out] data Array with data read from image
 //! \param logicalAddr Logical address of data.
 //! \param key Btrfs chunk item key.
 //! \param chunkData Btrfs chunk item data.
@@ -155,12 +165,6 @@ uint64_t BtrfsPool::readChunkData(char *data, uint64_t logicalAddr,
     uint64_t readSize(0);
     uint64_t length = chunkData->stripeLength;
     for(const auto &addr: physicalAddrs) {
-        //cout << "------------------" << endl;
-        //cout << "Physical addr: " << hex << addr << endl;
-        //cout << "Total size: " << hex << size << endl;
-        //cout << "Read size: " << hex << readSize << endl;
-        //cout << "Stripe length: " << hex << length << endl;
-        //cout << "------------------" << endl;
         if(size - readSize <= length) {
             tsk_img_read(image, addr, data + readSize, size - readSize);
             break;
@@ -177,7 +181,7 @@ uint64_t BtrfsPool::readChunkData(char *data, uint64_t logicalAddr,
 
 //! Read data from image based on given logical address.
 //!
-//! \param data Array with data read from image
+//! \param[out] data Array with data read from image
 //! \param logicalAddr Logical address of data.
 //! \param size Size of data.
 //!

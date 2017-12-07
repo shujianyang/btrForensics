@@ -11,7 +11,7 @@
 #include "Basics.h"
 
 namespace btrForensics {
-    //Contents of a file
+    //! Contents of a file
     class ExtentData : public BtrfsItem {
     public:
         uint64_t dataAddress; //!< Physical address of inline data, only works for inline file.

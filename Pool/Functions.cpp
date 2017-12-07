@@ -31,7 +31,7 @@ void printLeafDir(const LeafNode* leaf, std::ostream &os)
 //! \param leaf Pointer to the leaf node.
 //! \param inodeNum The inode number to search for.
 //! \param type The type of the item to search for.
-//! \param item Found ItemHead pointer.
+//! \param[out] item Found ItemHead pointer. Only the first found will be returned.
 //!
 //! \return True if the item is found.
 //!
@@ -56,7 +56,7 @@ bool searchForItem(const LeafNode* leaf, uint64_t inodeNum,
 //! \param leaf Pointer to the leaf node.
 //! \param inodeNum The inode number to search for.
 //! \param type The type of the item to search for.
-//! \param vec Vector storing found items.
+//! \param[out] vec Vector storing all found items.
 //!
 //! \return True if all items with the inodeNum has been found.
 //!
@@ -82,7 +82,7 @@ bool filterItems(const LeafNode* leaf, uint64_t inodeNum, ItemType type,
 //!
 //! \param leaf Pointer to the leaf node.
 //! \param type The type of the item to search for.
-//! \param vec Vector storing found items.
+//! \param vec Vector storing all found items.
 //!
 void filterItems(const LeafNode* leaf, ItemType type, vector<const BtrfsItem*> &vec)
 {
