@@ -61,7 +61,9 @@ namespace btrForensics{
         std::ostringstream oss;
         oss << "----------------------------------------------" << '\n';
         oss << "Chunk size: " << std::dec << chunkSize << '\n';
-        oss << "Number of stripes: " << numStripe << "\n\n";
+        oss << "Stripe length: " << std::dec << stripeLength << '\n';
+        oss << "Number of stripes: " << numStripe << "\n";
+        oss << "Sub stripes: " << subStripe << "\n\n";
         for(auto stripe : btrStripes) {
             oss << "Device ID: " << stripe->deviceId << '\n';
             oss << "Offset: 0x" << std::uppercase << std::hex  << stripe->offset << '\n';

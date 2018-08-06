@@ -15,10 +15,10 @@ namespace btrForensics {
     //! Device registered for a btrfs filesystem.
     class DeviceRecord {
     public:
-        uint64_t deviceId;
-        uint64_t deviceOffset;
-        UUID devUUID;
-        SuperBlock *superBlk;
+        uint64_t deviceId; //!< ID of the device.
+        uint64_t deviceOffset; //!< Offset of the device from the beginning of the image in bytes.
+        UUID devUUID; //!< Device UUID
+        SuperBlock *superBlk; //!< SuperBlock stored in thi device.
 
     public:
         std::string devInfo() const;

@@ -19,12 +19,12 @@ namespace btrForensics {
     //! Manage devices registered for a btrfs filesystem.
     class BtrfsPool {
     public:
-        TSK_IMG_INFO *image; 
+        TSK_IMG_INFO *image;  //!< Image file
         TSK_ENDIAN_ENUM endian; //!< Endianness.
 
-        UUID fsUUID;
-        SuperBlock* primarySupblk;
-        std::map<uint64_t, DeviceRecord*> deviceTable;
+        UUID fsUUID; //!< Filesystem UUID
+        SuperBlock* primarySupblk; //!< Primary SuperBlock, currently chosen from the device with ID 1.
+        std::map<uint64_t, DeviceRecord*> deviceTable; //!< Stores device information
 
 
         ChunkTree* chunkTree; //!< The chunk tree.

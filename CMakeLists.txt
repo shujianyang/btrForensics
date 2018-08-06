@@ -4,7 +4,7 @@ project(btrForensics)
 set(CMAKE_CXX_COMPILER "g++")
 set(CMAKE_CXX_STANDARD 11)
 
-#set(CMAKE_CXX_FLAGS "-Wall -ltsk")
+set(CMAKE_CXX_FLAGS "-g -Wall -ltsk")
 
 include_directories(${PROJECT_SOURCE_DIR})
 

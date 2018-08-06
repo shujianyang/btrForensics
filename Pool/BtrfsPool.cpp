@@ -165,14 +165,11 @@ uint64_t BtrfsPool::readChunkData(char *data, uint64_t logicalAddr,
     uint64_t readSize(0);
     uint64_t length = chunkData->stripeLength;
     for(const auto &addr: physicalAddrs) {
-        if(size - readSize <= length) {
-            tsk_img_read(image, addr, data + readSize, size - readSize);
-            break;
-        }
-        else {
-            tsk_img_read(image, addr, data + readSize, length);
+        while(size - readSize > length) {
+            tsk_img_read(image, addr + readSize, data + readSize, length);
             readSize += length;
         }
+        tsk_img_read(image, addr + readSize, data + readSize, size - readSize);
     }
 
     return physicalAddrs[0];
@@ -223,7 +220,7 @@ void BtrfsPool::initializeRootTree()
 
 //! Initialize file system tree.
 //!
-//! \param id Subvolume id
+//! \param fsRootId Subvolume id
 //!
 void BtrfsPool::initializeFileTree(uint64_t fsRootId)
 {
